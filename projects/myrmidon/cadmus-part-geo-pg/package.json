@@ -1,0 +1,24 @@
+{
+  "name": "@myrmidon/cadmus-part-geo-pg",
+  "version": "0.0.1",
+  "description": "Cadmus - geography UI component wrappers.",
+  "keywords": [
+    "Cadmus",
+    "geography"
+  ],
+  "homepage": "https://github.com/vedph/cadmus-geo-shell",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vedph/cadmus-geo-shell"
+  },
+  "author": {
+    "name": "Daniele Fusi"
+  },
+  "peerDependencies": {
+    "@angular/common": "^15.0.0",
+    "@angular/core": "^15.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}

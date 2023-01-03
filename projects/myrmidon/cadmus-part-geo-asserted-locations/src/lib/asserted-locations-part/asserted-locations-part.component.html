@@ -1,0 +1,101 @@
+<form [formGroup]="form" (submit)="save()">
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar>
+        <mat-icon>picture_in_picture</mat-icon>
+      </div>
+      <mat-card-title>Asserted Locations Part</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-tab-group [(selectedIndex)]="tabIndex">
+        <mat-tab label="locations">
+          <div>
+            <button
+              type="button"
+              mat-flat-button
+              color="primary"
+              (click)="addAssertedLocation()"
+            >
+              <mat-icon>add_circle</mat-icon> location
+            </button>
+          </div>
+          <table *ngIf="entries.value?.length">
+            <thead>
+              <tr>
+                <th></th>
+                <th>lat</th>
+                <th>lon</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let entry of entries.value;
+                  let i = index;
+                  let first = first;
+                  let last = last
+                "
+              >
+                <td>
+                  <button
+                    type="button"
+                    mat-icon-button
+                    color="primary"
+                    matTooltip="Edit this location"
+                    (click)="editAssertedLocation(entry, i)"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    mat-icon-button
+                    matTooltip="Move this location up"
+                    [disabled]="first"
+                    (click)="moveAssertedLocationUp(i)"
+                  >
+                    <mat-icon>arrow_upward</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    mat-icon-button
+                    matTooltip="Move this location down"
+                    [disabled]="last"
+                    (click)="moveAssertedLocationDown(i)"
+                  >
+                    <mat-icon>arrow_downward</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    mat-icon-button
+                    color="warn"
+                    matTooltip="Delete this location"
+                    (click)="deleteAssertedLocation(i)"
+                  >
+                    <mat-icon>remove_circle</mat-icon>
+                  </button>
+                </td>
+                <td>{{ entry.point.lat }}</td>
+                <td>{{ entry.point.lon }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-tab>
+
+        <mat-tab label="location" *ngIf="edited">
+          <cadmus-asserted-location
+            [location]="edited"
+            (locationChange)="saveAssertedLocation($event)"
+            (editorClose)="closeAssertedLocation()"
+          ></cadmus-asserted-location>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+    <mat-card-actions>
+      <cadmus-close-save-buttons
+        [form]="form"
+        [noSave]="userLevel < 2"
+        (closeRequest)="close()"
+      ></cadmus-close-save-buttons>
+    </mat-card-actions>
+  </mat-card>
+</form>

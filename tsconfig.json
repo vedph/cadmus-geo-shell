@@ -2,6 +2,17 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@myrmidon/cadmus-part-geo-asserted-locations": [
+        "dist/myrmidon/cadmus-part-geo-asserted-locations"
+      ],
+      "@myrmidon/cadmus-part-geo-asserted-toponyms": [
+        "dist/myrmidon/cadmus-part-geo-asserted-toponyms"
+      ],
+      "@myrmidon/cadmus-part-geo-pg": [
+        "dist/myrmidon/cadmus-part-geo-pg"
+      ]
+    },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

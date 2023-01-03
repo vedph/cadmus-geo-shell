@@ -1,0 +1,96 @@
+<form [formGroup]="form">
+  <!-- point -->
+  <cadmus-location-point
+    [point]="point.value"
+    [hasLocator]="true"
+    (pointChange)="onPointChange($event)"
+  ></cadmus-location-point>
+
+  <!-- altitude -->
+  <div class="form-row">
+    <mat-checkbox [formControl]="hasAltitude">altitude</mat-checkbox>
+    <mat-form-field style="width: 6em" *ngIf="hasAltitude.value">
+      <mat-label>alt.</mat-label>
+      <input matInput type="number" [formControl]="altitude" />
+    </mat-form-field>
+  </div>
+
+  <!-- box -->
+  <div>
+    <mat-checkbox [formControl]="hasBox">bounding box</mat-checkbox>
+  </div>
+  <fieldset *ngIf="hasBox.value">
+    <legend>box</legend>
+    <div>
+      <!-- point A -->
+      A
+      <cadmus-location-point
+        [point]="box.value?.a"
+        [hasLocator]="true"
+        (pointChange)="onPointAChange($event)"
+      ></cadmus-location-point>
+    </div>
+
+    <div>
+      <!-- point B -->
+      B
+      <cadmus-location-point
+        [point]="box.value?.b"
+        [hasLocator]="true"
+        (pointChange)="onPointBChange($event)"
+      ></cadmus-location-point>
+    </div>
+  </fieldset>
+
+  <!-- geometry -->
+  <div>
+    <mat-form-field class="long-text">
+      <mat-label>geometry</mat-label>
+      <textarea matInput [formControl]="geometry"></textarea>
+      <mat-error
+        *ngIf="
+          $any(geometry).errors?.maxLength &&
+          (geometry.dirty || geometry.touched)
+        "
+        >geometry too long</mat-error
+      >
+    </mat-form-field>
+  </div>
+
+  <!-- assertion -->
+  <div>
+    <mat-checkbox [formControl]="hasAssertion">assertion</mat-checkbox>
+  </div>
+  <fieldset *ngIf="hasAssertion.value">
+    <legend>assertion</legend>
+    <cadmus-refs-assertion
+      [assertion]="initialAssertion || undefined"
+      [assTagEntries]="assTagEntries"
+      [refTagEntries]="refTagEntries"
+      [refTypeEntries]="refTypeEntries"
+      (assertionChange)="onAssertionChange($event)"
+    ></cadmus-refs-assertion>
+  </fieldset>
+
+  <!-- buttons -->
+  <div>
+    <button
+      type="button"
+      mat-icon-button
+      color="warn"
+      matTooltip="Close"
+      (click)="close()"
+    >
+      <mat-icon>cancel</mat-icon>
+    </button>
+    <button
+      type="submit"
+      [disabled]="form.invalid || form.pristine"
+      mat-icon-button
+      color="primary"
+      matTooltip="Save location"
+    >
+      <mat-icon>check_circle</mat-icon>
+    </button>
+  </div>
+</form>

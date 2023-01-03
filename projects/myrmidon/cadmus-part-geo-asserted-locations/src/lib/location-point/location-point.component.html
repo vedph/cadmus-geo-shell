@@ -1,0 +1,64 @@
+<form [formGroup]="form" class="form-row">
+  <!-- lat -->
+  <mat-form-field class="coord">
+    <mat-label>lat</mat-label>
+    <input matInput [formControl]="lat" type="number" min="-90" max="90" />
+    <mat-error *ngIf="$any(lat).errors?.required && (lat.dirty || lat.touched)"
+      >lat required</mat-error
+    >
+  </mat-form-field>
+
+  <!-- lon -->
+  <mat-form-field class="coord">
+    <mat-label>lon</mat-label>
+    <input matInput [formControl]="lon" type="number" min="-180" max="180" />
+    <mat-error *ngIf="$any(lon).errors?.required && (lon.dirty || lon.touched)"
+      >lon required</mat-error
+    >
+  </mat-form-field>
+
+  <!-- locator -->
+  <button
+    type="button"
+    *ngIf="hasLocator"
+    mat-icon-button
+    color="primary"
+    matTooltip="Set coordinates to my location"
+    [disabled]="locating"
+    (click)="setCurrentPosition()"
+  >
+    <mat-icon>my_location</mat-icon>
+  </button>
+  <a
+    type="button"
+    *ngIf="hasLocator && location?.coords"
+    [href]="
+      'https://www.openstreetmap.org/#map=18/' +
+      location!.coords!.latitude +
+      '/' +
+      location!.coords!.longitude
+    "
+    target="_blank"
+    mat-icon-button
+    matTooltip="View in OpenStreetMaps"
+  >
+    <mat-icon>map</mat-icon>
+  </a>
+
+  <span class="info" *ngIf="location">
+    ({{ location.coords.accuracy | number : "1.0-2" }} mt.)</span
+  >
+  <span
+    class="info"
+    *ngIf="
+      location?.coords?.altitude !== null &&
+      location?.coords?.altitude !== undefined
+    "
+  >
+    alt:
+    {{ location!.coords!.altitude | number : "1.0-2" }} mt. ({{
+      location!.coords!.accuracy | number : "1.0-2"
+    }}
+    mt.)
+  </span>
+</form>
