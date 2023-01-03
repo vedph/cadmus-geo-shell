@@ -47,7 +47,6 @@ export class AssertedToponymsPartComponent
 
   // geo-name-piece-types
   public nameTypeEntries?: ThesaurusEntry[] | undefined;
-  public nameValueEntries: ThesaurusEntry[];
 
   // assertion-tags
   public assTagEntries?: ThesaurusEntry[] | undefined;
@@ -60,6 +59,10 @@ export class AssertedToponymsPartComponent
 
   public toponyms: FormControl<AssertedToponym[]>;
 
+  // calculated entries
+  public namePieceTypeEntries: ThesaurusEntry[];
+  public namePieceValueEntries: ThesaurusEntry[];
+
   constructor(
     authService: AuthJwtService,
     formBuilder: FormBuilder,
@@ -69,7 +72,8 @@ export class AssertedToponymsPartComponent
     super(authService, formBuilder);
     this._editedIndex = -1;
     this.tabIndex = 0;
-    this.nameValueEntries = [];
+    this.namePieceTypeEntries = [];
+    this.namePieceValueEntries = [];
     // form
     this.toponyms = formBuilder.control([], {
       // at least 1 entry
@@ -88,9 +92,10 @@ export class AssertedToponymsPartComponent
     });
   }
 
-  private updateValueTypeEntries(typeEntries: ThesaurusEntry[]): void {
-    this.nameValueEntries = this._nameService.getValueEntries(
-      this._nameService.parseTypeEntries(typeEntries)
+  private updateNamePieceValueEntries(typeEntries: ThesaurusEntry[]): void {
+    this.namePieceTypeEntries = this._nameService.parseTypeEntries(typeEntries);
+    this.namePieceValueEntries = this._nameService.getValueEntries(
+      this.namePieceTypeEntries
     );
   }
 
@@ -112,10 +117,11 @@ export class AssertedToponymsPartComponent
     key = 'geo-name-piece-types';
     if (this.hasThesaurus(key)) {
       this.nameTypeEntries = thesauri[key].entries;
-      this.updateValueTypeEntries(this.nameTypeEntries || []);
+      this.updateNamePieceValueEntries(this.nameTypeEntries || []);
     } else {
       this.nameTypeEntries = undefined;
-      this.nameValueEntries = [];
+      this.namePieceTypeEntries = [];
+      this.namePieceValueEntries = [];
     }
 
     key = 'assertion-tags';

@@ -21,7 +21,9 @@ import {
   ORTHOGRAPHY_FRAGMENT_TYPEID,
 } from '@myrmidon/cadmus-part-philology-ui';
 import { PartEditorKeys } from '@myrmidon/cadmus-core';
+
 import { ASSERTED_LOCATIONS_PART_TYPEID } from '@myrmidon/cadmus-part-geo-asserted-locations';
+import { ASSERTED_TOPONYMS_PART_TYPEID } from '@myrmidon/cadmus-part-geo-asserted-toponyms';
 
 const GENERAL = 'general';
 const PHILOLOGY = 'philology';
@@ -80,6 +82,9 @@ export const PART_EDITOR_KEYS: PartEditorKeys = {
   },
   // geography
   [ASSERTED_LOCATIONS_PART_TYPEID]: {
+    part: GEOGRAPHY,
+  },
+  [ASSERTED_TOPONYMS_PART_TYPEID]: {
     part: GEOGRAPHY,
   },
   // layer parts

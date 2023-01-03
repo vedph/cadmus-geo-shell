@@ -8,22 +8,23 @@
     </mat-card-header>
     <mat-card-content>
       <mat-tab-group [(selectedIndex)]="tabIndex">
+        <!-- list -->
         <mat-tab label="toponyms">
           <div>
             <button
               type="button"
-              mat-icon-button
+              mat-flat-button
               color="primary"
               (click)="addAssertedToponym()"
             >
-              <mat-icon>add_circle</mat-icon>
+              <mat-icon>add_circle</mat-icon> toponym
             </button>
           </div>
           <table *ngIf="toponyms.value?.length">
             <thead>
               <tr>
                 <th></th>
-                TODO: add model properties
+                <th>name</th>
               </tr>
             </thead>
             <tbody>
@@ -73,16 +74,30 @@
                     <mat-icon>remove_circle</mat-icon>
                   </button>
                 </td>
-                TODO: td's for properties
+                <td>
+                  {{
+                    entry.name
+                      | cadmusProperName
+                        : namePieceTypeEntries
+                        : namePieceValueEntries
+                        : "id"
+                        : "value"
+                        : true
+                  }}
+                </td>
               </tr>
             </tbody>
           </table>
         </mat-tab>
 
+        <!-- editor -->
         <mat-tab label="toponym" *ngIf="edited">
-          TODO: editor control with: [model]="edited"
-          (modelChange)="saveAssertedToponym($event)"
-          (editorClose)="closeAssertedToponym()"
+          <cadmus-asserted-toponym
+            [toponym]="edited"
+            (toponymChange)="saveAssertedToponym($event)"
+            (editorClose)="closeAssertedToponym()"
+          >
+          </cadmus-asserted-toponym>
         </mat-tab>
       </mat-tab-group>
     </mat-card-content>

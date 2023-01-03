@@ -62,12 +62,12 @@ export class AssertedToponymComponent {
   public refTagEntries: ThesaurusEntry[] | undefined;
 
   @Output()
-  public modelChange: EventEmitter<AssertedToponym>;
+  public toponymChange: EventEmitter<AssertedToponym>;
   @Output()
   public editorClose: EventEmitter<any>;
 
   constructor(formBuilder: FormBuilder) {
-    this.modelChange = new EventEmitter<AssertedToponym>();
+    this.toponymChange = new EventEmitter<AssertedToponym>();
     this.editorClose = new EventEmitter<any>();
     // form
     this.eid = formBuilder.control(null, Validators.maxLength(500));
@@ -126,6 +126,6 @@ export class AssertedToponymComponent {
     if (this.form.invalid) {
       return;
     }
-    this.modelChange.emit(this.getModel());
+    this.toponymChange.emit(this.getModel());
   }
 }

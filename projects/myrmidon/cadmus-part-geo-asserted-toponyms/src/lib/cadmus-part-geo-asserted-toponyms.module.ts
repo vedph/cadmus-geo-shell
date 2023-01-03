@@ -22,7 +22,7 @@ import { RouterModule } from '@angular/router';
 
 // cadmus
 import { CadmusCoreModule } from '@myrmidon/cadmus-core';
-import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion/public-api';
+import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion';
 import { CadmusRefsProperNameModule } from '@myrmidon/cadmus-refs-proper-name';
 import { CadmusStateModule } from '@myrmidon/cadmus-state';
 import { CadmusUiModule } from '@myrmidon/cadmus-ui';
