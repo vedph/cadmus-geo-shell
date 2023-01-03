@@ -22,13 +22,23 @@ import { RouterModule } from '@angular/router';
 
 // cadmus
 import { CadmusCoreModule } from '@myrmidon/cadmus-core';
+import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion/public-api';
+import { CadmusRefsProperNameModule } from '@myrmidon/cadmus-refs-proper-name';
 import { CadmusStateModule } from '@myrmidon/cadmus-state';
 import { CadmusUiModule } from '@myrmidon/cadmus-ui';
 import { CadmusUiFlagsPickerModule } from '@myrmidon/cadmus-ui-flags-picker';
 import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
 
+import { AssertedToponymComponent } from './asserted-toponym/asserted-toponym.component';
+import { AssertedToponymsPartComponent } from './asserted-toponyms-part/asserted-toponyms-part.component';
+import { AssertedToponymsPartFeatureComponent } from './asserted-toponyms-part-feature/asserted-toponyms-part-feature.component';
+
 @NgModule({
-  declarations: [],
+  declarations: [
+    AssertedToponymComponent,
+    AssertedToponymsPartComponent,
+    AssertedToponymsPartFeatureComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -52,11 +62,17 @@ import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
     MatTooltipModule,
     // cadmus
     CadmusCoreModule,
+    CadmusRefsAssertionModule,
+    CadmusRefsProperNameModule,
     CadmusStateModule,
     CadmusUiModule,
     CadmusUiFlagsPickerModule,
     CadmusUiPgModule,
   ],
-  exports: [],
+  exports: [
+    AssertedToponymComponent,
+    AssertedToponymsPartComponent,
+    AssertedToponymsPartFeatureComponent,
+  ],
 })
 export class CadmusPartGeoAssertedToponymsModule {}

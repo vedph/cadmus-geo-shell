@@ -4,33 +4,32 @@
       <div mat-card-avatar>
         <mat-icon>picture_in_picture</mat-icon>
       </div>
-      <mat-card-title>Locations Part</mat-card-title>
+      <mat-card-title>Toponyms Part</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <mat-tab-group [(selectedIndex)]="tabIndex">
-        <mat-tab label="locations">
+        <mat-tab label="toponyms">
           <div>
             <button
               type="button"
-              mat-flat-button
+              mat-icon-button
               color="primary"
-              (click)="addAssertedLocation()"
+              (click)="addAssertedToponym()"
             >
-              <mat-icon>add_circle</mat-icon> location
+              <mat-icon>add_circle</mat-icon>
             </button>
           </div>
-          <table *ngIf="locations.value?.length">
+          <table *ngIf="toponyms.value?.length">
             <thead>
               <tr>
                 <th></th>
-                <th>lat</th>
-                <th>lon</th>
+                TODO: add model properties
               </tr>
             </thead>
             <tbody>
               <tr
                 *ngFor="
-                  let entry of locations.value;
+                  let entry of toponyms.value;
                   let i = index;
                   let first = first;
                   let last = last
@@ -41,26 +40,26 @@
                     type="button"
                     mat-icon-button
                     color="primary"
-                    matTooltip="Edit this location"
-                    (click)="editAssertedLocation(entry, i)"
+                    matTooltip="Edit this toponym"
+                    (click)="editAssertedToponym(entry, i)"
                   >
                     <mat-icon>edit</mat-icon>
                   </button>
                   <button
                     type="button"
                     mat-icon-button
-                    matTooltip="Move this location up"
+                    matTooltip="Move this toponym up"
                     [disabled]="first"
-                    (click)="moveAssertedLocationUp(i)"
+                    (click)="moveAssertedToponymUp(i)"
                   >
                     <mat-icon>arrow_upward</mat-icon>
                   </button>
                   <button
                     type="button"
                     mat-icon-button
-                    matTooltip="Move this location down"
+                    matTooltip="Move this toponym down"
                     [disabled]="last"
-                    (click)="moveAssertedLocationDown(i)"
+                    (click)="moveAssertedToponymDown(i)"
                   >
                     <mat-icon>arrow_downward</mat-icon>
                   </button>
@@ -68,25 +67,22 @@
                     type="button"
                     mat-icon-button
                     color="warn"
-                    matTooltip="Delete this location"
-                    (click)="deleteAssertedLocation(i)"
+                    matTooltip="Delete this toponym"
+                    (click)="deleteAssertedToponym(i)"
                   >
                     <mat-icon>remove_circle</mat-icon>
                   </button>
                 </td>
-                <td>{{ entry.point.lat }}</td>
-                <td>{{ entry.point.lon }}</td>
+                TODO: td's for properties
               </tr>
             </tbody>
           </table>
         </mat-tab>
 
-        <mat-tab label="location" *ngIf="edited">
-          <cadmus-asserted-location
-            [location]="edited"
-            (locationChange)="saveAssertedLocation($event)"
-            (editorClose)="closeAssertedLocation()"
-          ></cadmus-asserted-location>
+        <mat-tab label="toponym" *ngIf="edited">
+          TODO: editor control with: [model]="edited"
+          (modelChange)="saveAssertedToponym($event)"
+          (editorClose)="closeAssertedToponym()"
         </mat-tab>
       </mat-tab-group>
     </mat-card-content>

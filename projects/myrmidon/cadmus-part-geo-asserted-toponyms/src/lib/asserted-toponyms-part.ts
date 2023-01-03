@@ -1,46 +1,38 @@
 import { Part } from '@myrmidon/cadmus-core';
 import { Assertion } from '@myrmidon/cadmus-refs-assertion';
+import { ProperName } from '@myrmidon/cadmus-refs-proper-name';
 
-export interface LocationPoint {
-  lat: number;
-  lon: number;
-}
-
-export interface LocationBox {
-  a: LocationPoint;
-  b: LocationPoint;
-}
-
-export interface AssertedLocation {
-  point: LocationPoint;
-  box?: LocationBox;
-  altitude?: number;
-  geometry?: string;
+/**
+ * A toponym with an optional assertion.
+ */
+export interface AssertedToponym {
+  eid?: string;
+  name: ProperName;
   assertion?: Assertion;
 }
 
 /**
- * The asserted locations part model.
+ * The asserted toponyms part model.
  */
-export interface AssertedLocationsPart extends Part {
-  locations: AssertedLocation[];
+export interface AssertedToponymsPart extends Part {
+  toponyms: AssertedToponym[];
 }
 
 /**
- * The type ID used to identify the AssertedLocationsPart type.
+ * The type ID used to identify the AssertedToponymsPart type.
  */
-export const ASSERTED_LOCATIONS_PART_TYPEID = 'it.vedph.geo.asserted-locations';
+export const ASSERTED_TOPONYMS_PART_TYPEID = 'it.vedph.geo.asserted-toponyms';
 
 /**
- * JSON schema for the AssertedLocations part.
+ * JSON schema for the AssertedToponyms part.
  * You can use the JSON schema tool at https://jsonschema.net/.
  */
-export const ASSERTED_LOCATIONS_PART_SCHEMA = {
+export const ASSERTED_TOPONYMS_PART_SCHEMA = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   $id:
-    'www.vedph.it/cadmus/parts/geo/' + ASSERTED_LOCATIONS_PART_TYPEID + '.json',
+    'www.vedph.it/cadmus/parts/geo/' + ASSERTED_TOPONYMS_PART_TYPEID + '.json',
   type: 'object',
-  title: 'AssertedLocationsPart',
+  title: 'AssertedToponymsPart',
   required: [
     'id',
     'itemId',
@@ -49,7 +41,7 @@ export const ASSERTED_LOCATIONS_PART_SCHEMA = {
     'creatorId',
     'timeModified',
     'userId',
-    'locations',
+    'toponyms',
   ],
   properties: {
     timeCreated: {
@@ -82,53 +74,38 @@ export const ASSERTED_LOCATIONS_PART_SCHEMA = {
       type: ['string', 'null'],
       pattern: '^([a-z][-0-9a-z._]*)?$',
     },
-    point: {
-      type: 'object',
-      required: ['lat', 'lon'],
-      properties: {
-        lat: {
-          type: 'number',
-        },
-        lon: {
-          type: 'number',
-        },
-      },
-    },
-    box: {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['lat', 'lon'],
-          properties: {
-            lat: {
-              type: 'number',
-            },
-            lon: {
-              type: 'number',
-            },
-          },
-        },
-        b: {
-          type: 'object',
-          required: ['lat', 'lon'],
-          properties: {
-            lat: {
-              type: 'number',
-            },
-            lon: {
-              type: 'number',
-            },
-          },
-        },
-      },
-    },
-    altitude: {
-      type: 'number',
-    },
-    geometry: {
+    eid: {
       type: 'string',
+      default: '',
+      title: 'The eid Schema',
+      examples: [''],
+    },
+    name: {
+      type: 'object',
+      required: ['language', 'pieces'],
+      properties: {
+        language: {
+          type: 'string',
+        },
+        tag: {
+          type: 'string',
+        },
+        pieces: {
+          type: 'array',
+          items: {
+            type: 'object',
+            required: ['type', 'value'],
+            properties: {
+              type: {
+                type: 'string',
+              },
+              value: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
     },
     assertion: {
       type: 'object',

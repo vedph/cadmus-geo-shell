@@ -59,9 +59,10 @@ import {
 import { AuthJwtAdminModule } from '@myrmidon/auth-jwt-admin';
 
 // cadmus bricks
+import { CadmusRefsAssertedIdsModule } from '@myrmidon/cadmus-refs-asserted-ids';
 import { CadmusRefsDocReferencesModule } from '@myrmidon/cadmus-refs-doc-references';
 import { CadmusRefsHistoricalDateModule } from '@myrmidon/cadmus-refs-historical-date';
-import { CadmusRefsAssertedIdsModule } from '@myrmidon/cadmus-refs-asserted-ids';
+import { CadmusRefsProperNameModule } from '@myrmidon/cadmus-refs-proper-name';
 import { CadmusUiFlagsPickerModule } from '@myrmidon/cadmus-ui-flags-picker';
 
 // cadmus
@@ -164,10 +165,11 @@ export function initElfDevTools(actions: Actions) {
     AuthJwtLoginModule,
     AuthJwtAdminModule,
     // cadmus bricks
+    CadmusRefsAssertedIdsModule,
     CadmusRefsAssertionModule,
     CadmusRefsDocReferencesModule,
     CadmusRefsHistoricalDateModule,
-    CadmusRefsAssertedIdsModule,
+    CadmusRefsProperNameModule,
     CadmusUiFlagsPickerModule,
     // cadmus
     CadmusApiModule,

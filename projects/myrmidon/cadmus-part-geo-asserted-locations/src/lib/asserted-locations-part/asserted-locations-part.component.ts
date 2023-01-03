@@ -45,7 +45,7 @@ export class AssertedLocationsPartComponent
   // doc-reference-tags
   public refTagEntries: ThesaurusEntry[] | undefined;
 
-  public entries: FormControl<AssertedLocation[]>;
+  public locations: FormControl<AssertedLocation[]>;
 
   constructor(
     authService: AuthJwtService,
@@ -56,7 +56,7 @@ export class AssertedLocationsPartComponent
     this._editedIndex = -1;
     this.tabIndex = 0;
     // form
-    this.entries = formBuilder.control([], {
+    this.locations = formBuilder.control([], {
       // at least 1 entry
       validators: NgToolsValidators.strictMinLengthValidator(1),
       nonNullable: true,
@@ -69,7 +69,7 @@ export class AssertedLocationsPartComponent
 
   protected buildForm(formBuilder: FormBuilder): FormGroup | UntypedFormGroup {
     return formBuilder.group({
-      entries: this.entries,
+      entries: this.locations,
     });
   }
 
@@ -99,7 +99,7 @@ export class AssertedLocationsPartComponent
       this.form.reset();
       return;
     }
-    this.entries.setValue(part.locations || []);
+    this.locations.setValue(part.locations || []);
     this.form.markAsPristine();
   }
 
@@ -119,7 +119,7 @@ export class AssertedLocationsPartComponent
     let part = this.getEditedPart(
       ASSERTED_LOCATIONS_PART_TYPEID
     ) as AssertedLocationsPart;
-    part.locations = this.entries.value || [];
+    part.locations = this.locations.value || [];
     return part;
   }
 
@@ -147,15 +147,15 @@ export class AssertedLocationsPartComponent
   }
 
   public saveAssertedLocation(entry: AssertedLocation): void {
-    const entries = [...this.entries.value];
+    const entries = [...this.locations.value];
     if (this._editedIndex === -1) {
       entries.push(entry);
     } else {
       entries.splice(this._editedIndex, 1, entry);
     }
-    this.entries.setValue(entries);
-    this.entries.markAsDirty();
-    this.entries.updateValueAndValidity();
+    this.locations.setValue(entries);
+    this.locations.markAsDirty();
+    this.locations.updateValueAndValidity();
     this.closeAssertedLocation();
   }
 
@@ -168,11 +168,11 @@ export class AssertedLocationsPartComponent
           if (this._editedIndex === index) {
             this.closeAssertedLocation();
           }
-          const entries = [...this.entries.value];
+          const entries = [...this.locations.value];
           entries.splice(index, 1);
-          this.entries.setValue(entries);
-          this.entries.markAsDirty();
-          this.entries.updateValueAndValidity();
+          this.locations.setValue(entries);
+          this.locations.markAsDirty();
+          this.locations.updateValueAndValidity();
         }
       });
   }
@@ -181,25 +181,25 @@ export class AssertedLocationsPartComponent
     if (index < 1) {
       return;
     }
-    const entry = this.entries.value[index];
-    const entries = [...this.entries.value];
+    const entry = this.locations.value[index];
+    const entries = [...this.locations.value];
     entries.splice(index, 1);
     entries.splice(index - 1, 0, entry);
-    this.entries.setValue(entries);
-    this.entries.markAsDirty();
-    this.entries.updateValueAndValidity();
+    this.locations.setValue(entries);
+    this.locations.markAsDirty();
+    this.locations.updateValueAndValidity();
   }
 
   public moveAssertedLocationDown(index: number): void {
-    if (index + 1 >= this.entries.value.length) {
+    if (index + 1 >= this.locations.value.length) {
       return;
     }
-    const entry = this.entries.value[index];
-    const entries = [...this.entries.value];
+    const entry = this.locations.value[index];
+    const entries = [...this.locations.value];
     entries.splice(index, 1);
     entries.splice(index + 1, 0, entry);
-    this.entries.setValue(entries);
-    this.entries.markAsDirty();
-    this.entries.updateValueAndValidity();
+    this.locations.setValue(entries);
+    this.locations.markAsDirty();
+    this.locations.updateValueAndValidity();
   }
 }

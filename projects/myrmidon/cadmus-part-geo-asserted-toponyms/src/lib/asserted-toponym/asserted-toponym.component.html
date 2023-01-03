@@ -1,0 +1,59 @@
+<form [formGroup]="form" (submit)="save()">
+  <!-- eid -->
+  <mat-form-field>
+    <mat-label>EID</mat-label>
+    <input matInput [formControl]="eid" />
+    <mat-error *ngIf="$any(eid).errors?.maxLength && (eid.dirty || eid.touched)"
+      >EID too long</mat-error
+    >
+  </mat-form-field>
+
+  <!-- name -->
+  <cadmus-refs-proper-name
+    [name]="name.value || undefined"
+    [tagEntries]="nameTagEntries"
+    [langEntries]="nameLangEntries"
+    [typeEntries]="nameTypeEntries"
+    [assTagEntries]="assTagEntries"
+    [refTagEntries]="refTagEntries"
+    [refTypeEntries]="refTypeEntries"
+    (nameChange)="onNameChange($event)"
+  ></cadmus-refs-proper-name>
+
+  <!-- assertion -->
+  <div>
+    <mat-checkbox [formControl]="hasAssertion">assertion</mat-checkbox>
+  </div>
+  <fieldset *ngIf="hasAssertion.value">
+    <legend>assertion</legend>
+    <cadmus-refs-assertion
+      [assertion]="assertion.value || undefined"
+      [assTagEntries]="assTagEntries"
+      [refTagEntries]="refTagEntries"
+      [refTypeEntries]="refTypeEntries"
+      (assertionChange)="onAssertionChange($event)"
+    ></cadmus-refs-assertion>
+  </fieldset>
+
+  <!-- buttons -->
+  <div>
+    <button
+      type="button"
+      color="warn"
+      mat-icon-button
+      matTooltip="Close"
+      (click)="cancel()"
+    >
+      <mat-icon>clear</mat-icon>
+    </button>
+    <button
+      type="submit"
+      color="primary"
+      mat-icon-button
+      matTooltip="Save toponym"
+      [disabled]="form.invalid || form.pristine"
+    >
+      <mat-icon>check_circle</mat-icon>
+    </button>
+  </div>
+</form>
