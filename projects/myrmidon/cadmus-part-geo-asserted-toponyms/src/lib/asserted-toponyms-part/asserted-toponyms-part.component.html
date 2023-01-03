@@ -94,6 +94,12 @@
         <mat-tab label="toponym" *ngIf="edited">
           <cadmus-asserted-toponym
             [toponym]="edited"
+            [assTagEntries]="assTagEntries"
+            [refTagEntries]="refTagEntries"
+            [nameTagEntries]="nameTagEntries"
+            [refTypeEntries]="refTypeEntries"
+            [nameTypeEntries]="nameTypeEntries"
+            [nameLangEntries]="nameLangEntries"
             (toponymChange)="saveAssertedToponym($event)"
             (editorClose)="closeAssertedToponym()"
           >

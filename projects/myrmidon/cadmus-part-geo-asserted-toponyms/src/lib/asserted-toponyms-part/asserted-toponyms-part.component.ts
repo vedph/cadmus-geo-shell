@@ -92,7 +92,7 @@ export class AssertedToponymsPartComponent
     });
   }
 
-  private updateNamePieceValueEntries(typeEntries: ThesaurusEntry[]): void {
+  private updateCalculatedEntries(typeEntries: ThesaurusEntry[]): void {
     this.namePieceTypeEntries = this._nameService.parseTypeEntries(typeEntries);
     this.namePieceValueEntries = this._nameService.getValueEntries(
       this.namePieceTypeEntries
@@ -117,7 +117,7 @@ export class AssertedToponymsPartComponent
     key = 'geo-name-piece-types';
     if (this.hasThesaurus(key)) {
       this.nameTypeEntries = thesauri[key].entries;
-      this.updateNamePieceValueEntries(this.nameTypeEntries || []);
+      this.updateCalculatedEntries(this.nameTypeEntries || []);
     } else {
       this.nameTypeEntries = undefined;
       this.namePieceTypeEntries = [];

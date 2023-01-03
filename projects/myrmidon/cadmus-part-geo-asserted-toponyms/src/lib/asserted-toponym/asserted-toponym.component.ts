@@ -26,6 +26,8 @@ export class AssertedToponymComponent {
   public assertion: FormControl<Assertion | null>;
   public form: FormGroup;
 
+  public initialName?: ProperName;
+
   @Input()
   public get toponym(): AssertedToponym | undefined | null {
     return this._toponym;
@@ -89,7 +91,7 @@ export class AssertedToponymComponent {
     }
 
     this.eid.setValue(toponym.eid || null);
-    this.name.setValue(toponym.name || null);
+    this.initialName = toponym.name || null;
     this.hasAssertion.setValue(toponym.assertion ? true : false);
     this.assertion.setValue(toponym.assertion || null);
 
