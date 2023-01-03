@@ -1,4 +1,4 @@
-<form [formGroup]="form">
+<form [formGroup]="form" (submit)="save()">
   <!-- point -->
   <cadmus-location-point
     [point]="point.value"
@@ -43,7 +43,7 @@
   </fieldset>
 
   <!-- geometry -->
-  <div>
+  <div style="margin-top: 8px">
     <mat-form-field class="long-text">
       <mat-label>geometry</mat-label>
       <textarea matInput [formControl]="geometry"></textarea>

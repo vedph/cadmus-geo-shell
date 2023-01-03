@@ -93,7 +93,6 @@ export class AssertedLocationComponent {
       return;
     }
 
-    //this.initialPoint = location.point;
     this.point.setValue(location.point);
     this.hasBox.setValue(location.box?.a && location.box?.b ? true : false);
     if (this.hasBox.value) {
