@@ -5,9 +5,17 @@ import {
   FormGroup,
   UntypedFormGroup,
 } from '@angular/forms';
-import { take } from 'rxjs/operators';
+import { debounceTime, take } from 'rxjs/operators';
 
-import { NgToolsValidators } from '@myrmidon/ng-tools';
+import {
+  LngLat,
+  LngLatBounds,
+  Map,
+  Marker,
+  NavigationControl,
+} from 'mapbox-gl';
+
+import { EnvService, NgToolsValidators } from '@myrmidon/ng-tools';
 import { DialogService } from '@myrmidon/ng-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 import { EditedObject, ModelEditorComponentBase } from '@myrmidon/cadmus-ui';
@@ -32,8 +40,10 @@ export class AssertedLocationsPartComponent
   implements OnInit
 {
   private _editedIndex: number;
+  private _rendered?: boolean;
+  private _map?: Map;
+  private _updating?: boolean;
 
-  public tabIndex: number;
   public edited: AssertedLocation | undefined;
 
   // assertion-tags
@@ -46,15 +56,19 @@ export class AssertedLocationsPartComponent
   public refTagEntries: ThesaurusEntry[] | undefined;
 
   public locations: FormControl<AssertedLocation[]>;
+  public mapToken?: string;
+  public markers: Marker[];
 
   constructor(
     authService: AuthJwtService,
     formBuilder: FormBuilder,
-    private _dialogService: DialogService
+    private _dialogService: DialogService,
+    env: EnvService
   ) {
     super(authService, formBuilder);
     this._editedIndex = -1;
-    this.tabIndex = 0;
+    this.mapToken = env.get('mapbox_token');
+    this.markers = [];
     // form
     this.locations = formBuilder.control([], {
       // at least 1 entry
@@ -65,6 +79,61 @@ export class AssertedLocationsPartComponent
 
   public override ngOnInit(): void {
     super.ngOnInit();
+    // update markers when locations are updated
+    this.locations.valueChanges
+      .pipe(debounceTime(200))
+      .subscribe((locations) => {
+        if (!this._updating) {
+          this.updateMarkers(locations);
+        }
+      });
+  }
+
+  public onMapLoad(map: Map): void {
+    this._map = map;
+    // navigation
+    this._map.addControl(new NavigationControl());
+    this.updateMarkers(this.locations.value);
+  }
+
+  private getRectBounds(points: LngLat[]): LngLatBounds {
+    // min lng,lat and max lng,lat
+    const min = new LngLat(180, 90);
+    const max = new LngLat(-180, -90);
+    points.forEach((pt) => {
+      // min
+      if (min.lng > pt.lng) {
+        min.lng = pt.lng;
+      }
+      if (min.lat > pt.lat) {
+        min.lat = pt.lat;
+      }
+      // max
+      if (max.lng < pt.lng) {
+        max.lng = pt.lng;
+      }
+      if (max.lat < pt.lat) {
+        max.lat = pt.lat;
+      }
+    });
+    return new LngLatBounds(min, max);
+  }
+
+  private updateMarkers(locations: AssertedLocation[]): void {
+    this.markers.forEach(m => m.remove());
+
+    this.markers = locations.map((l) => {
+      const m = new Marker();
+      m.setLngLat({
+        lng: l.point.lon,
+        lat: l.point.lat,
+      });
+      m.addTo(this._map!);
+      return m;
+    });
+    this._map?.fitBounds(
+      this.getRectBounds(this.markers.map((m) => m.getLngLat()))
+    );
   }
 
   protected buildForm(formBuilder: FormBuilder): FormGroup | UntypedFormGroup {
@@ -99,8 +168,10 @@ export class AssertedLocationsPartComponent
       this.form.reset();
       return;
     }
+    this._updating = true;
     this.locations.setValue(part.locations || []);
     this.form.markAsPristine();
+    this._updating = false;
   }
 
   protected override onDataSet(
@@ -133,17 +204,11 @@ export class AssertedLocationsPartComponent
   public editAssertedLocation(entry: AssertedLocation, index: number): void {
     this._editedIndex = index;
     this.edited = entry;
-    setTimeout(() => {
-      this.tabIndex = 1;
-    });
   }
 
   public closeAssertedLocation(): void {
     this._editedIndex = -1;
     this.edited = undefined;
-    setTimeout(() => {
-      this.tabIndex = 0;
-    });
   }
 
   public saveAssertedLocation(entry: AssertedLocation): void {
@@ -201,5 +266,14 @@ export class AssertedLocationsPartComponent
     this.locations.setValue(entries);
     this.locations.markAsDirty();
     this.locations.updateValueAndValidity();
+  }
+
+  public onMapRender(event: any): void {
+    // resize to fit container
+    // https://github.com/Wykks/ngx-mapbox-gl/issues/344
+    if (!this._rendered) {
+      event.target.resize();
+      this._rendered = true;
+    }
   }
 }

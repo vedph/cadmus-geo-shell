@@ -3,3 +3,42 @@ th {
   font-weight: normal;
   text-align: left;
 }
+mgl-map {
+  height: 100%;
+  width: 100%;
+}
+div#container {
+  display: grid;
+  min-height: 600px;
+  grid-template-rows: 1fr auto;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "list map"
+    "editor map";
+  gap: 8px;
+}
+div#editor {
+  grid-area: editor;
+}
+div#list {
+  grid-area: list;
+}
+div#map {
+  grid-area: map;
+  border: 1px solid silver;
+  border-radius: 4px;
+  padding: 4px;
+}
+/* lt-md */
+@media only screen and (max-width: 959px) {
+  div#container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "list"
+      "editor"
+      "map";
+  }
+  .noif-lt-md {
+    display: none;
+  }
+}

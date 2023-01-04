@@ -20,6 +20,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
+// mapbox
+import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
+
 // cadmus
 import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion';
 import { CadmusCoreModule } from '@myrmidon/cadmus-core';
@@ -61,6 +64,8 @@ import { AssertedLocationsPartFeatureComponent } from './asserted-locations-part
     MatSnackBarModule,
     MatTabsModule,
     MatTooltipModule,
+    // mapbox
+    NgxMapboxGLModule,
     // cadmus
     CadmusRefsAssertionModule,
     CadmusCoreModule,

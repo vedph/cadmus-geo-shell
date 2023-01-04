@@ -7,8 +7,9 @@
       <mat-card-title>Locations Part</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-tab-group [(selectedIndex)]="tabIndex">
-        <mat-tab label="locations">
+      <div id="container">
+        <!-- list -->
+        <div id="list">
           <div>
             <button
               type="button"
@@ -79,16 +80,34 @@
               </tr>
             </tbody>
           </table>
-        </mat-tab>
+        </div>
 
-        <mat-tab label="location" *ngIf="edited">
-          <cadmus-asserted-location
-            [location]="edited"
-            (locationChange)="saveAssertedLocation($event)"
-            (editorClose)="closeAssertedLocation()"
-          ></cadmus-asserted-location>
-        </mat-tab>
-      </mat-tab-group>
+        <!-- editor -->
+        <div id="editor">
+          <mat-expansion-panel [expanded]="edited" [disabled]="!edited">
+            <mat-expansion-panel-header>location</mat-expansion-panel-header>
+            <cadmus-asserted-location
+              [location]="edited"
+              (locationChange)="saveAssertedLocation($event)"
+              (editorClose)="closeAssertedLocation()"
+            ></cadmus-asserted-location>
+          </mat-expansion-panel>
+        </div>
+
+        <!-- map -->
+        <div id="map">
+          <mgl-map
+            [accessToken]="mapToken"
+            [style]="'mapbox://styles/mapbox/streets-v11'"
+            [zoom]="[4]"
+            (mapLoad)="onMapLoad($event)"
+          >
+            <!-- <mgl-marker *ngFor="let m of markers; let i = index">{{
+              i + 1
+            }}</mgl-marker> -->
+          </mgl-map>
+        </div>
+      </div>
     </mat-card-content>
     <mat-card-actions>
       <cadmus-close-save-buttons

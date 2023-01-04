@@ -43,6 +43,8 @@ import { MatTreeModule } from '@angular/material/tree';
 import { devTools } from '@ngneat/elf-devtools';
 import { Actions } from '@ngneat/effects-ng';
 
+// mapbox-gl
+import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 // ngx-monaco
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 // ngx-markdown
@@ -156,6 +158,7 @@ export function initElfDevTools(actions: Actions) {
     MatToolbarModule,
     MatTreeModule,
     // vendors
+    NgxMapboxGLModule,
     MonacoEditorModule.forRoot(),
     MarkdownModule.forRoot(),
     // myrmidon
