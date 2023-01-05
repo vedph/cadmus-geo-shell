@@ -74,6 +74,15 @@
                   >
                     <mat-icon>remove_circle</mat-icon>
                   </button>
+                  <button
+                    *ngIf="mapToken"
+                    type="button"
+                    mat-icon-button
+                    matTooltip="Center map on this location"
+                    (click)="setMapCenter([entry.point.lon, entry.point.lat])"
+                  >
+                    <mat-icon>adjust</mat-icon>
+                  </button>
                 </td>
                 <td>{{ entry.point.lat }}</td>
                 <td>{{ entry.point.lon }}</td>
@@ -95,16 +104,13 @@
         </div>
 
         <!-- map -->
-        <div id="map">
+        <div id="map" *ngIf="mapToken">
           <mgl-map
             [accessToken]="mapToken"
             [style]="'mapbox://styles/mapbox/streets-v11'"
             [zoom]="[4]"
             (mapLoad)="onMapLoad($event)"
           >
-            <!-- <mgl-marker *ngFor="let m of markers; let i = index">{{
-              i + 1
-            }}</mgl-marker> -->
           </mgl-map>
         </div>
       </div>

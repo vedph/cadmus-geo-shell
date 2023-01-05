@@ -10,6 +10,7 @@ import { debounceTime, take } from 'rxjs/operators';
 import {
   LngLat,
   LngLatBounds,
+  LngLatLike,
   Map,
   Marker,
   NavigationControl,
@@ -87,53 +88,6 @@ export class AssertedLocationsPartComponent
           this.updateMarkers(locations);
         }
       });
-  }
-
-  public onMapLoad(map: Map): void {
-    this._map = map;
-    // navigation
-    this._map.addControl(new NavigationControl());
-    this.updateMarkers(this.locations.value);
-  }
-
-  private getRectBounds(points: LngLat[]): LngLatBounds {
-    // min lng,lat and max lng,lat
-    const min = new LngLat(180, 90);
-    const max = new LngLat(-180, -90);
-    points.forEach((pt) => {
-      // min
-      if (min.lng > pt.lng) {
-        min.lng = pt.lng;
-      }
-      if (min.lat > pt.lat) {
-        min.lat = pt.lat;
-      }
-      // max
-      if (max.lng < pt.lng) {
-        max.lng = pt.lng;
-      }
-      if (max.lat < pt.lat) {
-        max.lat = pt.lat;
-      }
-    });
-    return new LngLatBounds(min, max);
-  }
-
-  private updateMarkers(locations: AssertedLocation[]): void {
-    this.markers.forEach(m => m.remove());
-
-    this.markers = locations.map((l) => {
-      const m = new Marker();
-      m.setLngLat({
-        lng: l.point.lon,
-        lat: l.point.lat,
-      });
-      m.addTo(this._map!);
-      return m;
-    });
-    this._map?.fitBounds(
-      this.getRectBounds(this.markers.map((m) => m.getLngLat()))
-    );
   }
 
   protected buildForm(formBuilder: FormBuilder): FormGroup | UntypedFormGroup {
@@ -268,6 +222,13 @@ export class AssertedLocationsPartComponent
     this.locations.updateValueAndValidity();
   }
 
+  public onMapLoad(map: Map): void {
+    this._map = map;
+    // navigation
+    this._map.addControl(new NavigationControl());
+    this.updateMarkers(this.locations.value);
+  }
+
   public onMapRender(event: any): void {
     // resize to fit container
     // https://github.com/Wykks/ngx-mapbox-gl/issues/344
@@ -275,5 +236,62 @@ export class AssertedLocationsPartComponent
       event.target.resize();
       this._rendered = true;
     }
+  }
+
+  private getRectBounds(points: LngLat[]): LngLatBounds {
+    // min lng,lat and max lng,lat
+    const min = new LngLat(180, 90);
+    const max = new LngLat(-180, -90);
+    points.forEach((pt) => {
+      // min
+      if (min.lng > pt.lng) {
+        min.lng = pt.lng;
+      }
+      if (min.lat > pt.lat) {
+        min.lat = pt.lat;
+      }
+      // max
+      if (max.lng < pt.lng) {
+        max.lng = pt.lng;
+      }
+      if (max.lat < pt.lat) {
+        max.lat = pt.lat;
+      }
+    });
+    return new LngLatBounds(min, max);
+  }
+
+  private updateMarkers(locations: AssertedLocation[]): void {
+    // remove all markers from map
+    this.markers.forEach((m) => m.remove());
+
+    // add markers from locations
+    this.markers = locations.map((l) => {
+      const m = new Marker();
+      m.setLngLat({
+        lng: l.point.lon,
+        lat: l.point.lat,
+      });
+      m.addTo(this._map!);
+      return m;
+    });
+
+    // if there is a single marker, center the map on it;
+    // else fit it to the markers bounds
+    if (this.markers.length === 1) {
+      this._map?.setCenter(this.markers[0].getLngLat());
+    } else {
+      // https://stackoverflow.com/questions/16845614/zoom-to-fit-all-markers-in-mapbox-or-leaflet
+      this._map?.fitBounds(
+        this.getRectBounds(this.markers.map((m) => m.getLngLat())),
+        {
+          padding: 20,
+        }
+      );
+    }
+  }
+
+  public setMapCenter(point: LngLatLike): void {
+    this._map?.setCenter(point);
   }
 }

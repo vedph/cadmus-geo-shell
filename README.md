@@ -14,3 +14,7 @@ Quick Docker image build:
 1. `npm run build-lib`
 2. update version in `env.js` and `ng build`
 3. `docker build . -t vedph2020/cadmus-geo-shell:0.0.1 -t vedph2020/cadmus-geo-shell:latest` (replace with the current version).
+
+## Requirements
+
+The asserted locations part uses MapBoxGL, so it has its own [specific requirements](projects/myrmidon/cadmus-part-geo-asserted-locations/README.md).

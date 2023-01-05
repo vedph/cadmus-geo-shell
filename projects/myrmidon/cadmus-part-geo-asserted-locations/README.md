@@ -2,23 +2,24 @@
 
 This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.0.
 
-## Code scaffolding
+## Requirements
 
-Run `ng generate component component-name --project cadmus-part-geo-asserted-locations` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project cadmus-part-geo-asserted-locations`.
-> Note: Don't forget to add `--project cadmus-part-geo-asserted-locations` or else it will be added to the default project in your `angular.json` file. 
+This editor uses [NGX MapBoxGL](https://github.com/Wykks/ngx-mapbox-gl).
 
-## Build
+The app using this part editor must:
 
-Run `ng build cadmus-part-geo-asserted-locations` to build the project. The build artifacts will be stored in the `dist/` directory.
+- install packages:
 
-## Publishing
+```bash
+npm install ngx-mapbox-gl mapbox-gl
+npm install @types/mapbox-gl --save-dev
+```
 
-After building your library with `ng build cadmus-part-geo-asserted-locations`, go to the dist folder `cd dist/cadmus-part-geo-asserted-locations` and run `npm publish`.
+- import global styles in styles.css:
 
-## Running unit tests
+```css
+@import '~mapbox-gl/dist/mapbox-gl.css';
+```
 
-Run `ng test cadmus-part-geo-asserted-locations` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- import `NgxMapboxGLModule`.
+- add a MapBoxGL token to `env.js` with name `mapbox_token`.
