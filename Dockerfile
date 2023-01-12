@@ -4,6 +4,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN rm /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html
-COPY dist/cadmus-shell/ .
+COPY dist/cadmus-geo-shell/ .
 
 EXPOSE 80

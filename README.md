@@ -12,7 +12,6 @@ This shell is used to develop Cadmus frontend geography libraries.
   - [Requirements](#requirements)
   - [History](#history)
     - [0.0.2](#002)
-    - [0.0.1](#001)
 
 ## Docker
 
@@ -32,8 +31,4 @@ The asserted locations part uses MapBoxGL, so it has its own [specific requireme
 
 - 2023-01-12:
   - added tag to location and toponym.
-  - updated packages.
-
-### 0.0.1
-
-- initial release.
+  - updated Angular and packages.
