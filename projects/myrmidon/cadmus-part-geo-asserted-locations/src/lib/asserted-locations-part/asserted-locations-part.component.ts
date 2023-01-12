@@ -29,7 +29,8 @@ import {
 
 /**
  * Asserted locations part editor.
- * Thesauri: assertion-tags, doc-reference-types, doc-reference-tags.
+ * Thesauri: geo-location-tags, assertion-tags, doc-reference-types,
+ * doc-reference-tags.
  */
 @Component({
   selector: 'cadmus-asserted-locations-part',
@@ -47,14 +48,17 @@ export class AssertedLocationsPartComponent
 
   public edited: AssertedLocation | undefined;
 
+  // geo-location-tags
+  public locTagEntries?: ThesaurusEntry[];
+
   // assertion-tags
-  public assTagEntries?: ThesaurusEntry[] | undefined;
+  public assTagEntries?: ThesaurusEntry[];
 
   // doc-reference-types
-  public refTypeEntries: ThesaurusEntry[] | undefined;
+  public refTypeEntries?: ThesaurusEntry[];
 
   // doc-reference-tags
-  public refTagEntries: ThesaurusEntry[] | undefined;
+  public refTagEntries?: ThesaurusEntry[];
 
   public locations: FormControl<AssertedLocation[]>;
   public mapToken?: string;
@@ -97,7 +101,13 @@ export class AssertedLocationsPartComponent
   }
 
   private updateThesauri(thesauri: ThesauriSet): void {
-    let key = 'assertion-tags';
+    let key = 'geo-location-tags';
+    if (this.hasThesaurus(key)) {
+      this.locTagEntries = thesauri[key].entries;
+    } else {
+      this.locTagEntries = undefined;
+    }
+    key = 'assertion-tags';
     if (this.hasThesaurus(key)) {
       this.assTagEntries = thesauri[key].entries;
     } else {

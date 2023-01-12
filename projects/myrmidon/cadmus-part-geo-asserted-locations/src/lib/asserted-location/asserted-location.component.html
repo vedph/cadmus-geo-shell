@@ -57,6 +57,28 @@
     </mat-form-field>
   </div>
 
+  <div>
+    <!-- tag (bound) -->
+    <mat-form-field *ngIf="locTagEntries?.length">
+      <mat-label>tag</mat-label>
+      <mat-select [formControl]="tag">
+        <mat-option *ngFor="let e of locTagEntries" [value]="e.id">{{
+          e.value
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- tag (free) -->
+    <mat-form-field *ngIf="!locTagEntries?.length">
+      <mat-label>tag</mat-label>
+      <input matInput [formControl]="tag" />
+      <mat-error
+        *ngIf="$any(tag).errors?.maxLength && (tag.dirty || tag.touched)"
+        >tag too long</mat-error
+      >
+    </mat-form-field>
+  </div>
+
   <!-- assertion -->
   <div>
     <mat-checkbox [formControl]="hasAssertion">assertion</mat-checkbox>

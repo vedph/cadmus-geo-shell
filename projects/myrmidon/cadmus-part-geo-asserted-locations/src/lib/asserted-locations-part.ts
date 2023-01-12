@@ -12,6 +12,7 @@ export interface LocationBox {
 }
 
 export interface AssertedLocation {
+  tag?: string;
   point: LocationPoint;
   box?: LocationBox;
   altitude?: number;
@@ -81,6 +82,9 @@ export const ASSERTED_LOCATIONS_PART_SCHEMA = {
     roleId: {
       type: ['string', 'null'],
       pattern: '^([a-z][-0-9a-z._]*)?$',
+    },
+    tag: {
+      type: 'string'
     },
     point: {
       type: 'object',

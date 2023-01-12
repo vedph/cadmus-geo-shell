@@ -38,7 +38,7 @@ services:
       - cadmus-network
 
   cadmus-api:
-    image: vedph2020/cadmus-geo-api:0.0.1
+    image: vedph2020/cadmus-geo-api:0.0.2
     ports:
       # https://stackoverflow.com/questions/48669548/why-does-aspnet-core-start-on-port-80-from-within-docker
       - 5041:80
@@ -66,7 +66,7 @@ services:
       - cadmus-network
 
   cadmus-web:
-    image: vedph2020/cadmus-geo-shell:0.0.1
+    image: vedph2020/cadmus-geo-shell:0.0.2
     ports:
       - 4200:80
     depends_on:

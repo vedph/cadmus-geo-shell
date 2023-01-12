@@ -22,8 +22,8 @@ import { ProperNameService } from '@myrmidon/cadmus-refs-proper-name';
 
 /**
  * AssertedToponymsPart editor component.
- * Thesauri: geo-name-tags, geo-name-languages, geo-name-piece-types,
- * assertion-tags, doc-reference-types, doc-reference-tags.
+ * Thesauri: geo-toponym-tags, geo-name-tags, geo-name-languages,
+ * geo-name-piece-types, assertion-tags, doc-reference-types, doc-reference-tags.
  */
 @Component({
   selector: 'cadmus-asserted-toponyms-part',
@@ -38,6 +38,9 @@ export class AssertedToponymsPartComponent
 
   public tabIndex: number;
   public edited: AssertedToponym | undefined;
+
+  // geo-toponym-tags
+  public topTagEntries?: ThesaurusEntry[];
 
   // geo-name-tags
   public nameTagEntries?: ThesaurusEntry[] | undefined;
@@ -100,7 +103,14 @@ export class AssertedToponymsPartComponent
   }
 
   private updateThesauri(thesauri: ThesauriSet): void {
-    let key = 'geo-name-tags';
+    let key = 'geo-toponym-tags';
+    if (this.hasThesaurus(key)) {
+      this.topTagEntries = thesauri[key].entries;
+    } else {
+      this.topTagEntries = undefined;
+    }
+
+    key = 'geo-name-tags';
     if (this.hasThesaurus(key)) {
       this.nameTagEntries = thesauri[key].entries;
     } else {

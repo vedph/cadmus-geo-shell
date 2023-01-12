@@ -31,6 +31,10 @@ export class AssertedLocationComponent {
     this.updateForm(value);
   }
 
+  // geo-location-tags
+  @Input()
+  public locTagEntries?: ThesaurusEntry[] | undefined;
+
   // assertion-tags
   @Input()
   public assTagEntries?: ThesaurusEntry[] | undefined;
@@ -57,6 +61,7 @@ export class AssertedLocationComponent {
   public geometry: FormControl<string | null>;
   public hasAssertion: FormControl<boolean>;
   public assertion: FormControl<Assertion | null>;
+  public tag: FormControl<string | null>;
   public form: FormGroup;
 
   public initialAssertion?: Assertion | null;
@@ -72,6 +77,7 @@ export class AssertedLocationComponent {
     });
     this.hasAssertion = formBuilder.control(false, { nonNullable: true });
     this.assertion = formBuilder.control(null);
+    this.tag = formBuilder.control(null, Validators.maxLength(50));
     this.form = formBuilder.group({
       point: this.point,
       hasAltitude: this.hasAltitude,
@@ -81,6 +87,7 @@ export class AssertedLocationComponent {
       geometry: this.geometry,
       hasAssertion: this.hasAssertion,
       assertion: this.assertion,
+      tag: this.tag
     });
     // events
     this.editorClose = new EventEmitter<any>();
@@ -98,7 +105,7 @@ export class AssertedLocationComponent {
     if (this.hasBox.value) {
       this.box.setValue({
         a: location.box!.a,
-        b: location.box!.b
+        b: location.box!.b,
       });
     }
     this.hasAssertion.setValue(location.assertion ? true : false);
@@ -111,6 +118,7 @@ export class AssertedLocationComponent {
       this.altitude.setValue(location.altitude!);
     }
     this.geometry.setValue(location.geometry || null);
+    this.tag.setValue(location.tag || null);
     this.form.markAsPristine();
   }
 
@@ -127,6 +135,7 @@ export class AssertedLocationComponent {
         this.hasAssertion.value && this.assertion.value
           ? this.assertion.value
           : undefined,
+      tag: this.tag.value?.trim()
     };
   }
 

@@ -33,6 +33,11 @@ export class AssertedLocationsPartFeatureComponent
   }
 
   protected override getReqThesauriIds(): string[] {
-    return ['assertion-tags', 'doc-reference-types', 'doc-reference-tags'];
+    return [
+      'geo-location-tags',
+      'assertion-tags',
+      'doc-reference-types',
+      'doc-reference-tags',
+    ];
   }
 }

@@ -34,6 +34,7 @@ export class AssertedToponymsPartFeatureComponent
 
   protected override getReqThesauriIds(): string[] {
     return [
+      'geo-toponym-tags',
       'geo-name-tags',
       'geo-name-languages',
       'geo-name-piece-types',

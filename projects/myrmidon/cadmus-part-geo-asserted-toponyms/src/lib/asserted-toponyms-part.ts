@@ -6,6 +6,7 @@ import { ProperName } from '@myrmidon/cadmus-refs-proper-name';
  * A toponym with an optional assertion.
  */
 export interface AssertedToponym {
+  tag?: string;
   eid?: string;
   name: ProperName;
   assertion?: Assertion;
@@ -74,11 +75,11 @@ export const ASSERTED_TOPONYMS_PART_SCHEMA = {
       type: ['string', 'null'],
       pattern: '^([a-z][-0-9a-z._]*)?$',
     },
+    tag: {
+      type: 'string',
+    },
     eid: {
       type: 'string',
-      default: '',
-      title: 'The eid Schema',
-      examples: [''],
     },
     name: {
       type: 'object',
