@@ -49,7 +49,7 @@
   <fieldset *ngIf="hasAssertion.value">
     <legend>assertion</legend>
     <cadmus-refs-assertion
-      [assertion]="assertion.value || undefined"
+      [assertion]="initialAssertion"
       [assTagEntries]="assTagEntries"
       [refTagEntries]="refTagEntries"
       [refTypeEntries]="refTypeEntries"

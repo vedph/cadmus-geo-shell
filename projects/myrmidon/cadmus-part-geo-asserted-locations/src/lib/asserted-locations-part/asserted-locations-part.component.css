@@ -11,7 +11,7 @@ div#container {
   display: grid;
   min-height: 600px;
   grid-template-rows: 1fr auto;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr 1fr;
   grid-template-areas:
     "list map"
     "editor map";
