@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
 import { ThesaurusEntry } from '@myrmidon/cadmus-core';
-import { Assertion } from '@myrmidon/cadmus-refs-assertion';
 import { ProperName } from '@myrmidon/cadmus-refs-proper-name';
 
 import { AssertedToponym } from '../asserted-toponyms-part';
@@ -23,9 +21,9 @@ export class AssertedToponymComponent {
   public eid: FormControl<string | null>;
   public tag: FormControl<string | null>;
   public name: FormControl<ProperName | null>;
-  public hasAssertion: FormControl<boolean>;
-  public assertion: FormControl<Assertion | null>;
   public form: FormGroup;
+
+  public initialName?: ProperName;
 
   @Input()
   public get toponym(): AssertedToponym | undefined | null {
@@ -78,14 +76,10 @@ export class AssertedToponymComponent {
     this.eid = formBuilder.control(null, Validators.maxLength(500));
     this.tag = formBuilder.control(null, Validators.maxLength(50));
     this.name = formBuilder.control(null, Validators.required);
-    this.hasAssertion = formBuilder.control(false, { nonNullable: true });
-    this.assertion = formBuilder.control(null);
     this.form = formBuilder.group({
       eid: this.eid,
       tag: this.tag,
       name: this.name,
-      hasAssertion: this.hasAssertion,
-      assertion: this.assertion,
     });
   }
 
@@ -97,9 +91,7 @@ export class AssertedToponymComponent {
 
     this.eid.setValue(toponym.eid || null);
     this.tag.setValue(toponym.tag || null);
-    this.name.setValue(toponym.name);
-    this.hasAssertion.setValue(toponym.assertion ? true : false);
-    this.assertion.setValue(toponym.assertion || null);
+    this.initialName = toponym.name;
     this.form.markAsPristine();
   }
 
@@ -109,20 +101,11 @@ export class AssertedToponymComponent {
     this.name.updateValueAndValidity();
   }
 
-  public onAssertionChange(assertion: Assertion | undefined): void {
-    this.assertion.setValue(assertion || null);
-    this.assertion.markAsDirty();
-    this.assertion.updateValueAndValidity();
-  }
-
   private getModel(): AssertedToponym {
     return {
       eid: this.eid.value?.trim(),
       tag: this.tag.value?.trim(),
       name: this.name.value!,
-      assertion: this.hasAssertion.value
-        ? this.assertion.value || undefined
-        : undefined,
     };
   }
 

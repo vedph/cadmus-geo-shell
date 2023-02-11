@@ -1,14 +1,15 @@
 <form [formGroup]="form" (submit)="save()">
-  <!-- eid -->
-  <mat-form-field>
-    <mat-label>EID</mat-label>
-    <input matInput [formControl]="eid" />
-    <mat-error *ngIf="$any(eid).errors?.maxLength && (eid.dirty || eid.touched)"
-      >EID too long</mat-error
-    >
-  </mat-form-field>
+  <div class="form-row">
+    <!-- eid -->
+    <mat-form-field>
+      <mat-label>EID</mat-label>
+      <input matInput [formControl]="eid" />
+      <mat-error
+        *ngIf="$any(eid).errors?.maxLength && (eid.dirty || eid.touched)"
+        >EID too long</mat-error
+      >
+    </mat-form-field>
 
-  <div>
     <!-- tag (bound) -->
     <mat-form-field *ngIf="topTagEntries?.length">
       <mat-label>tag</mat-label>
@@ -31,30 +32,18 @@
   </div>
 
   <!-- name -->
-  <cadmus-refs-proper-name
-    [name]="name.value"
-    [tagEntries]="nameTagEntries"
-    [langEntries]="nameLangEntries"
-    [typeEntries]="nameTypeEntries"
-    [assTagEntries]="assTagEntries"
-    [refTagEntries]="refTagEntries"
-    [refTypeEntries]="refTypeEntries"
-    (nameChange)="onNameChange($event)"
-  ></cadmus-refs-proper-name>
-
-  <!-- assertion -->
-  <div>
-    <mat-checkbox [formControl]="hasAssertion">assertion</mat-checkbox>
-  </div>
-  <fieldset *ngIf="hasAssertion.value">
-    <legend>assertion</legend>
-    <cadmus-refs-assertion
-      [assertion]="assertion.value"
+  <fieldset>
+    <legend>name</legend>
+    <cadmus-refs-proper-name
+      [name]="initialName"
+      [tagEntries]="nameTagEntries"
+      [langEntries]="nameLangEntries"
+      [typeEntries]="nameTypeEntries"
       [assTagEntries]="assTagEntries"
       [refTagEntries]="refTagEntries"
       [refTypeEntries]="refTypeEntries"
-      (assertionChange)="onAssertionChange($event)"
-    ></cadmus-refs-assertion>
+      (nameChange)="onNameChange($event)"
+    ></cadmus-refs-proper-name>
   </fieldset>
 
   <!-- buttons -->

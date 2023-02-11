@@ -7,106 +7,107 @@
       <mat-card-title>Toponyms Part</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-tab-group [(selectedIndex)]="tabIndex">
-        <!-- list -->
-        <mat-tab label="toponyms">
-          <div>
-            <button
-              type="button"
-              mat-flat-button
-              color="primary"
-              (click)="addAssertedToponym()"
-            >
-              <mat-icon>add_circle</mat-icon> toponym
-            </button>
-          </div>
-          <table *ngIf="toponyms.value?.length">
-            <thead>
-              <tr>
-                <th></th>
-                <th>name</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="
-                  let entry of toponyms.value;
-                  let i = index;
-                  let first = first;
-                  let last = last
-                "
-              >
-                <td>
-                  <button
-                    type="button"
-                    mat-icon-button
-                    color="primary"
-                    matTooltip="Edit this toponym"
-                    (click)="editAssertedToponym(entry, i)"
-                  >
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    mat-icon-button
-                    matTooltip="Move this toponym up"
-                    [disabled]="first"
-                    (click)="moveAssertedToponymUp(i)"
-                  >
-                    <mat-icon>arrow_upward</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    mat-icon-button
-                    matTooltip="Move this toponym down"
-                    [disabled]="last"
-                    (click)="moveAssertedToponymDown(i)"
-                  >
-                    <mat-icon>arrow_downward</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    mat-icon-button
-                    color="warn"
-                    matTooltip="Delete this toponym"
-                    (click)="deleteAssertedToponym(i)"
-                  >
-                    <mat-icon>remove_circle</mat-icon>
-                  </button>
-                </td>
-                <td>
-                  {{
-                    entry.name
-                      | cadmusProperName
-                        : namePieceTypeEntries
-                        : namePieceValueEntries
-                        : "id"
-                        : "value"
-                        : true
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </mat-tab>
-
-        <!-- editor -->
-        <mat-tab label="toponym" *ngIf="edited">
-          <cadmus-asserted-toponym
-            [toponym]="edited"
-            [topTagEntries]="topTagEntries"
-            [assTagEntries]="assTagEntries"
-            [refTagEntries]="refTagEntries"
-            [nameTagEntries]="nameTagEntries"
-            [refTypeEntries]="refTypeEntries"
-            [nameTypeEntries]="nameTypeEntries"
-            [nameLangEntries]="nameLangEntries"
-            (toponymChange)="saveAssertedToponym($event)"
-            (editorClose)="closeAssertedToponym()"
+      <!-- list -->
+      <div>
+        <div>
+          <button
+            type="button"
+            mat-flat-button
+            color="primary"
+            (click)="addAssertedToponym()"
           >
-          </cadmus-asserted-toponym>
-        </mat-tab>
-      </mat-tab-group>
+            <mat-icon>add_circle</mat-icon> toponym
+          </button>
+        </div>
+        <table *ngIf="toponyms.value?.length">
+          <thead>
+            <tr>
+              <th></th>
+              <th>name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let entry of toponyms.value;
+                let i = index;
+                let first = first;
+                let last = last
+              "
+            >
+              <td>
+                <button
+                  type="button"
+                  mat-icon-button
+                  color="primary"
+                  matTooltip="Edit this toponym"
+                  (click)="editAssertedToponym(entry, i)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  mat-icon-button
+                  matTooltip="Move this toponym up"
+                  [disabled]="first"
+                  (click)="moveAssertedToponymUp(i)"
+                >
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  mat-icon-button
+                  matTooltip="Move this toponym down"
+                  [disabled]="last"
+                  (click)="moveAssertedToponymDown(i)"
+                >
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  mat-icon-button
+                  color="warn"
+                  matTooltip="Delete this toponym"
+                  (click)="deleteAssertedToponym(i)"
+                >
+                  <mat-icon>remove_circle</mat-icon>
+                </button>
+              </td>
+              <td>
+                {{
+                  entry.name
+                    | cadmusProperName
+                      : namePieceTypeEntries
+                      : namePieceValueEntries
+                      : "id"
+                      : "value"
+                      : true
+                }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- editor -->
+      <mat-expansion-panel [expanded]="edited" [disabled]="!edited">
+        <mat-expansion-panel-header
+          >toponym #{{ editedIndex + 1 }}</mat-expansion-panel-header
+        >
+        <cadmus-asserted-toponym
+          [toponym]="edited"
+          [topTagEntries]="topTagEntries"
+          [assTagEntries]="assTagEntries"
+          [refTagEntries]="refTagEntries"
+          [nameTagEntries]="nameTagEntries"
+          [refTypeEntries]="refTypeEntries"
+          [nameTypeEntries]="nameTypeEntries"
+          [nameLangEntries]="nameLangEntries"
+          (toponymChange)="saveAssertedToponym($event)"
+          (editorClose)="closeAssertedToponym()"
+        >
+        </cadmus-asserted-toponym>
+      </mat-expansion-panel>
     </mat-card-content>
     <mat-card-actions>
       <cadmus-close-save-buttons

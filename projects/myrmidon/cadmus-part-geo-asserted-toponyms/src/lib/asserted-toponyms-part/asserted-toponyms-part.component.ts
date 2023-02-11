@@ -34,9 +34,8 @@ export class AssertedToponymsPartComponent
   extends ModelEditorComponentBase<AssertedToponymsPart>
   implements OnInit
 {
-  private _editedIndex: number;
+  public editedIndex: number;
 
-  public tabIndex: number;
   public edited: AssertedToponym | undefined;
 
   // geo-toponym-tags
@@ -73,8 +72,7 @@ export class AssertedToponymsPartComponent
     private _dialogService: DialogService
   ) {
     super(authService, formBuilder);
-    this._editedIndex = -1;
-    this.tabIndex = 0;
+    this.editedIndex = -1;
     this.namePieceTypeEntries = [];
     this.namePieceValueEntries = [];
     // form
@@ -196,27 +194,21 @@ export class AssertedToponymsPartComponent
   }
 
   public editAssertedToponym(entry: AssertedToponym, index: number): void {
-    this._editedIndex = index;
+    this.editedIndex = index;
     this.edited = entry;
-    setTimeout(() => {
-      this.tabIndex = 1;
-    });
   }
 
   public closeAssertedToponym(): void {
-    this._editedIndex = -1;
+    this.editedIndex = -1;
     this.edited = undefined;
-    setTimeout(() => {
-      this.tabIndex = 0;
-    });
   }
 
   public saveAssertedToponym(entry: AssertedToponym): void {
     const entries = [...this.toponyms.value];
-    if (this._editedIndex === -1) {
+    if (this.editedIndex === -1) {
       entries.push(entry);
     } else {
-      entries.splice(this._editedIndex, 1, entry);
+      entries.splice(this.editedIndex, 1, entry);
     }
     this.toponyms.setValue(entries);
     this.toponyms.markAsDirty();
@@ -230,7 +222,7 @@ export class AssertedToponymsPartComponent
       .pipe(take(1))
       .subscribe((yes) => {
         if (yes) {
-          if (this._editedIndex === index) {
+          if (this.editedIndex === index) {
             this.closeAssertedToponym();
           }
           const entries = [...this.toponyms.value];
