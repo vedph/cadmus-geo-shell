@@ -27,7 +27,9 @@ The asserted locations part uses MapBoxGL, so it has its own [specific requireme
 
 ## History
 
-- 2023-02-11: updated packages.
+- 2023-02-11:
+  - updated packages.
+  - fixes to asserted toponyms.
 - 2023-01-17:
   - layout of location part.
   - fixes to toponym editor.
