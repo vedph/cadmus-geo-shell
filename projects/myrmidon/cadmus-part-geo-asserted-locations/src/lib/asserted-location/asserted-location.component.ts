@@ -64,8 +64,6 @@ export class AssertedLocationComponent {
   public tag: FormControl<string | null>;
   public form: FormGroup;
 
-  public initialAssertion?: Assertion | null;
-
   constructor(formBuilder: FormBuilder) {
     this.point = formBuilder.control(null, Validators.required);
     this.hasAltitude = formBuilder.control(false, { nonNullable: true });
@@ -109,7 +107,7 @@ export class AssertedLocationComponent {
       });
     }
     this.hasAssertion.setValue(location.assertion ? true : false);
-    this.initialAssertion = location.assertion;
+    this.assertion.setValue(location.assertion || null);
 
     this.hasAltitude.setValue(
       location.altitude !== undefined && location.altitude !== null
