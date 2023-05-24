@@ -27,6 +27,7 @@ The asserted locations part uses MapBoxGL, so it has its own [specific requireme
 
 ## History
 
+- 2023-05-24: updated Angular and packages. No changes required for introducing AssertedCompositeId here, so libraries versions stay the same.
 - 2023-05-12: updated to Angular 16.
 - 2023-02-11:
   - updated packages.
