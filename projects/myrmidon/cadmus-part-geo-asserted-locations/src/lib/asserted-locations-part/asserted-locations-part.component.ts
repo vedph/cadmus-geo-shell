@@ -8,10 +8,12 @@ import {
 import { debounceTime, take } from 'rxjs/operators';
 
 import {
+  EventData,
   LngLat,
   LngLatBounds,
   LngLatLike,
   Map,
+  MapboxEvent,
   Marker,
   NavigationControl,
 } from 'mapbox-gl';
@@ -232,8 +234,8 @@ export class AssertedLocationsPartComponent
     this.locations.updateValueAndValidity();
   }
 
-  public onMapLoad(map: Map): void {
-    this._map = map;
+  public onMapLoad(event: MapboxEvent<undefined> & EventData): void {
+    this._map = event.target;
     // navigation
     this._map.addControl(new NavigationControl());
     this.updateMarkers(this.locations.value);
