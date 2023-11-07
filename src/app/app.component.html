@@ -34,17 +34,26 @@
     </button>
     <!-- graph menu -->
     <!-- <button mat-button routerLink="/graph" *ngIf="logged">Graph</button> -->
-    <!-- thesauri menu -->
-    <button
-      type="button"
-      mat-button
-      routerLink="/thesauri"
-      *ngIf="
-        user && (user.roles.includes('admin') || user.roles.includes('editor'))
-      "
-    >
-      Thesauri
-    </button>
+    <!-- profile menu -->
+    <mat-menu #profileMenu>
+      <a
+        mat-menu-item
+        routerLink="/flags"
+        *ngIf="user && user.roles.includes('admin')"
+      >
+        Flags
+      </a>
+      <a
+        mat-menu-item
+        routerLink="/thesauri"
+        *ngIf="
+          user &&
+          (user.roles.includes('admin') || user.roles.includes('editor'))
+        "
+      >
+        Thesauri
+      </a>
+    </mat-menu>
 
     <!-- demo menu -->
     <button type="button" mat-button [matMenuTriggerFor]="demoMenu">

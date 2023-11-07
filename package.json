@@ -29,6 +29,8 @@
     "@myrmidon/auth-jwt-login": "^2.0.0",
     "@myrmidon/cadmus-api": "^5.1.1",
     "@myrmidon/cadmus-core": "^5.0.0",
+    "@myrmidon/cadmus-flags-pg": "^0.0.1",
+    "@myrmidon/cadmus-flags-ui": "^0.0.1",
     "@myrmidon/cadmus-graph-pg": "^5.0.0",
     "@myrmidon/cadmus-graph-ui": "^6.0.0",
     "@myrmidon/cadmus-item-editor": "^6.0.0",
