@@ -28,6 +28,11 @@ The asserted locations part uses MapBoxGL, so it has its own [specific requireme
 
 ## History
 
+- 2023-11-07:
+  - updated Angular and packages.
+  - removed ELF.
+  - opted in thesauri import.
+
 ### 1.0.0
 
 - 2023-06-17:
