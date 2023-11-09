@@ -35,6 +35,9 @@
     <!-- graph menu -->
     <!-- <button mat-button routerLink="/graph" *ngIf="logged">Graph</button> -->
     <!-- profile menu -->
+    <button type="button" mat-button [matMenuTriggerFor]="profileMenu">
+      Profile
+    </button>
     <mat-menu #profileMenu>
       <a
         mat-menu-item
