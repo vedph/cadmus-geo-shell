@@ -11,6 +11,7 @@ This shell is used to develop Cadmus frontend geography libraries.
   - [Docker](#docker)
   - [Requirements](#requirements)
   - [History](#history)
+    - [2.0.0](#200)
     - [1.0.0](#100)
     - [0.0.2](#002)
 
@@ -28,6 +29,9 @@ The asserted locations part uses MapBoxGL, so it has its own [specific requireme
 
 ## History
 
+### 2.0.0
+
+- 2023-11-09: ⚠️ upgraded to Angular 17.
 - 2023-11-07:
   - updated Angular and packages.
   - removed ELF.

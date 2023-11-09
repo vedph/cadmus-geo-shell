@@ -62,10 +62,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "cadmus-geo-shell:build:production"
+              "buildTarget": "cadmus-geo-shell:build:production"
             },
             "development": {
-              "browserTarget": "cadmus-geo-shell:build:development"
+              "buildTarget": "cadmus-geo-shell:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -73,7 +73,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cadmus-geo-shell:build"
+            "buildTarget": "cadmus-geo-shell:build"
           }
         },
         "test": {
