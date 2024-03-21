@@ -39,11 +39,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 
-// mapbox-gl
+// vendor
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
-// ngx-monaco
-import { MonacoEditorModule } from 'ngx-monaco-editor';
-// ngx-markdown
 import { MarkdownModule } from 'ngx-markdown';
 
 // myrmidon
