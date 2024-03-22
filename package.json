@@ -64,7 +64,6 @@
     "@myrmidon/ng-tools": "^3.0.0",
     "@myrmidon/ngx-dirty-check": "^2.0.0",
     "@myrmidon/paged-data-browsers": "^1.0.0",
-    "@ngneat/effects": "^2.1.2",
     "@types/diff-match-patch": "^1.0.36",
     "diff-match-patch": "^1.0.5",
     "gravatar": "^1.8.2",
