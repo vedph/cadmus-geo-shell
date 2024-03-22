@@ -10,7 +10,7 @@
       <div id="container">
         <!-- list -->
         <div id="list">
-          <div>
+          <div class="button-row">
             <button
               type="button"
               mat-flat-button
@@ -18,6 +18,15 @@
               (click)="addAssertedLocation()"
             >
               <mat-icon>add_circle</mat-icon> location
+            </button>
+            <button
+              type="button"
+              mat-icon-button
+              [disabled]="leafletLayers.length < 2"
+              matTooltip="Fit map to locations"
+              (click)="fitMapToMarkers()"
+            >
+              <mat-icon>fit_screen</mat-icon>
             </button>
           </div>
           <table *ngIf="locations.value?.length">
@@ -36,6 +45,7 @@
                   let first = first;
                   let last = last
                 "
+                [class.selected]="entry === selectedLocation"
               >
                 <td>
                   <button
@@ -78,8 +88,8 @@
                     *ngIf="mapToken"
                     type="button"
                     mat-icon-button
-                    matTooltip="Center map on this location"
-                    (click)="setMapCenter([entry.point.lon, entry.point.lat])"
+                    matTooltip="Fly to this location"
+                    (click)="flyToLocation(entry.point.lat, entry.point.lon)"
                   >
                     <mat-icon>adjust</mat-icon>
                   </button>
@@ -108,14 +118,15 @@
         </div>
 
         <!-- map -->
-        <div id="map" *ngIf="mapToken">
-          <mgl-map
-            [accessToken]="mapToken"
-            [style]="'mapbox://styles/mapbox/streets-v11'"
-            [zoom]="[4]"
-            (mapLoad)="onMapLoad($event)"
-          >
-          </mgl-map>
+        <div id="map-frame">
+          <div
+            id="map"
+            leaflet
+            [leafletOptions]="leafletOptions"
+            [leafletLayers]="leafletLayers"
+            [leafletLayersControl]="layersControl"
+            (leafletMapReady)="onMapReady($event)"
+          ></div>
         </div>
       </div>
     </mat-card-content>

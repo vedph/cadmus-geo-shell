@@ -41,7 +41,7 @@ import { MatTreeModule } from '@angular/material/tree';
 
 // vendor
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { MarkdownModule } from 'ngx-markdown';
 
 // myrmidon
@@ -142,7 +142,7 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     MatToolbarModule,
     MatTreeModule,
     // vendors
-    NgxMapboxGLModule,
+    LeafletModule,
     MonacoEditorModule.forRoot(),
     MarkdownModule.forRoot(),
     // myrmidon

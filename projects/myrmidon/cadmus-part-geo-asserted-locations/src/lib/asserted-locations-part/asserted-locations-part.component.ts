@@ -8,26 +8,31 @@ import {
 import { debounceTime, take } from 'rxjs/operators';
 
 import {
-  EventData,
-  LngLat,
-  LngLatBounds,
-  LngLatLike,
+  latLng,
+  latLngBounds,
+  marker,
+  tileLayer,
   Map,
-  MapboxEvent,
+  icon,
+  layerGroup,
+  Layer,
   Marker,
-  NavigationControl,
-} from 'mapbox-gl';
+} from 'leaflet';
 
 import { EnvService, NgToolsValidators } from '@myrmidon/ng-tools';
 import { DialogService } from '@myrmidon/ng-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 import { EditedObject, ModelEditorComponentBase } from '@myrmidon/cadmus-ui';
+
 import { ThesauriSet, ThesaurusEntry } from '@myrmidon/cadmus-core';
 import {
   AssertedLocation,
   AssertedLocationsPart,
   ASSERTED_LOCATIONS_PART_TYPEID,
 } from '../asserted-locations-part';
+
+const OSM_ATTR =
+  '&copy; <a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
 /**
  * Asserted locations part editor.
@@ -44,11 +49,36 @@ export class AssertedLocationsPartComponent
   implements OnInit
 {
   private _editedIndex: number;
-  private _rendered?: boolean;
-  private _map?: Map;
   private _updating?: boolean;
+  private _map?: Map;
 
   public edited: AssertedLocation | undefined;
+
+  public leafletLayers: Layer[] = [];
+  public selectedLocation?: AssertedLocation;
+
+  public leafletOptions = {
+    layers: [
+      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: OSM_ATTR,
+      }),
+    ],
+    zoom: 5,
+    center: latLng(46.879966, -121.726909),
+  };
+
+  public layersControl = {
+    baseLayers: {
+      'Open Street Map': tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { maxZoom: 18, attribution: OSM_ATTR }
+      ),
+    },
+    overlays: {
+      Markers: layerGroup([]),
+    },
+  };
 
   // geo-location-tags
   public locTagEntries?: ThesaurusEntry[];
@@ -63,8 +93,8 @@ export class AssertedLocationsPartComponent
   public refTagEntries?: ThesaurusEntry[];
 
   public locations: FormControl<AssertedLocation[]>;
+  // TODO use this to provide an additional layer (satellite imagery) from mapbox
   public mapToken?: string;
-  public markers: Marker[];
 
   constructor(
     authService: AuthJwtService,
@@ -75,7 +105,6 @@ export class AssertedLocationsPartComponent
     super(authService, formBuilder);
     this._editedIndex = -1;
     this.mapToken = env.get('mapbox_token');
-    this.markers = [];
     // form
     this.locations = formBuilder.control([], {
       // at least 1 entry
@@ -234,76 +263,85 @@ export class AssertedLocationsPartComponent
     this.locations.updateValueAndValidity();
   }
 
-  public onMapLoad(event: MapboxEvent<undefined> & EventData): void {
-    this._map = event.target;
-    // navigation
-    this._map.addControl(new NavigationControl());
-    this.updateMarkers(this.locations.value);
+  private isMarker(layer: any): boolean {
+    return typeof layer.getLatLng === 'function';
   }
 
-  public onMapRender(event: any): void {
-    // resize to fit container
-    // https://github.com/Wykks/ngx-mapbox-gl/issues/344
-    if (!this._rendered) {
-      event.target.resize();
-      this._rendered = true;
+  public fitMapToMarkers() {
+    if (!this._map || !this.leafletLayers.length) return;
+
+    const latlngs = this.leafletLayers
+      .filter((layer: Layer) => this.isMarker(layer))
+      .map((marker) => (marker as Marker).getLatLng());
+    const bounds = latLngBounds(latlngs);
+    this._map.fitBounds(bounds);
+  }
+
+  private createMarker(
+    latlng: [number, number],
+    label?: string,
+    permanent = true
+  ) {
+    const newMarker = marker(latlng, {
+      icon: icon({
+        iconSize: [25, 41],
+        iconAnchor: [13, 41],
+        iconUrl: 'assets/img/marker-icon.png',
+        shadowUrl: 'assets/img/marker-shadow.png',
+      }),
+    }).setLatLng(latlng);
+    if (label) {
+      newMarker.bindTooltip(label, {
+        permanent: permanent,
+        direction: 'top',
+        offset: [0, -35],
+      });
+    }
+    newMarker.on('click', () => this.handleMarkerClick(latlng));
+    return newMarker;
+  }
+
+  private handleMarkerClick(latlng: [number, number]) {
+    // find location with latlng and select it
+    const location = this.locations.value.find(
+      (l) => l.point.lat === latlng[0] && l.point.lon === latlng[1]
+    );
+    if (location) {
+      this.selectedLocation = location;
     }
   }
 
-  private getRectBounds(points: LngLat[]): LngLatBounds {
-    // min lng,lat and max lng,lat
-    const min = new LngLat(180, 90);
-    const max = new LngLat(-180, -90);
-    points.forEach((pt) => {
-      // min
-      if (min.lng > pt.lng) {
-        min.lng = pt.lng;
-      }
-      if (min.lat > pt.lat) {
-        min.lat = pt.lat;
-      }
-      // max
-      if (max.lng < pt.lng) {
-        max.lng = pt.lng;
-      }
-      if (max.lat < pt.lat) {
-        max.lat = pt.lat;
-      }
-    });
-    return new LngLatBounds(min, max);
+  public ngAfterViewInit() {
+    this.fitMapToMarkers();
+  }
+
+  public onMapReady(map: Map) {
+    this._map = map;
+  }
+
+  public flyToLocation(lat: number, lng: number, zoom = 10) {
+    if (!this._map) return;
+
+    this._map.flyTo(latLng(lat, lng), zoom);
   }
 
   private updateMarkers(locations: AssertedLocation[]): void {
-    // remove all markers from map
-    this.markers.forEach((m) => m.remove());
-
     // add markers from locations
-    this.markers = locations.map((l) => {
-      const m = new Marker();
-      m.setLngLat({
-        lng: l.point.lon,
-        lat: l.point.lat,
-      });
-      m.addTo(this._map!);
+    this.leafletLayers = locations.map((l) => {
+      const m = this.createMarker([l.point.lat, l.point.lon]);
       return m;
     });
 
     // if there is a single marker, center the map on it;
     // else fit it to the markers bounds
-    if (this.markers.length === 1) {
-      this._map?.setCenter(this.markers[0].getLngLat());
+    if (this.leafletLayers.length === 1) {
+      const marker = this.leafletLayers[0];
+      if (this.isMarker(marker)) {
+        const latLng = (marker as Marker).getLatLng();
+        this.flyToLocation(latLng.lat, latLng.lng);
+      }
     } else {
-      // https://stackoverflow.com/questions/16845614/zoom-to-fit-all-markers-in-mapbox-or-leaflet
-      this._map?.fitBounds(
-        this.getRectBounds(this.markers.map((m) => m.getLngLat())),
-        {
-          padding: 20,
-        }
-      );
+      this.fitMapToMarkers();
     }
-  }
-
-  public setMapCenter(point: LngLatLike): void {
-    this._map?.setCenter(point);
   }
 }

@@ -20,8 +20,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
-// mapbox
-import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
+// leaflet
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 // cadmus
 import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion';
@@ -64,8 +64,8 @@ import { AssertedLocationsPartFeatureComponent } from './asserted-locations-part
     MatSnackBarModule,
     MatTabsModule,
     MatTooltipModule,
-    // mapbox
-    NgxMapboxGLModule,
+    // leaflet
+    LeafletModule,
     // cadmus
     CadmusRefsAssertionModule,
     CadmusCoreModule,

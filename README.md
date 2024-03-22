@@ -25,10 +25,40 @@ Quick Docker image build:
 
 ## Requirements
 
-The asserted locations part uses MapBoxGL, so it has its own [specific requirements](projects/myrmidon/cadmus-part-geo-asserted-locations/README.md).
+This requires Leaflet via [ngx-leaflet](https://github.com/bluehalo/ngx-leaflet).
+
+(1) install packages:
+
+```bash
+npm install leaflet @asymmetrik/ngx-leaflet
+npm install --save-dev @types/leaflet
+```
+
+(2) in `angular.json` under `styles` add the leaflet CSS stylesheet:
+
+```json
+"styles": [
+  "./node_modules/leaflet/dist/leaflet.css"
+]
+```
+
+(3) manually copy images from `node_modules/leaflet/dist/images` to `src/assets/images`.
+
+(4) import the corresponding module in your root component or module:
+
+```ts
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
+...
+imports: [
+  LeafletModule
+]
+...
+```
 
 ## History
 
+- 2024-03-22: ⚠️ replaced MapboxGL with Leaflet, updating `@myrmidon/cadmus-part-geo-asserted-locations` version. This is a breaking change for clients, which should replace the mapping library.
 - 2024-03-21: updated Angular and packages, replacing `ngx-monaco-editor` with [ngx-monaco-editor-v2](https://github.com/miki995/ngx-monaco-editor-v2). This changes affects only the shell UI, not the libraries.
 
 ### 2.0.0
