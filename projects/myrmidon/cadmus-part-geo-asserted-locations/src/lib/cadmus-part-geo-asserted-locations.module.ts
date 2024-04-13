@@ -23,12 +23,14 @@ import { RouterModule } from '@angular/router';
 // leaflet
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
+// bricks
+import { AssertionComponent } from '@myrmidon/cadmus-refs-assertion';
+import { FlagsPickerComponent } from '@myrmidon/cadmus-ui-flags-picker';
+
 // cadmus
-import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion';
 import { CadmusCoreModule } from '@myrmidon/cadmus-core';
 import { CadmusStateModule } from '@myrmidon/cadmus-state';
 import { CadmusUiModule } from '@myrmidon/cadmus-ui';
-import { CadmusUiFlagsPickerModule } from '@myrmidon/cadmus-ui-flags-picker';
 import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
 
 import { AssertedLocationsPartComponent } from './asserted-locations-part/asserted-locations-part.component';
@@ -67,18 +69,18 @@ import { AssertedLocationsPartFeatureComponent } from './asserted-locations-part
     // leaflet
     LeafletModule,
     // cadmus
-    CadmusRefsAssertionModule,
+    AssertionComponent,
+    FlagsPickerComponent,
     CadmusCoreModule,
     CadmusStateModule,
     CadmusUiModule,
-    CadmusUiFlagsPickerModule,
     CadmusUiPgModule,
   ],
   exports: [
     AssertedLocationsPartComponent,
     AssertedLocationComponent,
     LocationPointComponent,
-    AssertedLocationsPartFeatureComponent
+    AssertedLocationsPartFeatureComponent,
   ],
 })
 export class CadmusPartGeoAssertedLocationsModule {}

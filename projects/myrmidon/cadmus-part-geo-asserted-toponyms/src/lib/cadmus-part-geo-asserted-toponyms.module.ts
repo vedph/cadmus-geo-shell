@@ -20,13 +20,15 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
+// bricks
+import { AssertionComponent } from '@myrmidon/cadmus-refs-assertion';
+import { CadmusProperNamePipe, ProperNameComponent } from '@myrmidon/cadmus-refs-proper-name';
+import { FlagsPickerComponent } from '@myrmidon/cadmus-ui-flags-picker';
+
 // cadmus
 import { CadmusCoreModule } from '@myrmidon/cadmus-core';
-import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion';
-import { CadmusRefsProperNameModule } from '@myrmidon/cadmus-refs-proper-name';
 import { CadmusStateModule } from '@myrmidon/cadmus-state';
 import { CadmusUiModule } from '@myrmidon/cadmus-ui';
-import { CadmusUiFlagsPickerModule } from '@myrmidon/cadmus-ui-flags-picker';
 import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
 
 import { AssertedToponymComponent } from './asserted-toponym/asserted-toponym.component';
@@ -61,12 +63,13 @@ import { AssertedToponymsPartFeatureComponent } from './asserted-toponyms-part-f
     MatTabsModule,
     MatTooltipModule,
     // cadmus
+    AssertionComponent,
+    ProperNameComponent,
+    CadmusProperNamePipe,
+    FlagsPickerComponent,
     CadmusCoreModule,
-    CadmusRefsAssertionModule,
-    CadmusRefsProperNameModule,
     CadmusStateModule,
     CadmusUiModule,
-    CadmusUiFlagsPickerModule,
     CadmusUiPgModule,
   ],
   exports: [

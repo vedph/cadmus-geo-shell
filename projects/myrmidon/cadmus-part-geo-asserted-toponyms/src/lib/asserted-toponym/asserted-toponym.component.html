@@ -2,8 +2,7 @@
   <div class="form-row">
     <!-- eid -->
     <mat-form-field>
-      <mat-label>EID</mat-label>
-      <input matInput [formControl]="eid" />
+      <input placeholder="EID" matInput [formControl]="eid" />
       <mat-error
         *ngIf="$any(eid).errors?.maxLength && (eid.dirty || eid.touched)"
         >EID too long</mat-error
@@ -23,7 +22,7 @@
     <!-- tag (free) -->
     <mat-form-field *ngIf="!topTagEntries?.length">
       <mat-label>tag</mat-label>
-      <input matInput [formControl]="tag" />
+      <input matInput [formControl]="tag" placeholder="tag" />
       <mat-error
         *ngIf="$any(tag).errors?.maxLength && (tag.dirty || tag.touched)"
         >tag too long</mat-error

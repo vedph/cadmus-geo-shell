@@ -40,9 +40,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 
 // vendor
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { MarkdownModule } from 'ngx-markdown';
+import { NgeMonacoModule } from '@cisstech/nge/monaco';
+import { NgeMarkdownModule } from '@cisstech/nge/markdown';
 
 // myrmidon
 import { NgxDirtyCheckModule } from '@myrmidon/ngx-dirty-check';
@@ -55,11 +55,11 @@ import {
 import { AuthJwtAdminModule } from '@myrmidon/auth-jwt-admin';
 
 // cadmus bricks
-import { CadmusRefsAssertedIdsModule } from '@myrmidon/cadmus-refs-asserted-ids';
-import { CadmusRefsDocReferencesModule } from '@myrmidon/cadmus-refs-doc-references';
-import { CadmusRefsHistoricalDateModule } from '@myrmidon/cadmus-refs-historical-date';
-import { CadmusRefsProperNameModule } from '@myrmidon/cadmus-refs-proper-name';
-import { CadmusUiFlagsPickerModule } from '@myrmidon/cadmus-ui-flags-picker';
+import { AssertedIdsComponent } from '@myrmidon/cadmus-refs-asserted-ids';
+import { DocReferencesComponent } from '@myrmidon/cadmus-refs-doc-references';
+import { HistoricalDateComponent } from '@myrmidon/cadmus-refs-historical-date';
+import { ProperNameComponent } from '@myrmidon/cadmus-refs-proper-name';
+import { FlagsPickerComponent } from '@myrmidon/cadmus-ui-flags-picker';
 
 // cadmus
 import { CadmusApiModule } from '@myrmidon/cadmus-api';
@@ -76,7 +76,7 @@ import { CadmusItemSearchModule } from '@myrmidon/cadmus-item-search';
 import { CadmusThesaurusEditorModule } from '@myrmidon/cadmus-thesaurus-editor';
 import { CadmusThesaurusListModule } from '@myrmidon/cadmus-thesaurus-list';
 import { CadmusThesaurusUiModule } from '@myrmidon/cadmus-thesaurus-ui';
-import { CadmusRefsAssertionModule } from '@myrmidon/cadmus-refs-assertion';
+import { AssertionComponent } from '@myrmidon/cadmus-refs-assertion';
 
 // local components
 import { HomeComponent } from './home/home.component';
@@ -143,8 +143,8 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     MatTreeModule,
     // vendors
     LeafletModule,
-    MonacoEditorModule.forRoot(),
-    MarkdownModule.forRoot(),
+    NgeMonacoModule.forRoot({}),
+    NgeMarkdownModule,
     // myrmidon
     NgToolsModule,
     NgMatToolsModule,
@@ -152,12 +152,12 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     AuthJwtLoginModule,
     AuthJwtAdminModule,
     // cadmus bricks
-    CadmusRefsAssertedIdsModule,
-    CadmusRefsAssertionModule,
-    CadmusRefsDocReferencesModule,
-    CadmusRefsHistoricalDateModule,
-    CadmusRefsProperNameModule,
-    CadmusUiFlagsPickerModule,
+    AssertedIdsComponent,
+    AssertionComponent,
+    DocReferencesComponent,
+    HistoricalDateComponent,
+    ProperNameComponent,
+    FlagsPickerComponent,
     // cadmus
     CadmusApiModule,
     CadmusCoreModule,
