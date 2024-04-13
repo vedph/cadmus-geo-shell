@@ -50,7 +50,7 @@ imports: [
 
 ## History
 
-- 2024-04-13: ⚠️ upgraded to [bricks V2](https://github.com/vedph/cadmus-bricks-shell-v2). All libraries bumped their version to 4.0.0.
+- 2024-04-13: ⚠️ upgraded to [bricks V2](https://github.com/vedph/cadmus-bricks-shell-v2). All libraries bumped their **version** to 4.0.0.
 - 2024-03-22: ⚠️ replaced MapboxGL with Leaflet, updating `@myrmidon/cadmus-part-geo-asserted-locations` version. This is a breaking change for clients, which should replace the mapping library.
 - 2024-03-21: updated Angular and packages, replacing `ngx-monaco-editor` with [ngx-monaco-editor-v2](https://github.com/miki995/ngx-monaco-editor-v2). This changes affects only the shell UI, not the libraries.
 
