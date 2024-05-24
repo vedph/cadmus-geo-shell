@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -38,49 +38,43 @@ import { AssertedLocationComponent } from './asserted-location/asserted-location
 import { LocationPointComponent } from './location-point/location-point.component';
 import { AssertedLocationsPartFeatureComponent } from './asserted-locations-part-feature/asserted-locations-part-feature.component';
 
-@NgModule({
-  declarations: [
-    AssertedLocationsPartComponent,
-    AssertedLocationComponent,
-    LocationPointComponent,
-    AssertedLocationsPartFeatureComponent,
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    HttpClientModule,
-    // material
-    MatButtonModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatProgressBarModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatTabsModule,
-    MatTooltipModule,
-    // leaflet
-    LeafletModule,
-    // cadmus
-    AssertionComponent,
-    FlagsPickerComponent,
-    CadmusCoreModule,
-    CadmusStateModule,
-    CadmusUiModule,
-    CadmusUiPgModule,
-  ],
-  exports: [
-    AssertedLocationsPartComponent,
-    AssertedLocationComponent,
-    LocationPointComponent,
-    AssertedLocationsPartFeatureComponent,
-  ],
-})
+@NgModule({ declarations: [
+        AssertedLocationsPartComponent,
+        AssertedLocationComponent,
+        LocationPointComponent,
+        AssertedLocationsPartFeatureComponent,
+    ],
+    exports: [
+        AssertedLocationsPartComponent,
+        AssertedLocationComponent,
+        LocationPointComponent,
+        AssertedLocationsPartFeatureComponent,
+    ], imports: [CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
+        // material
+        MatButtonModule,
+        MatCardModule,
+        MatCheckboxModule,
+        MatDialogModule,
+        MatExpansionModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatListModule,
+        MatProgressBarModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatTabsModule,
+        MatTooltipModule,
+        // leaflet
+        LeafletModule,
+        // cadmus
+        AssertionComponent,
+        FlagsPickerComponent,
+        CadmusCoreModule,
+        CadmusStateModule,
+        CadmusUiModule,
+        CadmusUiPgModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class CadmusPartGeoAssertedLocationsModule {}

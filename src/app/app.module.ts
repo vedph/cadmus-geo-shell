@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptors,
+  withJsonpSupport,
+} from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -45,12 +49,11 @@ import { NgeMonacoModule } from '@cisstech/nge/monaco';
 import { NgeMarkdownModule } from '@cisstech/nge/markdown';
 
 // myrmidon
-import { NgxDirtyCheckModule } from '@myrmidon/ngx-dirty-check';
 import { EnvServiceProvider, NgToolsModule } from '@myrmidon/ng-tools';
 import { NgMatToolsModule } from '@myrmidon/ng-mat-tools';
 import {
-  AuthJwtInterceptor,
   AuthJwtLoginModule,
+  authJwtInterceptor,
 } from '@myrmidon/auth-jwt-login';
 import { AuthJwtAdminModule } from '@myrmidon/auth-jwt-admin';
 
@@ -99,13 +102,13 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     RegisterUserPageComponent,
     ResetPasswordComponent,
   ],
+  bootstrap: [AppComponent],
   imports: [
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    HttpClientModule,
     // routing
     AppRoutingModule,
     // material
@@ -148,7 +151,6 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     // myrmidon
     NgToolsModule,
     NgMatToolsModule,
-    NgxDirtyCheckModule,
     AuthJwtLoginModule,
     AuthJwtAdminModule,
     // cadmus bricks
@@ -175,6 +177,10 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     CadmusThesaurusUiModule,
   ],
   providers: [
+    provideHttpClient(
+      withInterceptors([authJwtInterceptor]),
+      withJsonpSupport()
+    ),
     // environment service
     EnvServiceProvider,
     // parts and fragments type IDs to editor group keys mappings
@@ -197,12 +203,11 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     },
     // HTTP interceptor
     // https://medium.com/@ryanchenkie_40935/angular-authentication-using-the-http-client-and-http-interceptors-2f9d1540eb8
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthJwtInterceptor,
-      multi: true,
-    },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AuthJwtInterceptor,
+    //   multi: true,
+    // },
   ],
-  bootstrap: [AppComponent],
 })
 export class AppModule {}

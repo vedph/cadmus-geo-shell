@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -35,47 +35,41 @@ import { AssertedToponymComponent } from './asserted-toponym/asserted-toponym.co
 import { AssertedToponymsPartComponent } from './asserted-toponyms-part/asserted-toponyms-part.component';
 import { AssertedToponymsPartFeatureComponent } from './asserted-toponyms-part-feature/asserted-toponyms-part-feature.component';
 
-@NgModule({
-  declarations: [
-    AssertedToponymComponent,
-    AssertedToponymsPartComponent,
-    AssertedToponymsPartFeatureComponent,
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    HttpClientModule,
-    // material
-    MatButtonModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatProgressBarModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatTabsModule,
-    MatTooltipModule,
-    // cadmus
-    AssertionComponent,
-    ProperNameComponent,
-    CadmusProperNamePipe,
-    FlagsPickerComponent,
-    CadmusCoreModule,
-    CadmusStateModule,
-    CadmusUiModule,
-    CadmusUiPgModule,
-  ],
-  exports: [
-    AssertedToponymComponent,
-    AssertedToponymsPartComponent,
-    AssertedToponymsPartFeatureComponent,
-  ],
-})
+@NgModule({ declarations: [
+        AssertedToponymComponent,
+        AssertedToponymsPartComponent,
+        AssertedToponymsPartFeatureComponent,
+    ],
+    exports: [
+        AssertedToponymComponent,
+        AssertedToponymsPartComponent,
+        AssertedToponymsPartFeatureComponent,
+    ], imports: [CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
+        // material
+        MatButtonModule,
+        MatCardModule,
+        MatCheckboxModule,
+        MatDialogModule,
+        MatExpansionModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatListModule,
+        MatProgressBarModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatTabsModule,
+        MatTooltipModule,
+        // cadmus
+        AssertionComponent,
+        ProperNameComponent,
+        CadmusProperNamePipe,
+        FlagsPickerComponent,
+        CadmusCoreModule,
+        CadmusStateModule,
+        CadmusUiModule,
+        CadmusUiPgModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class CadmusPartGeoAssertedToponymsModule {}
