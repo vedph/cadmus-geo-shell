@@ -9,17 +9,20 @@
   <!-- altitude -->
   <div class="form-row">
     <mat-checkbox [formControl]="hasAltitude">altitude</mat-checkbox>
-    <mat-form-field style="width: 6em" *ngIf="hasAltitude.value">
+    @if (hasAltitude.value) {
+    <mat-form-field style="width: 6em">
       <mat-label>alt.</mat-label>
       <input matInput type="number" [formControl]="altitude" />
     </mat-form-field>
+    }
   </div>
 
   <!-- box -->
   <div>
     <mat-checkbox [formControl]="hasBox">bounding box</mat-checkbox>
   </div>
-  <fieldset *ngIf="hasBox.value">
+  @if (hasBox.value) {
+  <fieldset>
     <legend>box</legend>
     <div>
       <!-- point A -->
@@ -30,7 +33,6 @@
         (pointChange)="onPointAChange($event)"
       ></cadmus-location-point>
     </div>
-
     <div>
       <!-- point B -->
       B
@@ -41,49 +43,51 @@
       ></cadmus-location-point>
     </div>
   </fieldset>
+  }
 
   <!-- geometry -->
   <div style="margin-top: 8px">
     <mat-form-field class="long-text">
       <mat-label>geometry</mat-label>
       <textarea matInput [formControl]="geometry"></textarea>
-      <mat-error
-        *ngIf="
-          $any(geometry).errors?.maxLength &&
-          (geometry.dirty || geometry.touched)
-        "
-        >geometry too long</mat-error
-      >
+      @if ( $any(geometry).errors?.maxLength && (geometry.dirty ||
+      geometry.touched) ) {
+      <mat-error>geometry too long</mat-error>
+      }
     </mat-form-field>
   </div>
 
   <div>
     <!-- tag (bound) -->
-    <mat-form-field *ngIf="locTagEntries?.length">
+    @if (locTagEntries?.length) {
+    <mat-form-field>
       <mat-label>tag</mat-label>
       <mat-select [formControl]="tag">
-        <mat-option *ngFor="let e of locTagEntries" [value]="e.id">{{
-          e.value
-        }}</mat-option>
+        @for (e of locTagEntries; track e.id) {
+        <mat-option [value]="e.id">{{ e.value }}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
+    }
 
     <!-- tag (free) -->
-    <mat-form-field *ngIf="!locTagEntries?.length">
+    @if (!locTagEntries?.length) {
+    <mat-form-field>
       <mat-label>tag</mat-label>
       <input matInput [formControl]="tag" />
-      <mat-error
-        *ngIf="$any(tag).errors?.maxLength && (tag.dirty || tag.touched)"
-        >tag too long</mat-error
-      >
+      @if ($any(tag).errors?.maxLength && (tag.dirty || tag.touched)) {
+      <mat-error>tag too long</mat-error>
+      }
     </mat-form-field>
+    }
   </div>
 
   <!-- assertion -->
   <div>
     <mat-checkbox [formControl]="hasAssertion">assertion</mat-checkbox>
   </div>
-  <fieldset *ngIf="hasAssertion.value">
+  @if (hasAssertion.value) {
+  <fieldset>
     <legend>assertion</legend>
     <cadmus-refs-assertion
       [assertion]="assertion.value"
@@ -93,6 +97,7 @@
       (assertionChange)="onAssertionChange($event)"
     ></cadmus-refs-assertion>
   </fieldset>
+  }
 
   <!-- buttons -->
   <div>

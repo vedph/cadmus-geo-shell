@@ -20,7 +20,8 @@
             <mat-icon>add_circle</mat-icon> toponym
           </button>
         </div>
-        <table *ngIf="toponyms.value?.length">
+        @if (toponyms.value?.length) {
+        <table>
           <thead>
             <tr>
               <th></th>
@@ -28,14 +29,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              *ngFor="
-                let entry of toponyms.value;
-                let i = index;
-                let first = first;
-                let last = last
-              "
-            >
+            @for ( entry of toponyms.value; track entry; let i = $index; let
+            first = $first; let last = $last) {
+            <tr>
               <td>
                 <button
                   type="button"
@@ -86,8 +82,10 @@
                 }}
               </td>
             </tr>
+            }
           </tbody>
         </table>
+        }
       </div>
 
       <!-- editor -->

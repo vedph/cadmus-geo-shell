@@ -3,31 +3,33 @@
     <!-- eid -->
     <mat-form-field>
       <input placeholder="EID" matInput [formControl]="eid" />
-      <mat-error
-        *ngIf="$any(eid).errors?.maxLength && (eid.dirty || eid.touched)"
-        >EID too long</mat-error
-      >
+      @if ($any(eid).errors?.maxLength && (eid.dirty || eid.touched)) {
+      <mat-error>EID too long</mat-error>
+      }
     </mat-form-field>
 
     <!-- tag (bound) -->
-    <mat-form-field *ngIf="topTagEntries?.length">
+    @if (topTagEntries?.length) {
+    <mat-form-field>
       <mat-label>tag</mat-label>
       <mat-select [formControl]="tag">
-        <mat-option *ngFor="let e of topTagEntries" [value]="e.id">{{
-          e.value
-        }}</mat-option>
+        @for (e of topTagEntries; track e.id) {
+        <mat-option [value]="e.id">{{ e.value }}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
+    }
 
     <!-- tag (free) -->
-    <mat-form-field *ngIf="!topTagEntries?.length">
+    @if (!topTagEntries?.length) {
+    <mat-form-field>
       <mat-label>tag</mat-label>
       <input matInput [formControl]="tag" placeholder="tag" />
-      <mat-error
-        *ngIf="$any(tag).errors?.maxLength && (tag.dirty || tag.touched)"
-        >tag too long</mat-error
-      >
+      @if ($any(tag).errors?.maxLength && (tag.dirty || tag.touched)) {
+      <mat-error>tag too long</mat-error>
+      }
     </mat-form-field>
+    }
   </div>
 
   <!-- name -->

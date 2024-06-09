@@ -18,7 +18,7 @@
     >
       <p>Welcome to the Cadmus geography shell.</p>
       <p>
-        <a href="https://cadmus.fusi-soft.com" target="_blank"
+        <a href="https://cadmus.fusi-soft.com" target="_blank" rel="noopener"
           >presentation site</a
         >
       </p>
@@ -27,7 +27,9 @@
           >development guide</a
         >
       </p>
-      <p *ngIf="!logged">Please <a routerLink="/login">login</a> to start.</p>
+      @if (!logged) {
+      <p>Please <a routerLink="/login">login</a> to start.</p>
+      }
     </div>
   </div>
 </div>

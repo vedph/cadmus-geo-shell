@@ -15,9 +15,10 @@
               type="button"
               mat-flat-button
               color="primary"
+              class="mat-primary"
               (click)="addAssertedLocation()"
             >
-              <mat-icon class="mat-primary">add_circle</mat-icon> location
+              <mat-icon>add_circle</mat-icon> location
             </button>
             <button
               type="button"
@@ -29,7 +30,8 @@
               <mat-icon>fit_screen</mat-icon>
             </button>
           </div>
-          <table *ngIf="locations.value?.length">
+          @if (locations.value?.length) {
+          <table>
             <thead>
               <tr>
                 <th></th>
@@ -38,15 +40,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="
-                  let entry of locations.value;
-                  let i = index;
-                  let first = first;
-                  let last = last
-                "
-                [class.selected]="entry === selectedLocation"
-              >
+              @for ( entry of locations.value; track entry; let i = $index; let
+              first = $first; let last = $last) {
+              <tr [class.selected]="entry === selectedLocation">
                 <td>
                   <button
                     type="button"
@@ -84,8 +80,8 @@
                   >
                     <mat-icon class="mat-warn">remove_circle</mat-icon>
                   </button>
+                  @if (mapToken) {
                   <button
-                    *ngIf="mapToken"
                     type="button"
                     mat-icon-button
                     matTooltip="Fly to this location"
@@ -93,12 +89,15 @@
                   >
                     <mat-icon>adjust</mat-icon>
                   </button>
+                  }
                 </td>
                 <td>{{ entry.point.lat }}</td>
                 <td>{{ entry.point.lon }}</td>
               </tr>
+              }
             </tbody>
           </table>
+          }
         </div>
 
         <!-- editor -->
