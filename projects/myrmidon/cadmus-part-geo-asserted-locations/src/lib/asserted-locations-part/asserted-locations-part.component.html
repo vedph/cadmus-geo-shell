@@ -17,7 +17,7 @@
               color="primary"
               (click)="addAssertedLocation()"
             >
-              <mat-icon>add_circle</mat-icon> location
+              <mat-icon class="mat-primary">add_circle</mat-icon> location
             </button>
             <button
               type="button"
@@ -55,7 +55,7 @@
                     matTooltip="Edit this location"
                     (click)="editAssertedLocation(entry, i)"
                   >
-                    <mat-icon>edit</mat-icon>
+                    <mat-icon class="mat-primary">edit</mat-icon>
                   </button>
                   <button
                     type="button"
@@ -82,7 +82,7 @@
                     matTooltip="Delete this location"
                     (click)="deleteAssertedLocation(i)"
                   >
-                    <mat-icon>remove_circle</mat-icon>
+                    <mat-icon class="mat-warn">remove_circle</mat-icon>
                   </button>
                   <button
                     *ngIf="mapToken"

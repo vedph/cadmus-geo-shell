@@ -14,6 +14,7 @@
             type="button"
             mat-flat-button
             color="primary"
+            class="mat-primary"
             (click)="addAssertedToponym()"
           >
             <mat-icon>add_circle</mat-icon> toponym
@@ -43,7 +44,7 @@
                   matTooltip="Edit this toponym"
                   (click)="editAssertedToponym(entry, i)"
                 >
-                  <mat-icon>edit</mat-icon>
+                  <mat-icon class="mat-primary">edit</mat-icon>
                 </button>
                 <button
                   type="button"
@@ -70,7 +71,7 @@
                   matTooltip="Delete this toponym"
                   (click)="deleteAssertedToponym(i)"
                 >
-                  <mat-icon>remove_circle</mat-icon>
+                  <mat-icon class="mat-warn">remove_circle</mat-icon>
                 </button>
               </td>
               <td>
