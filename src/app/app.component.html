@@ -1,5 +1,5 @@
 <header>
-  <mat-toolbar color="primary" class="mat-primary">
+  <mat-toolbar class="mat-primary">
     <span style="flex: 0 0 60px"
       ><img src="./assets/img/logo-white-40.png" alt="Fusisoft"
     /></span>
@@ -57,9 +57,9 @@
 
     <!-- user -->
     @if (user) {
-    <div fxLayout="row" fxLayoutAlign="start center">
+    <div>
       <!-- indicators -->
-      <img [src]="getGravatarUrl(user.email, 32)" alt="{{ user.userName }}" />
+      <img [src]="user.email | gravatar : 32" alt="{{ user.userName }}" />
       @if (user && user.roles.includes('admin')) {
       <mat-icon class="small-icon" title="admin">build</mat-icon>
       } @if (user && !user.emailConfirmed) {

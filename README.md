@@ -50,6 +50,8 @@ imports: [
 
 ## History
 
+- 2024-11-18: updated Angular and packages.
+
 ### 4.1.1
 
 - 2024-06-09:
