@@ -29,6 +29,7 @@ import { ProperNameService } from '@myrmidon/cadmus-refs-proper-name';
   selector: 'cadmus-asserted-toponyms-part',
   templateUrl: './asserted-toponyms-part.component.html',
   styleUrls: ['./asserted-toponyms-part.component.css'],
+  standalone: false,
 })
 export class AssertedToponymsPartComponent
   extends ModelEditorComponentBase<AssertedToponymsPart>

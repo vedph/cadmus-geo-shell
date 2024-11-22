@@ -14,6 +14,7 @@ import { AssertedToponym } from '../asserted-toponyms-part';
   selector: 'cadmus-asserted-toponym',
   templateUrl: './asserted-toponym.component.html',
   styleUrls: ['./asserted-toponym.component.css'],
+  standalone: false,
 })
 export class AssertedToponymComponent {
   private _toponym: AssertedToponym | undefined | null;

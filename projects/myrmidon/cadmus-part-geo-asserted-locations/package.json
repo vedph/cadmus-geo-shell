@@ -1,6 +1,6 @@
 {
   "name": "@myrmidon/cadmus-part-geo-asserted-locations",
-  "version": "4.1.1",
+  "version": "5.0.0",
   "description": "Cadmus - asserted locations UI component.",
   "keywords": [
     "Cadmus",
@@ -15,18 +15,18 @@
     "name": "Daniele Fusi"
   },
   "peerDependencies": {
-    "@angular/common": "^18.0.0",
-    "@angular/core": "^18.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
     "leaflet": "^1.9.4",
     "@asymmetrik/ngx-leaflet": "^18.0.1",
-    "@myrmidon/cadmus-refs-assertion": "^5.1.1",
-    "@myrmidon/cadmus-ui-flags-picker": "^5.1.1",
-    "@myrmidon/cadmus-core": "^8.1.0",
-    "@myrmidon/cadmus-state": "^8.1.0",
-    "@myrmidon/cadmus-ui": "^8.1.2",
-    "@myrmidon/cadmus-ui-pg": "^8.1.1"
+    "@myrmidon/cadmus-refs-assertion": "^6.0.1",
+    "@myrmidon/cadmus-ui-flags-picker": "^6.0.0",
+    "@myrmidon/cadmus-core": "^9.0.0",
+    "@myrmidon/cadmus-state": "^9.0.0",
+    "@myrmidon/cadmus-ui": "^9.0.0",
+    "@myrmidon/cadmus-ui-pg": "^9.0.0"
   },
   "dependencies": {
-    "tslib": "^2.5.0"
+    "tslib": "^2.3.0"
   }
 }

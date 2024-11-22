@@ -30,6 +30,7 @@ import { GeoLocationService } from '../services/geo-location.service';
   selector: 'cadmus-location-point',
   templateUrl: './location-point.component.html',
   styleUrls: ['./location-point.component.css'],
+  standalone: false,
 })
 export class LocationPointComponent implements OnInit, OnDestroy {
   private _sub?: Subscription;

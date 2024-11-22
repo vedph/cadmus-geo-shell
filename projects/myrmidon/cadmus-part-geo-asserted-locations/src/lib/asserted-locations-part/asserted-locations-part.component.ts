@@ -43,6 +43,7 @@ const OSM_ATTR =
   selector: 'cadmus-asserted-locations-part',
   templateUrl: './asserted-locations-part.component.html',
   styleUrls: ['./asserted-locations-part.component.css'],
+  standalone: false,
 })
 export class AssertedLocationsPartComponent
   extends ModelEditorComponentBase<AssertedLocationsPart>

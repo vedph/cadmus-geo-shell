@@ -9,6 +9,7 @@ import { ItemService, ThesaurusService } from '@myrmidon/cadmus-api';
   selector: 'cadmus-asserted-locations-part-feature',
   templateUrl: './asserted-locations-part-feature.component.html',
   styleUrls: ['./asserted-locations-part-feature.component.css'],
+  standalone: false,
 })
 export class AssertedLocationsPartFeatureComponent
   extends EditPartFeatureBase

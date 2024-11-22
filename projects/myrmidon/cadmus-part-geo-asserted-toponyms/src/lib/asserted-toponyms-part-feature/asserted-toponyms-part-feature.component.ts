@@ -9,6 +9,7 @@ import { ItemService, ThesaurusService } from '@myrmidon/cadmus-api';
   selector: 'cadmus-asserted-toponyms-part-feature',
   templateUrl: './asserted-toponyms-part-feature.component.html',
   styleUrls: ['./asserted-toponyms-part-feature.component.css'],
+  standalone: false,
 })
 export class AssertedToponymsPartFeatureComponent
   extends EditPartFeatureBase

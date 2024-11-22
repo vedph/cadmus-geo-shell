@@ -18,6 +18,7 @@ import {
   selector: 'cadmus-asserted-location',
   templateUrl: './asserted-location.component.html',
   styleUrls: ['./asserted-location.component.css'],
+  standalone: false,
 })
 export class AssertedLocationComponent {
   private _location: AssertedLocation | undefined | null;
@@ -85,7 +86,7 @@ export class AssertedLocationComponent {
       geometry: this.geometry,
       hasAssertion: this.hasAssertion,
       assertion: this.assertion,
-      tag: this.tag
+      tag: this.tag,
     });
     // events
     this.editorClose = new EventEmitter<any>();
@@ -133,7 +134,7 @@ export class AssertedLocationComponent {
         this.hasAssertion.value && this.assertion.value
           ? this.assertion.value
           : undefined,
-      tag: this.tag.value?.trim()
+      tag: this.tag.value?.trim(),
     };
   }
 
