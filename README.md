@@ -50,6 +50,10 @@ imports: [
 
 ## History
 
+### 6.0.0
+
+- 2024-12-03: ⚠️ upgraded to new core dependencies.
+
 ### 5.0.0
 
 - 2024-11-22: ⚠️ upgraded to Angular 19.

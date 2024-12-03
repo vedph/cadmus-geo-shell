@@ -9,7 +9,7 @@ import {
   GravatarService,
   User,
 } from '@myrmidon/auth-jwt-login';
-import { EnvService } from '@myrmidon/ng-tools';
+import { EnvService } from '@myrmidon/ngx-tools';
 import { AppRepository } from '@myrmidon/cadmus-state';
 
 @Component({

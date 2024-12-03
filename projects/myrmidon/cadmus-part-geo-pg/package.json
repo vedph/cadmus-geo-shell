@@ -1,6 +1,6 @@
 {
   "name": "@myrmidon/cadmus-part-geo-pg",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Cadmus - geography UI component wrappers.",
   "keywords": [
     "Cadmus",
@@ -17,12 +17,12 @@
   "peerDependencies": {
     "@angular/common": "^19.0.0",
     "@angular/core": "^19.0.0",
-    "@myrmidon/cadmus-core": "^9.0.0",
-    "@myrmidon/cadmus-state": "^9.0.0",
-    "@myrmidon/cadmus-ui": "^9.0.0",
-    "@myrmidon/cadmus-ui-pg": "^9.0.0",
-    "@myrmidon/cadmus-part-geo-asserted-locations": "^5.0.0",
-    "@myrmidon/cadmus-part-geo-asserted-toponyms": "^5.0.0"
+    "@myrmidon/cadmus-core": "^10.0.0",
+    "@myrmidon/cadmus-state": "^10.0.0",
+    "@myrmidon/cadmus-ui": "^10.0.0",
+    "@myrmidon/cadmus-ui-pg": "^10.0.0",
+    "@myrmidon/cadmus-part-geo-asserted-locations": "^6.0.0",
+    "@myrmidon/cadmus-part-geo-asserted-toponyms": "^6.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
