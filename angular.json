@@ -21,7 +21,6 @@
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets", "src/env.js"],
             "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css"
             ],
@@ -84,10 +83,7 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "scripts": []
           }
         }

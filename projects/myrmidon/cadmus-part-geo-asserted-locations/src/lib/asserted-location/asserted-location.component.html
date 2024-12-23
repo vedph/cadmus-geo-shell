@@ -90,12 +90,12 @@
   <fieldset>
     <legend>assertion</legend>
     <cadmus-refs-assertion
-      [assertion]="assertion.value"
+      [assertion]="assertion.value || undefined"
       [assTagEntries]="assTagEntries"
       [refTagEntries]="refTagEntries"
       [refTypeEntries]="refTypeEntries"
       (assertionChange)="onAssertionChange($event)"
-    ></cadmus-refs-assertion>
+    />
   </fieldset>
   }
 

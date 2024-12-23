@@ -51,7 +51,6 @@ import { NgeMarkdownModule } from '@cisstech/nge/markdown';
 // myrmidon
 import {
   EllipsisPipe,
-  EnvServiceProvider,
   FlatLookupPipe,
   SafeHtmlPipe,
 } from '@myrmidon/ngx-tools';
@@ -192,8 +191,6 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
       withInterceptors([authJwtInterceptor]),
       withJsonpSupport()
     ),
-    // environment service
-    EnvServiceProvider,
     // parts and fragments type IDs to editor group keys mappings
     // https://github.com/nrwl/nx/issues/208#issuecomment-384102058
     // inject like: @Inject('partEditorKeys') partEditorKeys: PartEditorKeys

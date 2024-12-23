@@ -19,12 +19,11 @@
       </mat-select>
     </mat-form-field>
     }
-
     <!-- tag (free) -->
-    @if (!topTagEntries?.length) {
+    @else {
     <mat-form-field>
       <mat-label>tag</mat-label>
-      <input matInput [formControl]="tag" placeholder="tag" />
+      <input matInput [formControl]="tag" />
       @if ($any(tag).errors?.maxLength && (tag.dirty || tag.touched)) {
       <mat-error>tag too long</mat-error>
       }
@@ -44,7 +43,7 @@
       [refTagEntries]="refTagEntries"
       [refTypeEntries]="refTypeEntries"
       (nameChange)="onNameChange($event)"
-    ></cadmus-refs-proper-name>
+    />
   </fieldset>
 
   <!-- buttons -->
