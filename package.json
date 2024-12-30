@@ -64,7 +64,6 @@
     "@myrmidon/cadmus-thesaurus-list": "^10.2.0",
     "@myrmidon/cadmus-thesaurus-ui": "^10.2.0",
     "@myrmidon/cadmus-ui": "^10.2.0",
-    "@myrmidon/cadmus-ui-flags-picker": "^6.0.0",
     "@myrmidon/cadmus-ui-pg": "^10.2.0",
     "@myrmidon/ngx-mat-tools": "^0.0.1",
     "@myrmidon/ngx-tools": "^1.0.0",

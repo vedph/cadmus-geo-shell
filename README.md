@@ -50,6 +50,10 @@ imports: [
 
 ## History
 
+### 6.1.1
+
+- 2024-12-30: adjusted peer dependencies.
+
 ### 6.1.0
 
 - 2024-12-23: ⚠️ upgraded to [bricks V3](https://github.com/vedph/cadmus-bricks-shell-v3).

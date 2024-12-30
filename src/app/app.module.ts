@@ -70,7 +70,6 @@ import { AssertedIdsComponent } from '@myrmidon/cadmus-refs-asserted-ids';
 import { DocReferencesComponent } from '@myrmidon/cadmus-refs-doc-references';
 import { HistoricalDateComponent } from '@myrmidon/cadmus-refs-historical-date';
 import { ProperNameComponent } from '@myrmidon/cadmus-refs-proper-name';
-import { FlagsPickerComponent } from '@myrmidon/cadmus-ui-flags-picker';
 
 // cadmus
 import { CadmusApiModule } from '@myrmidon/cadmus-api';
@@ -169,7 +168,6 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     DocReferencesComponent,
     HistoricalDateComponent,
     ProperNameComponent,
-    FlagsPickerComponent,
     // cadmus
     CadmusApiModule,
     CadmusCoreModule,
