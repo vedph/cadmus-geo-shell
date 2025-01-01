@@ -53,7 +53,7 @@ imports: [
 ### 7.0.0
 
 - 2025-01-01:
-  - standalone components in libraries.
+  - ⚠️ standalone components in libraries.
   - refactored shell app for modern Angular.
 
 ### 6.1.1
