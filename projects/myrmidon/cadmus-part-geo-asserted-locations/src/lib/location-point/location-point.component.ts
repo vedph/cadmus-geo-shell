@@ -11,12 +11,20 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs';
 
 import { LocationPoint } from '../asserted-locations-part';
 import { GeoLocationService } from '../services/geo-location.service';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatIconButton, MatIconAnchor } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { DecimalPipe } from '@angular/common';
 
 /**
  * A geographic point defined by latitude and longitude.
@@ -30,7 +38,19 @@ import { GeoLocationService } from '../services/geo-location.service';
   selector: 'cadmus-location-point',
   templateUrl: './location-point.component.html',
   styleUrls: ['./location-point.component.css'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatIconAnchor,
+    DecimalPipe,
+  ],
 })
 export class LocationPointComponent implements OnInit, OnDestroy {
   private _sub?: Subscription;

@@ -4,21 +4,49 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
+
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+
 import { ThesaurusEntry } from '@myrmidon/cadmus-core';
-import { Assertion } from '@myrmidon/cadmus-refs-assertion';
+import { Assertion, AssertionComponent } from '@myrmidon/cadmus-refs-assertion';
 
 import {
   AssertedLocation,
   LocationBox,
   LocationPoint,
 } from '../asserted-locations-part';
+import { LocationPointComponent } from '../location-point/location-point.component';
 
 @Component({
   selector: 'cadmus-asserted-location',
   templateUrl: './asserted-location.component.html',
   styleUrls: ['./asserted-location.component.css'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    LocationPointComponent,
+    MatCheckbox,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    MatSelect,
+    MatOption,
+    AssertionComponent,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+  ],
 })
 export class AssertedLocationComponent {
   private _location: AssertedLocation | undefined | null;

@@ -1,6 +1,6 @@
 # Cadmus Geography Shell
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.4.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
 
 - [models](https://github.com/vedph/cadmus-geo)
 - [API](https://github.com/vedph/cadmus-geo-api)
@@ -17,16 +17,16 @@ This shell is used to develop Cadmus frontend geography libraries.
 
 ## Requirements
 
-This requires Leaflet via [ngx-leaflet](https://github.com/bluehalo/ngx-leaflet).
+This requires **Leaflet** via [ngx-leaflet](https://github.com/bluehalo/ngx-leaflet).
 
-(1) install packages:
+▶️ (1) install packages:
 
 ```bash
 npm install leaflet @asymmetrik/ngx-leaflet
 npm install --save-dev @types/leaflet
 ```
 
-(2) in `angular.json` under `styles` add the leaflet CSS stylesheet:
+▶️ (2) in `angular.json` under `styles` add the leaflet CSS stylesheet:
 
 ```json
 "styles": [
@@ -34,9 +34,9 @@ npm install --save-dev @types/leaflet
 ]
 ```
 
-(3) manually copy images from `node_modules/leaflet/dist/images` to `src/assets/images`.
+▶️ (3) manually copy images from `node_modules/leaflet/dist/images` to `public/img`.
 
-(4) import the corresponding module in your root component or module:
+▶️ (4) import the corresponding module in your root component or module:
 
 ```ts
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
@@ -49,6 +49,12 @@ imports: [
 ```
 
 ## History
+
+### 7.0.0
+
+- 2025-01-01:
+  - standalone components in libraries.
+  - refactored shell app for modern Angular.
 
 ### 6.1.1
 

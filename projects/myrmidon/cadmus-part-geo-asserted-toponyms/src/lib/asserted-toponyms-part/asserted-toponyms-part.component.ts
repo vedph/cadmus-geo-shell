@@ -1,16 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormBuilder,
-  FormGroup,
-  UntypedFormGroup,
-} from '@angular/forms';
+import { FormControl, FormBuilder, FormGroup, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { take } from 'rxjs/operators';
 
 import { NgxToolsValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
-import { EditedObject, ModelEditorComponentBase } from '@myrmidon/cadmus-ui';
+import { EditedObject, ModelEditorComponentBase, CadmusUiModule } from '@myrmidon/cadmus-ui';
 import { ThesauriSet, ThesaurusEntry } from '@myrmidon/cadmus-core';
 
 import {
@@ -18,7 +13,13 @@ import {
   AssertedToponymsPart,
   ASSERTED_TOPONYMS_PART_TYPEID,
 } from '../asserted-toponyms-part';
-import { ProperNameService } from '@myrmidon/cadmus-refs-proper-name';
+import { ProperNameService, CadmusProperNamePipe } from '@myrmidon/cadmus-refs-proper-name';
+import { MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { AssertedToponymComponent } from '../asserted-toponym/asserted-toponym.component';
 
 /**
  * AssertedToponymsPart editor component.
@@ -26,10 +27,28 @@ import { ProperNameService } from '@myrmidon/cadmus-refs-proper-name';
  * geo-name-piece-types, assertion-tags, doc-reference-types, doc-reference-tags.
  */
 @Component({
-  selector: 'cadmus-asserted-toponyms-part',
-  templateUrl: './asserted-toponyms-part.component.html',
-  styleUrls: ['./asserted-toponyms-part.component.css'],
-  standalone: false,
+    selector: 'cadmus-asserted-toponyms-part',
+    templateUrl: './asserted-toponyms-part.component.html',
+    styleUrls: ['./asserted-toponyms-part.component.css'],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatCard,
+        MatCardHeader,
+        MatCardAvatar,
+        MatIcon,
+        MatCardTitle,
+        MatCardContent,
+        MatButton,
+        MatIconButton,
+        MatTooltip,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        AssertedToponymComponent,
+        MatCardActions,
+        CadmusUiModule,
+        CadmusProperNamePipe,
+    ],
 })
 export class AssertedToponymsPartComponent
   extends ModelEditorComponentBase<AssertedToponymsPart>

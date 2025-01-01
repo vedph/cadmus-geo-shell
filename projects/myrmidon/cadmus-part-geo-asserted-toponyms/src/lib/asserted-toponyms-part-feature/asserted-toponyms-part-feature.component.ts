@@ -4,12 +4,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { EditPartFeatureBase, PartEditorService } from '@myrmidon/cadmus-state';
 import { ItemService, ThesaurusService } from '@myrmidon/cadmus-api';
+import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
+import { AssertedToponymsPartComponent } from '../asserted-toponyms-part/asserted-toponyms-part.component';
 
 @Component({
-  selector: 'cadmus-asserted-toponyms-part-feature',
-  templateUrl: './asserted-toponyms-part-feature.component.html',
-  styleUrls: ['./asserted-toponyms-part-feature.component.css'],
-  standalone: false,
+    selector: 'cadmus-asserted-toponyms-part-feature',
+    templateUrl: './asserted-toponyms-part-feature.component.html',
+    styleUrls: ['./asserted-toponyms-part-feature.component.css'],
+    imports: [CadmusUiPgModule, AssertedToponymsPartComponent],
 })
 export class AssertedToponymsPartFeatureComponent
   extends EditPartFeatureBase

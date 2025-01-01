@@ -1,22 +1,34 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Thesaurus, ThesaurusEntry } from '@myrmidon/cadmus-core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
-import {
-  AuthJwtService,
-  GravatarService,
-  User,
-} from '@myrmidon/auth-jwt-login';
-import { EnvService } from '@myrmidon/ngx-tools';
 import { AppRepository } from '@myrmidon/cadmus-state';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
+import { AuthJwtService, GravatarPipe, User } from '@myrmidon/auth-jwt-login';
+import { EnvService } from '@myrmidon/ngx-tools';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 @Component({
   selector: 'app-root',
+  imports: [
+    RouterModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    GravatarPipe,
+    LeafletModule
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  standalone: false,
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   private _authSub?: Subscription;
@@ -31,7 +43,6 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject('itemBrowserKeys')
     private _itemBrowserKeys: { [key: string]: string },
     private _authService: AuthJwtService,
-    private _gravatarService: GravatarService,
     private _appRepository: AppRepository,
     private _router: Router,
     env: EnvService
@@ -39,7 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.version = env.get('version') || '';
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.user = this._authService.currentUserValue || undefined;
     this.logged = this.user !== null;
 

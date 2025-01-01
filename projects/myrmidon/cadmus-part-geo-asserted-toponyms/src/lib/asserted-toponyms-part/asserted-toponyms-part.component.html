@@ -13,14 +13,13 @@
           <button
             type="button"
             mat-flat-button
-            color="primary"
             class="mat-primary"
             (click)="addAssertedToponym()"
           >
             <mat-icon>add_circle</mat-icon> toponym
           </button>
         </div>
-        @if (toponyms.value?.length) {
+        @if (toponyms.value.length) {
         <table>
           <thead>
             <tr>
@@ -36,7 +35,6 @@
                 <button
                   type="button"
                   mat-icon-button
-                  color="primary"
                   matTooltip="Edit this toponym"
                   (click)="editAssertedToponym(entry, i)"
                 >
@@ -63,7 +61,6 @@
                 <button
                   type="button"
                   mat-icon-button
-                  color="warn"
                   matTooltip="Delete this toponym"
                   (click)="deleteAssertedToponym(i)"
                 >

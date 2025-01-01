@@ -8,8 +8,8 @@ describe('AssertedToponymsPartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AssertedToponymsPartComponent ]
-    })
+    imports: [AssertedToponymsPartComponent]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(AssertedToponymsPartComponent);

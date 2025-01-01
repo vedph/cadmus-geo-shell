@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { EditPartFeatureBase, PartEditorService } from '@myrmidon/cadmus-state';
 import { ItemService, ThesaurusService } from '@myrmidon/cadmus-api';
+import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
+
+import { AssertedLocationsPartComponent } from '../asserted-locations-part/asserted-locations-part.component';
 
 @Component({
   selector: 'cadmus-asserted-locations-part-feature',
   templateUrl: './asserted-locations-part-feature.component.html',
   styleUrls: ['./asserted-locations-part-feature.component.css'],
-  standalone: false,
+  imports: [CadmusUiPgModule, AssertedLocationsPartComponent],
 })
 export class AssertedLocationsPartFeatureComponent
   extends EditPartFeatureBase

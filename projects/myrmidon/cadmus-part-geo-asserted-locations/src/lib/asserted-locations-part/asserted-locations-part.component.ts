@@ -4,9 +4,39 @@ import {
   FormBuilder,
   FormGroup,
   UntypedFormGroup,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { debounceTime, take } from 'rxjs/operators';
 
+import { EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
+import { DialogService } from '@myrmidon/ngx-mat-tools';
+import { AuthJwtService } from '@myrmidon/auth-jwt-login';
+
+import {
+  EditedObject,
+  ModelEditorComponentBase,
+  CadmusUiModule,
+} from '@myrmidon/cadmus-ui';
+import { ThesauriSet, ThesaurusEntry } from '@myrmidon/cadmus-core';
+
+import {
+  MatCard,
+  MatCardHeader,
+  MatCardAvatar,
+  MatCardTitle,
+  MatCardContent,
+  MatCardActions,
+} from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from '@angular/material/expansion';
+
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import {
   latLng,
   latLngBounds,
@@ -19,12 +49,7 @@ import {
   Marker,
 } from 'leaflet';
 
-import { EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
-import { DialogService } from '@myrmidon/ngx-mat-tools';
-import { AuthJwtService } from '@myrmidon/auth-jwt-login';
-import { EditedObject, ModelEditorComponentBase } from '@myrmidon/cadmus-ui';
-
-import { ThesauriSet, ThesaurusEntry } from '@myrmidon/cadmus-core';
+import { AssertedLocationComponent } from '../asserted-location/asserted-location.component';
 import {
   AssertedLocation,
   AssertedLocationsPart,
@@ -43,7 +68,25 @@ const OSM_ATTR =
   selector: 'cadmus-asserted-locations-part',
   templateUrl: './asserted-locations-part.component.html',
   styleUrls: ['./asserted-locations-part.component.css'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatCard,
+    MatCardHeader,
+    MatCardAvatar,
+    MatIcon,
+    MatCardTitle,
+    MatCardContent,
+    MatButton,
+    MatIconButton,
+    MatTooltip,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    AssertedLocationComponent,
+    LeafletModule,
+    MatCardActions,
+    CadmusUiModule,
+  ],
 })
 export class AssertedLocationsPartComponent
   extends ModelEditorComponentBase<AssertedLocationsPart>
@@ -287,8 +330,8 @@ export class AssertedLocationsPartComponent
       icon: icon({
         iconSize: [25, 41],
         iconAnchor: [13, 41],
-        iconUrl: 'assets/img/marker-icon.png',
-        shadowUrl: 'assets/img/marker-shadow.png',
+        iconUrl: 'img/marker-icon.png',
+        shadowUrl: 'img/marker-shadow.png',
       }),
     }).setLatLng(latlng);
     if (label) {

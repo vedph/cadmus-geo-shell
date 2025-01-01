@@ -14,7 +14,6 @@
             <button
               type="button"
               mat-flat-button
-              color="primary"
               class="mat-primary"
               (click)="addAssertedLocation()"
             >
@@ -30,7 +29,7 @@
               <mat-icon>fit_screen</mat-icon>
             </button>
           </div>
-          @if (locations.value?.length) {
+          @if (locations.value.length) {
           <table>
             <thead>
               <tr>
@@ -47,7 +46,6 @@
                   <button
                     type="button"
                     mat-icon-button
-                    color="primary"
                     matTooltip="Edit this location"
                     (click)="editAssertedLocation(entry, i)"
                   >
@@ -74,7 +72,6 @@
                   <button
                     type="button"
                     mat-icon-button
-                    color="warn"
                     matTooltip="Delete this location"
                     (click)="deleteAssertedLocation(i)"
                   >
