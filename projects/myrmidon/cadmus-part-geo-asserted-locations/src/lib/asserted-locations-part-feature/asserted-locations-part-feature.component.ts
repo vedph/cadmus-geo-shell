@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { EditPartFeatureBase, PartEditorService } from '@myrmidon/cadmus-state';
 import { ItemService, ThesaurusService } from '@myrmidon/cadmus-api';
-import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
+import { CurrentItemBarComponent } from '@myrmidon/cadmus-ui-pg';
 
 import { AssertedLocationsPartComponent } from '../asserted-locations-part/asserted-locations-part.component';
 
@@ -13,7 +13,7 @@ import { AssertedLocationsPartComponent } from '../asserted-locations-part/asser
   selector: 'cadmus-asserted-locations-part-feature',
   templateUrl: './asserted-locations-part-feature.component.html',
   styleUrls: ['./asserted-locations-part-feature.component.css'],
-  imports: [CadmusUiPgModule, AssertedLocationsPartComponent],
+  imports: [CurrentItemBarComponent, AssertedLocationsPartComponent],
 })
 export class AssertedLocationsPartFeatureComponent
   extends EditPartFeatureBase

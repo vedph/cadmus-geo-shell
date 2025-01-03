@@ -14,9 +14,9 @@ import { DialogService } from '@myrmidon/ngx-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 
 import {
+  CloseSaveButtonsComponent,
   EditedObject,
   ModelEditorComponentBase,
-  CadmusUiModule,
 } from '@myrmidon/cadmus-ui';
 import { ThesauriSet, ThesaurusEntry } from '@myrmidon/cadmus-core';
 
@@ -85,7 +85,7 @@ const OSM_ATTR =
     AssertedLocationComponent,
     LeafletModule,
     MatCardActions,
-    CadmusUiModule,
+    CloseSaveButtonsComponent,
   ],
 })
 export class AssertedLocationsPartComponent

@@ -71,22 +71,6 @@ import { DocReferencesComponent } from '@myrmidon/cadmus-refs-doc-references';
 import { HistoricalDateComponent } from '@myrmidon/cadmus-refs-historical-date';
 import { ProperNameComponent } from '@myrmidon/cadmus-refs-proper-name';
 
-// cadmus
-import { CadmusApiModule } from '@myrmidon/cadmus-api';
-import { CadmusCoreModule } from '@myrmidon/cadmus-core';
-import { CadmusGraphPgModule } from '@myrmidon/cadmus-graph-pg';
-import { CadmusGraphUiModule } from '@myrmidon/cadmus-graph-ui';
-import { CadmusProfileCoreModule } from '@myrmidon/cadmus-profile-core';
-import { CadmusStateModule } from '@myrmidon/cadmus-state';
-import { CadmusUiModule } from '@myrmidon/cadmus-ui';
-import { CadmusUiPgModule } from '@myrmidon/cadmus-ui-pg';
-import { CadmusItemEditorModule } from '@myrmidon/cadmus-item-editor';
-import { CadmusItemListModule } from '@myrmidon/cadmus-item-list';
-import { CadmusItemSearchModule } from '@myrmidon/cadmus-item-search';
-import { CadmusThesaurusEditorModule } from '@myrmidon/cadmus-thesaurus-editor';
-import { CadmusThesaurusListModule } from '@myrmidon/cadmus-thesaurus-list';
-import { CadmusThesaurusUiModule } from '@myrmidon/cadmus-thesaurus-ui';
-
 // local components
 import { HomeComponent } from './home/home.component';
 import { LoginPageComponent } from './login-page/login-page.component';
@@ -115,8 +99,6 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    // routing
-    AppRoutingModule,
     // material
     ClipboardModule,
     DragDropModule,
@@ -168,21 +150,6 @@ import { ITEM_BROWSER_KEYS } from './item-browser-keys';
     DocReferencesComponent,
     HistoricalDateComponent,
     ProperNameComponent,
-    // cadmus
-    CadmusApiModule,
-    CadmusCoreModule,
-    CadmusProfileCoreModule,
-    CadmusStateModule,
-    CadmusUiModule,
-    CadmusUiPgModule,
-    CadmusGraphPgModule,
-    CadmusGraphUiModule,
-    CadmusItemEditorModule,
-    CadmusItemListModule,
-    CadmusItemSearchModule,
-    CadmusThesaurusEditorModule,
-    CadmusThesaurusListModule,
-    CadmusThesaurusUiModule,
   ],
   providers: [
     provideHttpClient(

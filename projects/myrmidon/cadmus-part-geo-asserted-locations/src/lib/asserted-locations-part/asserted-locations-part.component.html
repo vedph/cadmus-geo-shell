@@ -109,7 +109,7 @@
               [location]="edited"
               (locationChange)="saveAssertedLocation($event)"
               (editorClose)="closeAssertedLocation()"
-            ></cadmus-asserted-location>
+            />
           </mat-expansion-panel>
         </div>
 
@@ -131,7 +131,7 @@
         [form]="form"
         [noSave]="userLevel < 2"
         (closeRequest)="close()"
-      ></cadmus-close-save-buttons>
+      />
     </mat-card-actions>
   </mat-card>
 </form>

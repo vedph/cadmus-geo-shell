@@ -50,6 +50,10 @@ imports: [
 
 ## History
 
+### 8.0.0
+
+- 2025-01-03: ⚠️ updated [Cadmus dependencies](https://github.com/vedph/cadmus-shell-v3) to version 11 (standalone components).
+
 ### 7.0.0
 
 - 2025-01-01:
