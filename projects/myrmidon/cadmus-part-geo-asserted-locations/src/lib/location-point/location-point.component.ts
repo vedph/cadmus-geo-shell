@@ -1,10 +1,10 @@
 import {
   Component,
-  EventEmitter,
-  Input,
+  effect,
+  input,
+  model,
   OnDestroy,
   OnInit,
-  Output,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -14,20 +14,20 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs';
 
-import { LocationPoint } from '../asserted-locations-part';
-import { GeoLocationService } from '../services/geo-location.service';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIconButton, MatIconAnchor } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { DecimalPipe } from '@angular/common';
+
+import { LocationPoint } from '../asserted-locations-part';
+import { GeoLocationService } from '../services/geo-location.service';
 
 /**
- * A geographic point defined by latitude and longitude.
+ * An editor for a geographic point defined by latitude and longitude.
  * Set the point via point and observe its changes via pointChange.
  * When hasLocator is true, user can use geolocation to get his position;
  * in this case, you can customize the geolocation service options via
@@ -54,29 +54,29 @@ import { DecimalPipe } from '@angular/common';
 })
 export class LocationPointComponent implements OnInit, OnDestroy {
   private _sub?: Subscription;
-  private _changeFrozen?: boolean;
-  private _point: LocationPoint | undefined | null;
+  private _dropNextInput?: boolean;
+  private _updatingForm?: boolean;
 
-  @Input()
-  public get point(): LocationPoint | undefined | null {
-    return this._point;
-  }
-  public set point(value: LocationPoint | undefined | null) {
-    if (this._point === value) {
-      return;
-    }
-    this._point = value;
-    this.updateForm(value);
-  }
+  public hasService = true;
 
-  @Input()
-  public hasLocator?: boolean;
+  /**
+   * The point to edit.
+   */
+  public readonly point = model<LocationPoint>();
 
-  @Input()
-  public positionOptions: PositionOptions;
+  /**
+   * When true, the user can use geolocation to get his position.
+   */
+  public readonly hasLocator = input<boolean>();
 
-  @Output()
-  public pointChange: EventEmitter<LocationPoint>;
+  /**
+   * The geolocation service options.
+   */
+  public readonly positionOptions = input<PositionOptions>({
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 10 * 1000,
+  });
 
   public locating?: boolean;
   public location?: GeolocationPosition;
@@ -102,59 +102,63 @@ export class LocationPointComponent implements OnInit, OnDestroy {
       lat: this.lat,
       lon: this.lon,
     });
-    this.positionOptions = {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 10 * 1000,
-    };
-    // event
-    this.pointChange = new EventEmitter<LocationPoint>();
-  }
 
-  ngOnInit(): void {
-    // disable locator if not available
-    if (this.hasLocator && !this._geoService.isAvailable()) {
-      this.hasLocator = false;
-    }
-    // emit on change
-    this._sub = this.form.valueChanges
-      .pipe(debounceTime(300))
-      .subscribe((v) => {
-        if (!this._changeFrozen) {
-          this.fireChange();
-        }
-      });
-  }
-
-  ngOnDestroy(): void {
-    this._sub?.unsubscribe();
-  }
-
-  private fireChange(): void {
-    this.pointChange.emit({
-      lat: this.lat.value,
-      lon: this.lon.value,
+    // when point is set, update form
+    effect(() => {
+      const point = this.point();
+      console.log('point input', point);
+      if (this._dropNextInput) {
+        console.log('dropped input');
+        this._dropNextInput = false;
+        return;
+      }
+      this.updateForm(point);
     });
   }
 
-  private updateForm(point: LocationPoint | undefined | null): void {
-    this._changeFrozen = true;
+  public ngOnInit(): void {
+    // disable locator if not available
+    if (!this._geoService.isAvailable()) {
+      this.hasService = false;
+    }
 
+    // when form changes, update point
+    this._sub = this.form.valueChanges.subscribe(() => {
+      if (this._updatingForm) {
+        return;
+      }
+      const point = this.getPoint();
+      console.log('form changed', point);
+      this._dropNextInput = true;
+      this.point.set(point);
+    });
+  }
+
+  public ngOnDestroy(): void {
+    this._sub?.unsubscribe();
+  }
+
+  private getPoint(): LocationPoint {
+    return {
+      lat: this.lat.value,
+      lon: this.lon.value,
+    };
+  }
+
+  private updateForm(point: LocationPoint | undefined | null): void {
+    this._updatingForm = true;
+    console.log('updateForm', point);
     if (!point) {
       this.form.reset();
-      this._changeFrozen = false;
+      this._updatingForm = false;
       return;
     }
 
     this.lat.setValue(point.lat);
-    this.lat.markAsDirty();
-    this.lat.updateValueAndValidity();
     this.lon.setValue(point.lon);
-    this.lon.markAsDirty();
-    this.lon.updateValueAndValidity();
-
     this.form.markAsPristine();
-    this._changeFrozen = false;
+
+    this._updatingForm = false;
   }
 
   public async setCurrentPosition() {
@@ -167,14 +171,12 @@ export class LocationPointComponent implements OnInit, OnDestroy {
 
     try {
       this.location = await this._geoService.getCurrentPosition(
-        this.positionOptions
+        this.positionOptions()
       );
-      this._changeFrozen = true;
       this.lat.setValue(this.location.coords.latitude);
       this.lon.setValue(this.location.coords.longitude);
-      this._changeFrozen = false;
       this.locating = false;
-      this.fireChange();
+      this.point.set(this.getPoint());
     } catch (err) {
       console.error(err ? JSON.stringify(err) : 'Error locating position');
       this.locating = false;

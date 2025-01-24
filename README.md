@@ -76,6 +76,10 @@ imports: [
 
 ## History
 
+### 8.0.1
+
+- 2025-01-24: ⚠️ moved components to signals. This affects only inner components, as part components do not use input or outputs.
+
 ### 8.0.0
 
 - 2025-01-03: ⚠️ updated [Cadmus dependencies](https://github.com/vedph/cadmus-shell-v3) to version 11 (standalone components).

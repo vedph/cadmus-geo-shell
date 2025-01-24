@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, effect, input, model, output } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -27,6 +27,9 @@ import {
 } from '../asserted-locations-part';
 import { LocationPointComponent } from '../location-point/location-point.component';
 
+/**
+ * Editor for a location with an optional assertion.
+ */
 @Component({
   selector: 'cadmus-asserted-location',
   templateUrl: './asserted-location.component.html',
@@ -49,37 +52,27 @@ import { LocationPointComponent } from '../location-point/location-point.compone
   ],
 })
 export class AssertedLocationComponent {
-  private _location: AssertedLocation | undefined | null;
-
-  @Input()
-  public get location(): AssertedLocation | undefined | null {
-    return this._location;
-  }
-  public set location(value: AssertedLocation | undefined | null) {
-    this._location = value;
-    this.updateForm(value);
-  }
+  /**
+   * The location being edited.
+   */
+  public readonly location = model<AssertedLocation>();
 
   // geo-location-tags
-  @Input()
-  public locTagEntries?: ThesaurusEntry[] | undefined;
+  public readonly locTagEntries = input<ThesaurusEntry[]>();
 
   // assertion-tags
-  @Input()
-  public assTagEntries?: ThesaurusEntry[] | undefined;
+  public readonly assTagEntries = input<ThesaurusEntry[]>();
 
   // doc-reference-types
-  @Input()
-  public refTypeEntries: ThesaurusEntry[] | undefined;
+  public readonly refTypeEntries = input<ThesaurusEntry[]>();
 
   // doc-reference-tags
-  @Input()
-  public refTagEntries: ThesaurusEntry[] | undefined;
+  public readonly refTagEntries = input<ThesaurusEntry[]>();
 
-  @Output()
-  public editorClose: EventEmitter<any>;
-  @Output()
-  public locationChange: EventEmitter<AssertedLocation>;
+  /**
+   * Emitted when the editor is closed.
+   */
+  public readonly editorClose = output();
 
   // form
   public point: FormControl<LocationPoint | null>;
@@ -116,9 +109,10 @@ export class AssertedLocationComponent {
       assertion: this.assertion,
       tag: this.tag,
     });
-    // events
-    this.editorClose = new EventEmitter<any>();
-    this.locationChange = new EventEmitter<AssertedLocation>();
+
+    effect(() => {
+      this.updateForm(this.location());
+    });
   }
 
   private updateForm(location: AssertedLocation | undefined | null): void {
@@ -206,6 +200,6 @@ export class AssertedLocationComponent {
     if (this.form.invalid) {
       return;
     }
-    this.locationChange.emit(this.getModel());
+    this.location.set(this.getModel());
   }
 }

@@ -1,9 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ThesaurusEntry } from '@myrmidon/cadmus-core';
-import { ProperName, ProperNameComponent } from '@myrmidon/cadmus-refs-proper-name';
+import { Component, effect, input, model, output } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
-import { AssertedToponym } from '../asserted-toponyms-part';
 import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -12,28 +16,34 @@ import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 
+import { ThesaurusEntry } from '@myrmidon/cadmus-core';
+import {
+  ProperName,
+  ProperNameComponent,
+} from '@myrmidon/cadmus-refs-proper-name';
+
+import { AssertedToponym } from '../asserted-toponyms-part';
+
 @Component({
-    selector: 'cadmus-asserted-toponym',
-    templateUrl: './asserted-toponym.component.html',
-    styleUrls: ['./asserted-toponym.component.css'],
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatInput,
-        MatError,
-        MatLabel,
-        MatSelect,
-        MatOption,
-        ProperNameComponent,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-    ],
+  selector: 'cadmus-asserted-toponym',
+  templateUrl: './asserted-toponym.component.html',
+  styleUrls: ['./asserted-toponym.component.css'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInput,
+    MatError,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    ProperNameComponent,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+  ],
 })
 export class AssertedToponymComponent {
-  private _toponym: AssertedToponym | undefined | null;
-
   public eid: FormControl<string | null>;
   public tag: FormControl<string | null>;
   public name: FormControl<ProperName | null>;
@@ -41,53 +51,26 @@ export class AssertedToponymComponent {
 
   public initialName?: ProperName;
 
-  @Input()
-  public get toponym(): AssertedToponym | undefined | null {
-    return this._toponym;
-  }
-  public set toponym(value: AssertedToponym | undefined | null) {
-    if (this._toponym !== value) {
-      this._toponym = value;
-      this.updateForm(value);
-    }
-  }
+  public readonly toponym = model<AssertedToponym>();
 
   // geo-toponym-tags
-  @Input()
-  public topTagEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly topTagEntries = input<ThesaurusEntry[]>();
   // geo-name-tags
-  @Input()
-  public nameTagEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly nameTagEntries = input<ThesaurusEntry[]>();
   // geo-name-languages
-  @Input()
-  public nameLangEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly nameLangEntries = input<ThesaurusEntry[]>();
   // geo-name-piece-types
-  @Input()
-  public nameTypeEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly nameTypeEntries = input<ThesaurusEntry[]>();
   // assertion-tags
-  @Input()
-  public assTagEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly assTagEntries = input<ThesaurusEntry[]>();
   // doc-reference-types
-  @Input()
-  public refTypeEntries: ThesaurusEntry[] | undefined;
-
+  public readonly refTypeEntries = input<ThesaurusEntry[]>();
   // doc-reference-tags
-  @Input()
-  public refTagEntries: ThesaurusEntry[] | undefined;
+  public readonly refTagEntries = input<ThesaurusEntry[]>();
 
-  @Output()
-  public toponymChange: EventEmitter<AssertedToponym>;
-  @Output()
-  public editorClose: EventEmitter<any>;
+  public readonly editorClose = output();
 
   constructor(formBuilder: FormBuilder) {
-    this.toponymChange = new EventEmitter<AssertedToponym>();
-    this.editorClose = new EventEmitter<any>();
     // form
     this.eid = formBuilder.control(null, Validators.maxLength(500));
     this.tag = formBuilder.control(null, Validators.maxLength(50));
@@ -96,6 +79,10 @@ export class AssertedToponymComponent {
       eid: this.eid,
       tag: this.tag,
       name: this.name,
+    });
+
+    effect(() => {
+      this.updateForm(this.toponym());
     });
   }
 
@@ -133,6 +120,6 @@ export class AssertedToponymComponent {
     if (this.form.invalid) {
       return;
     }
-    this.toponymChange.emit(this.getModel());
+    this.toponym.set(this.getModel());
   }
 }

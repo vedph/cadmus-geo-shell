@@ -9,11 +9,11 @@
     </mat-form-field>
 
     <!-- tag (bound) -->
-    @if (topTagEntries?.length) {
+    @if (topTagEntries()?.length) {
     <mat-form-field>
       <mat-label>tag</mat-label>
       <mat-select [formControl]="tag">
-        @for (e of topTagEntries; track e.id) {
+        @for (e of topTagEntries(); track e.id) {
         <mat-option [value]="e.id">{{ e.value }}</mat-option>
         }
       </mat-select>
@@ -36,24 +36,19 @@
     <legend>name</legend>
     <cadmus-refs-proper-name
       [name]="initialName"
-      [tagEntries]="nameTagEntries"
-      [langEntries]="nameLangEntries"
-      [typeEntries]="nameTypeEntries"
-      [assTagEntries]="assTagEntries"
-      [refTagEntries]="refTagEntries"
-      [refTypeEntries]="refTypeEntries"
+      [tagEntries]="nameTagEntries()"
+      [langEntries]="nameLangEntries()"
+      [typeEntries]="nameTypeEntries()"
+      [assTagEntries]="assTagEntries()"
+      [refTagEntries]="refTagEntries()"
+      [refTypeEntries]="refTypeEntries()"
       (nameChange)="onNameChange($event)"
     />
   </fieldset>
 
   <!-- buttons -->
   <div>
-    <button
-      type="button"
-      mat-icon-button
-      matTooltip="Close"
-      (click)="cancel()"
-    >
+    <button type="button" mat-icon-button matTooltip="Close" (click)="cancel()">
       <mat-icon class="mat-warn">clear</mat-icon>
     </button>
     <button

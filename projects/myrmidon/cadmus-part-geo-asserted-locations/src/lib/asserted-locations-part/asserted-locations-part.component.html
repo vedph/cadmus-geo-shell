@@ -107,7 +107,7 @@
               [refTagEntries]="refTagEntries"
               [refTypeEntries]="refTypeEntries"
               [location]="edited"
-              (locationChange)="saveAssertedLocation($event)"
+              (locationChange)="saveAssertedLocation($event!)"
               (editorClose)="closeAssertedLocation()"
             />
           </mat-expansion-panel>

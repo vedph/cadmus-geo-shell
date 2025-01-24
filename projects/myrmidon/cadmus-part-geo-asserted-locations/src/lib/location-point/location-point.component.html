@@ -18,7 +18,7 @@
   </mat-form-field>
 
   <!-- locator -->
-  @if (hasLocator) {
+  @if (hasLocator() && hasService) {
   <button
     type="button"
     mat-icon-button
@@ -28,7 +28,7 @@
   >
     <mat-icon class="mat-primary">my_location</mat-icon>
   </button>
-  } @if (hasLocator && location?.coords) {
+  } @if (hasLocator() && location?.coords) {
   <a
     type="button"
     [href]="

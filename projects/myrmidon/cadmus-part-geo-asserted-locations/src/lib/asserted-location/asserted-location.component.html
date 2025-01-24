@@ -1,10 +1,10 @@
 <form [formGroup]="form" (submit)="save()">
   <!-- point -->
   <cadmus-location-point
-    [point]="point.value"
+    [point]="point.value || undefined"
     [hasLocator]="true"
-    (pointChange)="onPointChange($event)"
-  ></cadmus-location-point>
+    (pointChange)="onPointChange($event!)"
+  />
 
   <!-- altitude -->
   <div class="form-row">
@@ -30,8 +30,8 @@
       <cadmus-location-point
         [point]="box.value?.a"
         [hasLocator]="true"
-        (pointChange)="onPointAChange($event)"
-      ></cadmus-location-point>
+        (pointChange)="onPointAChange($event!)"
+      />
     </div>
     <div>
       <!-- point B -->
@@ -39,8 +39,8 @@
       <cadmus-location-point
         [point]="box.value?.b"
         [hasLocator]="true"
-        (pointChange)="onPointBChange($event)"
-      ></cadmus-location-point>
+        (pointChange)="onPointBChange($event!)"
+      />
     </div>
   </fieldset>
   }
@@ -59,11 +59,11 @@
 
   <div>
     <!-- tag (bound) -->
-    @if (locTagEntries?.length) {
+    @if (locTagEntries()?.length) {
     <mat-form-field>
       <mat-label>tag</mat-label>
       <mat-select [formControl]="tag">
-        @for (e of locTagEntries; track e.id) {
+        @for (e of locTagEntries(); track e.id) {
         <mat-option [value]="e.id">{{ e.value }}</mat-option>
         }
       </mat-select>
@@ -71,7 +71,7 @@
     }
 
     <!-- tag (free) -->
-    @if (!locTagEntries?.length) {
+    @if (!locTagEntries()?.length) {
     <mat-form-field>
       <mat-label>tag</mat-label>
       <input matInput [formControl]="tag" />
@@ -91,9 +91,9 @@
     <legend>assertion</legend>
     <cadmus-refs-assertion
       [assertion]="assertion.value || undefined"
-      [assTagEntries]="assTagEntries"
-      [refTagEntries]="refTagEntries"
-      [refTypeEntries]="refTypeEntries"
+      [assTagEntries]="assTagEntries()"
+      [refTagEntries]="refTagEntries()"
+      [refTypeEntries]="refTypeEntries()"
       (assertionChange)="onAssertionChange($event)"
     />
   </fieldset>

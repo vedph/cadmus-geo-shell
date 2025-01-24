@@ -30,7 +30,7 @@
           <tbody>
             @for ( entry of toponyms.value; track entry; let i = $index; let
             first = $first; let last = $last) {
-            <tr>
+            <tr [class.selected]="i === editedIndex">
               <td>
                 <button
                   type="button"
@@ -99,10 +99,9 @@
           [refTypeEntries]="refTypeEntries"
           [nameTypeEntries]="nameTypeEntries"
           [nameLangEntries]="nameLangEntries"
-          (toponymChange)="saveAssertedToponym($event)"
+          (toponymChange)="saveAssertedToponym($event!)"
           (editorClose)="closeAssertedToponym()"
-        >
-        </cadmus-asserted-toponym>
+        />
       </mat-expansion-panel>
     </mat-card-content>
     <mat-card-actions>
