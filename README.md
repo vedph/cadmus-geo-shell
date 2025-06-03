@@ -76,6 +76,8 @@ imports: [
 
 ## History
 
+- 2025-06-03: ⚠️ upgraded to Angular 20 bumping major version to 10.
+
 ### 9.0.0
 
 - 2025-01-28: ⚠️ updated Cadmus dependencies for signals. The only relevant change (apart from version numbers) is changing part feature data change event handler: `(dataChange)="save($event!.value!)"`.
