@@ -76,6 +76,8 @@ imports: [
 
 ## History
 
+- 2025-06-07: updated Angular and packages.
+
 ### 10.0.0
 
 - 2025-06-03: ⚠️ upgraded to Angular 20 bumping major version to 10.
