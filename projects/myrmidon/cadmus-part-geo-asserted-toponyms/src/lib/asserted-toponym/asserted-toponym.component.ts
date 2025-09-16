@@ -44,13 +44,6 @@ import { AssertedToponym } from '../asserted-toponyms-part';
   ],
 })
 export class AssertedToponymComponent {
-  public eid: FormControl<string | null>;
-  public tag: FormControl<string | null>;
-  public name: FormControl<ProperName | null>;
-  public form: FormGroup;
-
-  public initialName?: ProperName;
-
   public readonly toponym = model<AssertedToponym>();
 
   // geo-toponym-tags
@@ -70,6 +63,11 @@ export class AssertedToponymComponent {
 
   public readonly editorClose = output();
 
+  public eid: FormControl<string | null>;
+  public tag: FormControl<string | null>;
+  public name: FormControl<ProperName | null>;
+  public form: FormGroup;
+
   constructor(formBuilder: FormBuilder) {
     // form
     this.eid = formBuilder.control(null, Validators.maxLength(500));
@@ -82,7 +80,8 @@ export class AssertedToponymComponent {
     });
 
     effect(() => {
-      this.updateForm(this.toponym());
+      const toponym =  this.toponym();
+      this.updateForm(toponym);
     });
   }
 
@@ -94,7 +93,7 @@ export class AssertedToponymComponent {
 
     this.eid.setValue(toponym.eid || null);
     this.tag.setValue(toponym.tag || null);
-    this.initialName = toponym.name;
+    this.name.setValue(toponym.name);
     this.form.markAsPristine();
   }
 
@@ -104,7 +103,7 @@ export class AssertedToponymComponent {
     this.name.updateValueAndValidity();
   }
 
-  private getModel(): AssertedToponym {
+  private getToponym(): AssertedToponym {
     return {
       eid: this.eid.value?.trim(),
       tag: this.tag.value?.trim(),
@@ -120,6 +119,7 @@ export class AssertedToponymComponent {
     if (this.form.invalid) {
       return;
     }
-    this.toponym.set(this.getModel());
+    const toponym = this.getToponym();
+    this.toponym.set(toponym);
   }
 }

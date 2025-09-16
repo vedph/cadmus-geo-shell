@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormBuilder,
@@ -7,6 +7,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { TitleCasePipe } from '@angular/common';
 import { take } from 'rxjs/operators';
 
 import {
@@ -25,7 +26,7 @@ import {
   MatExpansionPanelHeader,
 } from '@angular/material/expansion';
 
-import { NgxToolsValidators } from '@myrmidon/ngx-tools';
+import { deepCopy, NgxToolsValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 import {
@@ -35,10 +36,13 @@ import {
 
 import {
   CloseSaveButtonsComponent,
-  EditedObject,
   ModelEditorComponentBase,
 } from '@myrmidon/cadmus-ui';
-import { ThesauriSet, ThesaurusEntry } from '@myrmidon/cadmus-core';
+import {
+  EditedObject,
+  ThesauriSet,
+  ThesaurusEntry,
+} from '@myrmidon/cadmus-core';
 
 import {
   AssertedToponym,
@@ -70,6 +74,7 @@ import { AssertedToponymComponent } from '../asserted-toponym/asserted-toponym.c
     MatTooltip,
     MatExpansionPanel,
     MatExpansionPanelHeader,
+    TitleCasePipe,
     AssertedToponymComponent,
     MatCardActions,
     CadmusProperNamePipe,
@@ -80,36 +85,47 @@ export class AssertedToponymsPartComponent
   extends ModelEditorComponentBase<AssertedToponymsPart>
   implements OnInit
 {
-  public editedIndex: number;
-
-  public edited: AssertedToponym | undefined;
+  public readonly editedIndex = signal<number>(-1);
+  public readonly edited = signal<AssertedToponym | undefined>(undefined);
 
   // geo-toponym-tags
-  public topTagEntries?: ThesaurusEntry[];
-
+  public readonly topTagEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // geo-name-tags
-  public nameTagEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly nameTagEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // geo-name-languages
-  public nameLangEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly nameLangEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // geo-name-piece-types
-  public nameTypeEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly nameTypeEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // assertion-tags
-  public assTagEntries?: ThesaurusEntry[] | undefined;
-
+  public readonly assTagEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // doc-reference-types
-  public refTypeEntries: ThesaurusEntry[] | undefined;
-
+  public readonly refTypeEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // doc-reference-tags
-  public refTagEntries: ThesaurusEntry[] | undefined;
+  public readonly refTagEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
 
   public toponyms: FormControl<AssertedToponym[]>;
 
   // calculated entries
-  public namePieceTypeEntries: ThesaurusEntry[];
-  public namePieceValueEntries: ThesaurusEntry[];
+  public readonly namePieceTypeEntries = computed(() => {
+    return this._nameService.parseTypeEntries(this.nameTypeEntries() || []);
+  });
+  public readonly namePieceValueEntries = computed(() => {
+    return this._nameService.getValueEntries(this.namePieceTypeEntries());
+  });
 
   constructor(
     authService: AuthJwtService,
@@ -118,9 +134,6 @@ export class AssertedToponymsPartComponent
     private _dialogService: DialogService
   ) {
     super(authService, formBuilder);
-    this.editedIndex = -1;
-    this.namePieceTypeEntries = [];
-    this.namePieceValueEntries = [];
     // form
     this.toponyms = formBuilder.control([], {
       // at least 1 entry
@@ -139,62 +152,52 @@ export class AssertedToponymsPartComponent
     });
   }
 
-  private updateCalculatedEntries(typeEntries: ThesaurusEntry[]): void {
-    this.namePieceTypeEntries = this._nameService.parseTypeEntries(typeEntries);
-    this.namePieceValueEntries = this._nameService.getValueEntries(
-      this.namePieceTypeEntries
-    );
-  }
-
   private updateThesauri(thesauri: ThesauriSet): void {
     let key = 'geo-toponym-tags';
     if (this.hasThesaurus(key)) {
-      this.topTagEntries = thesauri[key].entries;
+      this.topTagEntries.set(thesauri[key].entries);
     } else {
-      this.topTagEntries = undefined;
+      this.topTagEntries.set(undefined);
     }
 
     key = 'geo-name-tags';
     if (this.hasThesaurus(key)) {
-      this.nameTagEntries = thesauri[key].entries;
+      this.nameTagEntries.set(thesauri[key].entries);
     } else {
-      this.nameTagEntries = undefined;
+      this.nameTagEntries.set(undefined);
     }
 
     key = 'geo-name-languages';
     if (this.hasThesaurus(key)) {
-      this.nameLangEntries = thesauri[key].entries;
+      this.nameLangEntries.set(thesauri[key].entries);
     } else {
-      this.nameLangEntries = undefined;
+      this.nameLangEntries.set(undefined);
     }
 
     key = 'geo-name-piece-types';
     if (this.hasThesaurus(key)) {
-      this.nameTypeEntries = thesauri[key].entries;
-      this.updateCalculatedEntries(this.nameTypeEntries || []);
+      this.nameTypeEntries.set(thesauri[key].entries);
     } else {
-      this.nameTypeEntries = undefined;
-      this.namePieceTypeEntries = [];
-      this.namePieceValueEntries = [];
+      this.nameTypeEntries.set(undefined);
     }
 
     key = 'assertion-tags';
     if (this.hasThesaurus(key)) {
-      this.assTagEntries = thesauri[key].entries;
+      this.assTagEntries.set(thesauri[key].entries);
     } else {
-      this.assTagEntries = undefined;
+      this.assTagEntries.set(undefined);
     }
     key = 'doc-reference-types';
     if (this.hasThesaurus(key)) {
-      this.refTypeEntries = thesauri[key].entries;
+      this.refTypeEntries.set(thesauri[key].entries);
     } else {
-      this.refTypeEntries = undefined;
+      this.refTypeEntries.set(undefined);
     }
     key = 'doc-reference-tags';
     if (this.hasThesaurus(key)) {
-      this.refTagEntries = thesauri[key].entries;
+      this.refTagEntries.set(thesauri[key].entries);
     } else {
-      this.refTagEntries = undefined;
+      this.refTagEntries.set(undefined);
     }
   }
 
@@ -230,8 +233,8 @@ export class AssertedToponymsPartComponent
   public addAssertedToponym(): void {
     const entry: AssertedToponym = {
       name: {
-        language: this.nameLangEntries?.length
-          ? this.nameLangEntries[0].id
+        language: this.nameLangEntries()?.length
+          ? this.nameLangEntries()![0].id
           : '',
         pieces: [],
       },
@@ -240,21 +243,21 @@ export class AssertedToponymsPartComponent
   }
 
   public editAssertedToponym(entry: AssertedToponym, index: number): void {
-    this.editedIndex = index;
-    this.edited = entry;
+    this.editedIndex.set(index);
+    this.edited.set(deepCopy(entry));
   }
 
   public closeAssertedToponym(): void {
-    this.editedIndex = -1;
-    this.edited = undefined;
+    this.editedIndex.set(-1);
+    this.edited.set(undefined);
   }
 
   public saveAssertedToponym(entry: AssertedToponym): void {
     const entries = [...this.toponyms.value];
-    if (this.editedIndex === -1) {
+    if (this.editedIndex() === -1) {
       entries.push(entry);
     } else {
-      entries.splice(this.editedIndex, 1, entry);
+      entries.splice(this.editedIndex(), 1, entry);
     }
     this.toponyms.setValue(entries);
     this.toponyms.markAsDirty();
@@ -268,7 +271,7 @@ export class AssertedToponymsPartComponent
       .pipe(take(1))
       .subscribe((yes) => {
         if (yes) {
-          if (this.editedIndex === index) {
+          if (this.editedIndex() === index) {
             this.closeAssertedToponym();
           }
           const entries = [...this.toponyms.value];

@@ -35,7 +35,7 @@
   <fieldset>
     <legend>name</legend>
     <cadmus-refs-proper-name
-      [name]="initialName"
+      [name]="name.value || undefined"
       [tagEntries]="nameTagEntries()"
       [langEntries]="nameLangEntries()"
       [typeEntries]="nameTypeEntries()"

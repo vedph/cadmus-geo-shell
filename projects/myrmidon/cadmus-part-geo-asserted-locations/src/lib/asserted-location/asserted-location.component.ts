@@ -59,13 +59,10 @@ export class AssertedLocationComponent {
 
   // geo-location-tags
   public readonly locTagEntries = input<ThesaurusEntry[]>();
-
   // assertion-tags
   public readonly assTagEntries = input<ThesaurusEntry[]>();
-
   // doc-reference-types
   public readonly refTypeEntries = input<ThesaurusEntry[]>();
-
   // doc-reference-tags
   public readonly refTagEntries = input<ThesaurusEntry[]>();
 
@@ -143,7 +140,7 @@ export class AssertedLocationComponent {
     this.form.markAsPristine();
   }
 
-  private getModel(): AssertedLocation {
+  private getLocation(): AssertedLocation {
     return {
       point: this.point.value!,
       altitude:
@@ -200,6 +197,6 @@ export class AssertedLocationComponent {
     if (this.form.invalid) {
       return;
     }
-    this.location.set(this.getModel());
+    this.location.set(this.getLocation());
   }
 }

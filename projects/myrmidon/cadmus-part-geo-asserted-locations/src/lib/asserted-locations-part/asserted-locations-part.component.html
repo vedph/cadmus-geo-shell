@@ -4,7 +4,9 @@
       <div mat-card-avatar>
         <mat-icon>picture_in_picture</mat-icon>
       </div>
-      <mat-card-title>Locations Part</mat-card-title>
+      <mat-card-title>{{
+        (modelName() | titlecase) || "Locations Part"
+      }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div id="container">
@@ -22,7 +24,7 @@
             <button
               type="button"
               mat-icon-button
-              [disabled]="leafletLayers.length < 2"
+              [disabled]="leafletLayers().length < 2"
               matTooltip="Fit map to locations"
               (click)="fitMapToMarkers()"
             >
@@ -41,8 +43,8 @@
             <tbody>
               @for ( entry of locations.value; track entry; let i = $index; let
               first = $first; let last = $last) {
-              <tr [class.selected]="entry === selectedLocation">
-                <td>
+              <tr [class.selected]="i === editedIndex()">
+                <td class="fit-width">
                   <button
                     type="button"
                     mat-icon-button
@@ -77,7 +79,7 @@
                   >
                     <mat-icon class="mat-warn">remove_circle</mat-icon>
                   </button>
-                  @if (mapToken) {
+                  @if (mapToken()) {
                   <button
                     type="button"
                     mat-icon-button
@@ -99,18 +101,20 @@
 
         <!-- editor -->
         <div id="editor">
-          <mat-expansion-panel [expanded]="edited" [disabled]="!edited">
+          @if (edited()) {
+          <mat-expansion-panel [expanded]="edited()" [disabled]="!edited()">
             <mat-expansion-panel-header>location</mat-expansion-panel-header>
             <cadmus-asserted-location
-              [assTagEntries]="assTagEntries"
-              [locTagEntries]="locTagEntries"
-              [refTagEntries]="refTagEntries"
-              [refTypeEntries]="refTypeEntries"
-              [location]="edited"
+              [assTagEntries]="assTagEntries()"
+              [locTagEntries]="locTagEntries()"
+              [refTagEntries]="refTagEntries()"
+              [refTypeEntries]="refTypeEntries()"
+              [location]="edited()"
               (locationChange)="saveAssertedLocation($event!)"
               (editorClose)="closeAssertedLocation()"
             />
           </mat-expansion-panel>
+          }
         </div>
 
         <!-- map -->
@@ -118,9 +122,9 @@
           <div
             id="map"
             leaflet
-            [leafletOptions]="leafletOptions"
-            [leafletLayers]="leafletLayers"
-            [leafletLayersControl]="layersControl"
+            [leafletOptions]="leafletOptions()"
+            [leafletLayers]="leafletLayers()"
+            [leafletLayersControl]="layersControl()"
             (leafletMapReady)="onMapReady($event)"
           ></div>
         </div>

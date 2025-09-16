@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 
 // cadmus
 import { PendingChangesGuard } from '@myrmidon/cadmus-core';
@@ -16,7 +13,7 @@ import {
   ASSERTED_TOPONYMS_PART_TYPEID,
 } from '@myrmidon/cadmus-part-geo-asserted-toponyms';
 
-export const RouterModuleForChild = RouterModule.forChild([
+export const CADMUS_PART_GEO_PG_ROUTES: Routes = [
   {
     path: `${ASSERTED_LOCATIONS_PART_TYPEID}/:pid`,
     pathMatch: 'full',
@@ -29,17 +26,4 @@ export const RouterModuleForChild = RouterModule.forChild([
     component: AssertedToponymsPartFeatureComponent,
     canDeactivate: [PendingChangesGuard],
   },
-]);
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    // Cadmus
-    RouterModuleForChild,
-  ],
-  exports: [],
-})
-export class CadmusPartGeoPgModule {}
+];

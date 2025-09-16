@@ -76,6 +76,12 @@ imports: [
 
 ## History
 
+### 11.0.0
+
+- 2025-09-16:
+  - updated Angular and packages.
+  - refactored components state to fully reactive.
+  - ⚠️ replaced legacy module with routes in PG library.
 - 2025-06-07: updated Angular and packages.
 
 ### 10.0.0

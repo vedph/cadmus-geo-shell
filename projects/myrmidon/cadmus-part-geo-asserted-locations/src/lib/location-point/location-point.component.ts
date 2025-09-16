@@ -5,6 +5,7 @@ import {
   model,
   OnDestroy,
   OnInit,
+  signal,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -54,10 +55,7 @@ import { GeoLocationService } from '../services/geo-location.service';
 })
 export class LocationPointComponent implements OnInit, OnDestroy {
   private _sub?: Subscription;
-  private _dropNextInput?: boolean;
-  private _updatingForm?: boolean;
-
-  public hasService = true;
+  private _updatingForm = false;
 
   /**
    * The point to edit.
@@ -78,8 +76,9 @@ export class LocationPointComponent implements OnInit, OnDestroy {
     timeout: 10 * 1000,
   });
 
-  public locating?: boolean;
-  public location?: GeolocationPosition;
+  public readonly hasService = signal<boolean>(true);
+  public readonly locating = signal<boolean>(false);
+  public readonly location = signal<GeolocationPosition | undefined>(undefined);
 
   // form
   public lat: FormControl<number>;
@@ -106,12 +105,7 @@ export class LocationPointComponent implements OnInit, OnDestroy {
     // when point is set, update form
     effect(() => {
       const point = this.point();
-      console.log('point input', point);
-      if (this._dropNextInput) {
-        console.log('dropped input');
-        this._dropNextInput = false;
-        return;
-      }
+      console.log('input point', point);
       this.updateForm(point);
     });
   }
@@ -119,7 +113,8 @@ export class LocationPointComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     // disable locator if not available
     if (!this._geoService.isAvailable()) {
-      this.hasService = false;
+      console.warn('Geolocation service not available');
+      this.hasService.set(false);
     }
 
     // when form changes, update point
@@ -128,8 +123,6 @@ export class LocationPointComponent implements OnInit, OnDestroy {
         return;
       }
       const point = this.getPoint();
-      console.log('form changed', point);
-      this._dropNextInput = true;
       this.point.set(point);
     });
   }
@@ -154,32 +147,33 @@ export class LocationPointComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.lat.setValue(point.lat);
-    this.lon.setValue(point.lon);
+    this.lat.setValue(point.lat, { emitEvent: false });
+    this.lon.setValue(point.lon, { emitEvent: false });
     this.form.markAsPristine();
 
     this._updatingForm = false;
   }
 
   public async setCurrentPosition() {
-    if (this.locating) {
+    if (this.locating()) {
       return;
     }
 
-    this.locating = true;
-    this.location = undefined;
+    this.locating.set(true);
+    this.location.set(undefined);
 
     try {
-      this.location = await this._geoService.getCurrentPosition(
-        this.positionOptions()
+      this.location.set(
+        await this._geoService.getCurrentPosition(this.positionOptions())
       );
-      this.lat.setValue(this.location.coords.latitude);
-      this.lon.setValue(this.location.coords.longitude);
-      this.locating = false;
-      this.point.set(this.getPoint());
+      this.lat.setValue(this.location()!.coords.latitude);
+      this.lon.setValue(this.location()!.coords.longitude);
+      this.locating.set(false);
+      const point = this.getPoint();
+      this.point.set(point);
     } catch (err) {
       console.error(err ? JSON.stringify(err) : 'Error locating position');
-      this.locating = false;
+      this.locating.set(false);
     }
   }
 }

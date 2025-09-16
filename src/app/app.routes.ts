@@ -91,7 +91,7 @@ export const routes: Routes = [
     path: 'items/:iid/geography',
     loadChildren: () =>
       import('@myrmidon/cadmus-part-geo-pg').then(
-        (module) => module.CadmusPartGeoPgModule
+        (module) => module.CADMUS_PART_GEO_PG_ROUTES
       ),
     canActivate: [AuthJwtGuardService],
   },

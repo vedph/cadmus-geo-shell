@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormBuilder,
@@ -8,17 +8,21 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { debounceTime, take } from 'rxjs/operators';
+import { TitleCasePipe } from '@angular/common';
 
-import { EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
+import { deepCopy, EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 
 import {
   CloseSaveButtonsComponent,
-  EditedObject,
   ModelEditorComponentBase,
 } from '@myrmidon/cadmus-ui';
-import { ThesauriSet, ThesaurusEntry } from '@myrmidon/cadmus-core';
+import {
+  EditedObject,
+  ThesauriSet,
+  ThesaurusEntry,
+} from '@myrmidon/cadmus-core';
 
 import {
   MatCard,
@@ -82,6 +86,7 @@ const OSM_ATTR =
     MatTooltip,
     MatExpansionPanel,
     MatExpansionPanelHeader,
+    TitleCasePipe,
     AssertedLocationComponent,
     LeafletModule,
     MatCardActions,
@@ -92,16 +97,18 @@ export class AssertedLocationsPartComponent
   extends ModelEditorComponentBase<AssertedLocationsPart>
   implements OnInit
 {
-  private _editedIndex: number;
   private _updating?: boolean;
   private _map?: Map;
 
-  public edited: AssertedLocation | undefined;
+  public readonly edited = signal<AssertedLocation | undefined>(undefined);
+  public readonly editedIndex = signal<number>(-1);
 
-  public leafletLayers: Layer[] = [];
-  public selectedLocation?: AssertedLocation;
+  public readonly leafletLayers = signal<Layer[]>([]);
+  public readonly selectedLocation = signal<AssertedLocation | undefined>(
+    undefined
+  );
 
-  public leafletOptions = {
+  public readonly leafletOptions = signal<any>({
     layers: [
       tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
@@ -110,9 +117,9 @@ export class AssertedLocationsPartComponent
     ],
     zoom: 5,
     center: latLng(46.879966, -121.726909),
-  };
+  });
 
-  public layersControl = {
+  public readonly layersControl = signal<any>({
     baseLayers: {
       'Open Street Map': tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -122,23 +129,28 @@ export class AssertedLocationsPartComponent
     overlays: {
       Markers: layerGroup([]),
     },
-  };
+  });
+  // TODO use this to provide an additional layer (satellite imagery) from mapbox
+  public readonly mapToken = signal<string | undefined>(undefined);
 
   // geo-location-tags
-  public locTagEntries?: ThesaurusEntry[];
-
+  public readonly locTagEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // assertion-tags
-  public assTagEntries?: ThesaurusEntry[];
-
+  public readonly assTagEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // doc-reference-types
-  public refTypeEntries?: ThesaurusEntry[];
-
+  public readonly refTypeEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
   // doc-reference-tags
-  public refTagEntries?: ThesaurusEntry[];
+  public readonly refTagEntries = signal<ThesaurusEntry[] | undefined>(
+    undefined
+  );
 
   public locations: FormControl<AssertedLocation[]>;
-  // TODO use this to provide an additional layer (satellite imagery) from mapbox
-  public mapToken?: string;
 
   constructor(
     authService: AuthJwtService,
@@ -147,8 +159,7 @@ export class AssertedLocationsPartComponent
     env: EnvService
   ) {
     super(authService, formBuilder);
-    this._editedIndex = -1;
-    this.mapToken = env.get('mapbox_token');
+    this.mapToken.set(env.get('mapbox_token'));
     // form
     this.locations = formBuilder.control([], {
       // at least 1 entry
@@ -178,27 +189,27 @@ export class AssertedLocationsPartComponent
   private updateThesauri(thesauri: ThesauriSet): void {
     let key = 'geo-location-tags';
     if (this.hasThesaurus(key)) {
-      this.locTagEntries = thesauri[key].entries;
+      this.locTagEntries.set(thesauri[key].entries);
     } else {
-      this.locTagEntries = undefined;
+      this.locTagEntries.set(undefined);
     }
     key = 'assertion-tags';
     if (this.hasThesaurus(key)) {
-      this.assTagEntries = thesauri[key].entries;
+      this.assTagEntries.set(thesauri[key].entries);
     } else {
-      this.assTagEntries = undefined;
+      this.assTagEntries.set(undefined);
     }
     key = 'doc-reference-types';
     if (this.hasThesaurus(key)) {
-      this.refTypeEntries = thesauri[key].entries;
+      this.refTypeEntries.set(thesauri[key].entries);
     } else {
-      this.refTypeEntries = undefined;
+      this.refTypeEntries.set(undefined);
     }
     key = 'doc-reference-tags';
     if (this.hasThesaurus(key)) {
-      this.refTagEntries = thesauri[key].entries;
+      this.refTagEntries.set(thesauri[key].entries);
     } else {
-      this.refTagEntries = undefined;
+      this.refTagEntries.set(undefined);
     }
   }
 
@@ -241,23 +252,23 @@ export class AssertedLocationsPartComponent
   }
 
   public editAssertedLocation(entry: AssertedLocation, index: number): void {
-    this._editedIndex = index;
-    this.edited = entry;
+    this.editedIndex.set(index);
+    this.edited.set(deepCopy(entry));
   }
 
   public closeAssertedLocation(): void {
-    this._editedIndex = -1;
-    this.edited = undefined;
+    this.editedIndex.set(-1);
+    this.edited.set(undefined);
   }
 
   public saveAssertedLocation(entry: AssertedLocation): void {
-    const entries = [...this.locations.value];
-    if (this._editedIndex === -1) {
-      entries.push(entry);
+    const locations = [...this.locations.value];
+    if (this.editedIndex() === -1) {
+      locations.push(entry);
     } else {
-      entries.splice(this._editedIndex, 1, entry);
+      locations.splice(this.editedIndex(), 1, entry);
     }
-    this.locations.setValue(entries);
+    this.locations.setValue(locations);
     this.locations.markAsDirty();
     this.locations.updateValueAndValidity();
     this.closeAssertedLocation();
@@ -269,12 +280,12 @@ export class AssertedLocationsPartComponent
       .pipe(take(1))
       .subscribe((yes) => {
         if (yes) {
-          if (this._editedIndex === index) {
+          if (this.editedIndex() === index) {
             this.closeAssertedLocation();
           }
-          const entries = [...this.locations.value];
-          entries.splice(index, 1);
-          this.locations.setValue(entries);
+          const locations = [...this.locations.value];
+          locations.splice(index, 1);
+          this.locations.setValue(locations);
           this.locations.markAsDirty();
           this.locations.updateValueAndValidity();
         }
@@ -285,11 +296,11 @@ export class AssertedLocationsPartComponent
     if (index < 1) {
       return;
     }
-    const entry = this.locations.value[index];
-    const entries = [...this.locations.value];
-    entries.splice(index, 1);
-    entries.splice(index - 1, 0, entry);
-    this.locations.setValue(entries);
+    const location = this.locations.value[index];
+    const locations = [...this.locations.value];
+    locations.splice(index, 1);
+    locations.splice(index - 1, 0, location);
+    this.locations.setValue(locations);
     this.locations.markAsDirty();
     this.locations.updateValueAndValidity();
   }
@@ -298,11 +309,11 @@ export class AssertedLocationsPartComponent
     if (index + 1 >= this.locations.value.length) {
       return;
     }
-    const entry = this.locations.value[index];
-    const entries = [...this.locations.value];
-    entries.splice(index, 1);
-    entries.splice(index + 1, 0, entry);
-    this.locations.setValue(entries);
+    const location = this.locations.value[index];
+    const locations = [...this.locations.value];
+    locations.splice(index, 1);
+    locations.splice(index + 1, 0, location);
+    this.locations.setValue(locations);
     this.locations.markAsDirty();
     this.locations.updateValueAndValidity();
   }
@@ -312,9 +323,9 @@ export class AssertedLocationsPartComponent
   }
 
   public fitMapToMarkers() {
-    if (!this._map || !this.leafletLayers.length) return;
+    if (!this._map || !this.leafletLayers().length) return;
 
-    const latlngs = this.leafletLayers
+    const latlngs = this.leafletLayers()
       .filter((layer: Layer) => this.isMarker(layer))
       .map((marker) => (marker as Marker).getLatLng());
     const bounds = latLngBounds(latlngs);
@@ -351,7 +362,7 @@ export class AssertedLocationsPartComponent
       (l) => l.point.lat === latlng[0] && l.point.lon === latlng[1]
     );
     if (location) {
-      this.selectedLocation = location;
+      this.selectedLocation.set(location);
     }
   }
 
@@ -371,15 +382,17 @@ export class AssertedLocationsPartComponent
 
   private updateMarkers(locations: AssertedLocation[]): void {
     // add markers from locations
-    this.leafletLayers = locations.map((l) => {
-      const m = this.createMarker([l.point.lat, l.point.lon]);
-      return m;
-    });
+    this.leafletLayers.set(
+      locations.map((l) => {
+        const m = this.createMarker([l.point.lat, l.point.lon]);
+        return m;
+      })
+    );
 
     // if there is a single marker, center the map on it;
     // else fit it to the markers bounds
-    if (this.leafletLayers.length === 1) {
-      const marker = this.leafletLayers[0];
+    if (this.leafletLayers().length === 1) {
+      const marker = this.leafletLayers()[0];
       if (this.isMarker(marker)) {
         const latLng = (marker as Marker).getLatLng();
         this.flyToLocation(latLng.lat, latLng.lng);
