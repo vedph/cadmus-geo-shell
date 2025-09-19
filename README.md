@@ -78,7 +78,9 @@ imports: [
 
 ### 11.0.1
 
-- 2025-09-18: updated peer dependencies.
+- 2025-09-18:
+  - updated peer dependencies.
+  - updated packages and routes.
 
 ### 11.0.0
 
