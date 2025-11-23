@@ -1,4 +1,8 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
   provideHttpClient,
@@ -6,6 +10,8 @@ import {
   withJsonpSupport,
 } from '@angular/common/http';
 import { provideNativeDateAdapter } from '@angular/material/core';
+
+import { NgeMonacoModule } from '@cisstech/nge/monaco';
 
 import { authJwtInterceptor } from '@myrmidon/auth-jwt-login';
 
@@ -23,6 +29,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([authJwtInterceptor]),
       withJsonpSupport()
     ),
+    importProvidersFrom(NgeMonacoModule.forRoot({})),
     // parts and fragments type IDs to editor group keys mappings
     // https://github.com/nrwl/nx/issues/208#issuecomment-384102058
     // inject like: @Inject('partEditorKeys') partEditorKeys: PartEditorKeys

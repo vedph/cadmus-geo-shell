@@ -11,7 +11,7 @@ This shell is used to develop Cadmus frontend geography libraries.
 
 🐋 Quick Docker image build:
 
-1. `npm run build-lib`;
+1. `pnpm run build-lib`;
 2. update version in `env.js` and `ng build`;
 3. `docker build . -t vedph2020/cadmus-geo-shell:1.0.0 -t vedph2020/cadmus-geo-shell:latest` (replace with the current version).
 
