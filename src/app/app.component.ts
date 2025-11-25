@@ -13,7 +13,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { AuthJwtService, GravatarPipe, User } from '@myrmidon/auth-jwt-login';
 import { EnvService } from '@myrmidon/ngx-tools';
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { LeafletModule } from '@bluehalo/ngx-leaflet';
 
 @Component({
   selector: 'app-root',

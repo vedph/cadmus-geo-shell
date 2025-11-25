@@ -48,7 +48,7 @@ This requires **Leaflet** via [ngx-leaflet](https://github.com/bluehalo/ngx-leaf
 ▶️ (1) install packages:
 
 ```bash
-npm install leaflet @asymmetrik/ngx-leaflet
+npm install leaflet @bluehalo/ngx-leaflet
 npm install --save-dev @types/leaflet
 ```
 
@@ -65,7 +65,7 @@ npm install --save-dev @types/leaflet
 ▶️ (4) import the corresponding module in your root component or module:
 
 ```ts
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { LeafletModule } from '@bluehalo/ngx-leaflet';
 
 ...
 imports: [
@@ -79,6 +79,7 @@ imports: [
 - 2025-11-23:
   - ⚠️ upgraded to Angular 21.
   - migrated to `pnpm`.
+  - replaced deprecated `@asymmetrix/ngx-leaflet` with its new version `@bluehalo/ngx-leaflet`.
 
 ### 11.0.1
 

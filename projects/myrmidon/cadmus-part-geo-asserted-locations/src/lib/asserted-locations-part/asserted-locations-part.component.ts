@@ -40,7 +40,7 @@ import {
   MatExpansionPanelHeader,
 } from '@angular/material/expansion';
 
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { LeafletModule } from '@bluehalo/ngx-leaflet';
 import {
   latLng,
   latLngBounds,
