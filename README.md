@@ -76,6 +76,7 @@ imports: [
 
 ## History
 
+- 2026-01-17: updated Angular and packages.
 - 2025-11-23:
   - ⚠️ upgraded to Angular 21.
   - migrated to `pnpm`.
