@@ -43,6 +43,7 @@ import {
   ThesauriSet,
   ThesaurusEntry,
 } from '@myrmidon/cadmus-core';
+import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 
 import {
   AssertedToponym,
@@ -50,6 +51,10 @@ import {
   ASSERTED_TOPONYMS_PART_TYPEID,
 } from '../asserted-toponyms-part';
 import { AssertedToponymComponent } from '../asserted-toponym/asserted-toponym.component';
+
+interface AssertedToponymsPartSettings {
+  lookupProviderOptions?: LookupProviderOptions;
+}
 
 /**
  * AssertedToponymsPart editor component.
@@ -90,32 +95,37 @@ export class AssertedToponymsPartComponent
 
   // geo-toponym-tags
   public readonly topTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // geo-name-tags
   public readonly nameTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // geo-name-languages
   public readonly nameLangEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // geo-name-piece-types
   public readonly nameTypeEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // assertion-tags
   public readonly assTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // doc-reference-types
   public readonly refTypeEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // doc-reference-tags
   public readonly refTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
+
+  // lookup options depending on role
+  public readonly lookupProviderOptions = signal<
+    LookupProviderOptions | undefined
+  >(undefined);
 
   public toponyms: FormControl<AssertedToponym[]>;
 
@@ -131,7 +141,7 @@ export class AssertedToponymsPartComponent
     authService: AuthJwtService,
     formBuilder: FormBuilder,
     private _nameService: ProperNameService,
-    private _dialogService: DialogService
+    private _dialogService: DialogService,
   ) {
     super(authService, formBuilder);
     // form
@@ -211,20 +221,29 @@ export class AssertedToponymsPartComponent
   }
 
   protected override onDataSet(
-    data?: EditedObject<AssertedToponymsPart>
+    data?: EditedObject<AssertedToponymsPart>,
   ): void {
     // thesauri
     if (data?.thesauri) {
       this.updateThesauri(data.thesauri);
     }
-
+    // settings
+    this._appRepository
+      ?.getSettingFor<AssertedToponymsPartSettings>(
+        ASSERTED_TOPONYMS_PART_TYPEID,
+        this.identity()?.roleId || undefined,
+      )
+      .then((settings) => {
+        const options = settings?.lookupProviderOptions;
+        this.lookupProviderOptions.set(options || undefined);
+      });
     // form
     this.updateForm(data?.value);
   }
 
   protected getValue(): AssertedToponymsPart {
     let part = this.getEditedPart(
-      ASSERTED_TOPONYMS_PART_TYPEID
+      ASSERTED_TOPONYMS_PART_TYPEID,
     ) as AssertedToponymsPart;
     part.toponyms = this.toponyms.value || [];
     return part;

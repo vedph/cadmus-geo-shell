@@ -32,88 +32,96 @@
             </button>
           </div>
           @if (locations.value.length) {
-          <table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>lat</th>
-                <th>lon</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for ( entry of locations.value; track entry; let i = $index; let
-              first = $first; let last = $last) {
-              <tr [class.selected]="i === editedIndex()">
-                <td class="fit-width">
-                  <button
-                    type="button"
-                    mat-icon-button
-                    matTooltip="Edit this location"
-                    (click)="editAssertedLocation(entry, i)"
-                  >
-                    <mat-icon class="mat-primary">edit</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    mat-icon-button
-                    matTooltip="Move this location up"
-                    [disabled]="first"
-                    (click)="moveAssertedLocationUp(i)"
-                  >
-                    <mat-icon>arrow_upward</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    mat-icon-button
-                    matTooltip="Move this location down"
-                    [disabled]="last"
-                    (click)="moveAssertedLocationDown(i)"
-                  >
-                    <mat-icon>arrow_downward</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    mat-icon-button
-                    matTooltip="Delete this location"
-                    (click)="deleteAssertedLocation(i)"
-                  >
-                    <mat-icon class="mat-warn">remove_circle</mat-icon>
-                  </button>
-                  @if (mapToken()) {
-                  <button
-                    type="button"
-                    mat-icon-button
-                    matTooltip="Fly to this location"
-                    (click)="flyToLocation(entry.point.lat, entry.point.lon)"
-                  >
-                    <mat-icon>adjust</mat-icon>
-                  </button>
-                  }
-                </td>
-                <td>{{ entry.point.lat }}</td>
-                <td>{{ entry.point.lon }}</td>
-              </tr>
-              }
-            </tbody>
-          </table>
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>lat</th>
+                  <th>lon</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  entry of locations.value;
+                  track entry;
+                  let i = $index;
+                  let first = $first;
+                  let last = $last
+                ) {
+                  <tr [class.selected]="i === editedIndex()">
+                    <td class="fit-width">
+                      <button
+                        type="button"
+                        mat-icon-button
+                        matTooltip="Edit this location"
+                        (click)="editAssertedLocation(entry, i)"
+                      >
+                        <mat-icon class="mat-primary">edit</mat-icon>
+                      </button>
+                      <button
+                        type="button"
+                        mat-icon-button
+                        matTooltip="Move this location up"
+                        [disabled]="first"
+                        (click)="moveAssertedLocationUp(i)"
+                      >
+                        <mat-icon>arrow_upward</mat-icon>
+                      </button>
+                      <button
+                        type="button"
+                        mat-icon-button
+                        matTooltip="Move this location down"
+                        [disabled]="last"
+                        (click)="moveAssertedLocationDown(i)"
+                      >
+                        <mat-icon>arrow_downward</mat-icon>
+                      </button>
+                      <button
+                        type="button"
+                        mat-icon-button
+                        matTooltip="Delete this location"
+                        (click)="deleteAssertedLocation(i)"
+                      >
+                        <mat-icon class="mat-warn">remove_circle</mat-icon>
+                      </button>
+                      @if (mapToken()) {
+                        <button
+                          type="button"
+                          mat-icon-button
+                          matTooltip="Fly to this location"
+                          (click)="
+                            flyToLocation(entry.point.lat, entry.point.lon)
+                          "
+                        >
+                          <mat-icon>adjust</mat-icon>
+                        </button>
+                      }
+                    </td>
+                    <td>{{ entry.point.lat }}</td>
+                    <td>{{ entry.point.lon }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           }
         </div>
 
         <!-- editor -->
         <div id="editor">
           @if (edited()) {
-          <mat-expansion-panel [expanded]="edited()" [disabled]="!edited()">
-            <mat-expansion-panel-header>location</mat-expansion-panel-header>
-            <cadmus-asserted-location
-              [assTagEntries]="assTagEntries()"
-              [locTagEntries]="locTagEntries()"
-              [refTagEntries]="refTagEntries()"
-              [refTypeEntries]="refTypeEntries()"
-              [location]="edited()"
-              (locationChange)="saveAssertedLocation($event!)"
-              (editorClose)="closeAssertedLocation()"
-            />
-          </mat-expansion-panel>
+            <mat-expansion-panel [expanded]="edited()" [disabled]="!edited()">
+              <mat-expansion-panel-header>location</mat-expansion-panel-header>
+              <cadmus-asserted-location
+                [assTagEntries]="assTagEntries()"
+                [locTagEntries]="locTagEntries()"
+                [refTagEntries]="refTagEntries()"
+                [refTypeEntries]="refTypeEntries()"
+                [lookupProviderOptions]="lookupProviderOptions()"
+                [location]="edited()"
+                (locationChange)="saveAssertedLocation($event!)"
+                (editorClose)="closeAssertedLocation()"
+              />
+            </mat-expansion-panel>
           }
         </div>
 

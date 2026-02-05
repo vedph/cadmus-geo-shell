@@ -21,6 +21,7 @@ import {
   ProperName,
   ProperNameComponent,
 } from '@myrmidon/cadmus-refs-proper-name';
+import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 
 import { AssertedToponym } from '../asserted-toponyms-part';
 
@@ -61,6 +62,10 @@ export class AssertedToponymComponent {
   // doc-reference-tags
   public readonly refTagEntries = input<ThesaurusEntry[]>();
 
+  public readonly lookupProviderOptions = input<
+    LookupProviderOptions | undefined
+  >();
+
   public readonly editorClose = output();
 
   public eid: FormControl<string | null>;
@@ -80,7 +85,7 @@ export class AssertedToponymComponent {
     });
 
     effect(() => {
-      const toponym =  this.toponym();
+      const toponym = this.toponym();
       this.updateForm(toponym);
     });
   }

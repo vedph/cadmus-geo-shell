@@ -35,6 +35,7 @@ export class AssertedLocationsPartFeatureComponent
       thesaurusService,
       editorService
     );
+    this.roleIdInThesauri = true;
   }
 
   protected override getReqThesauriIds(): string[] {

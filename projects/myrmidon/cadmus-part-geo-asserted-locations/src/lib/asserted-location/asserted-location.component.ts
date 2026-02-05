@@ -19,6 +19,7 @@ import { MatIcon } from '@angular/material/icon';
 
 import { ThesaurusEntry } from '@myrmidon/cadmus-core';
 import { Assertion, AssertionComponent } from '@myrmidon/cadmus-refs-assertion';
+import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 
 import {
   AssertedLocation,
@@ -65,6 +66,10 @@ export class AssertedLocationComponent {
   public readonly refTypeEntries = input<ThesaurusEntry[]>();
   // doc-reference-tags
   public readonly refTagEntries = input<ThesaurusEntry[]>();
+
+  public readonly lookupProviderOptions = input<
+    LookupProviderOptions | undefined
+  >();
 
   /**
    * Emitted when the editor is closed.
@@ -130,7 +135,7 @@ export class AssertedLocationComponent {
     this.assertion.setValue(location.assertion || null);
 
     this.hasAltitude.setValue(
-      location.altitude !== undefined && location.altitude !== null
+      location.altitude !== undefined && location.altitude !== null,
     );
     if (this.hasAltitude.value) {
       this.altitude.setValue(location.altitude!);

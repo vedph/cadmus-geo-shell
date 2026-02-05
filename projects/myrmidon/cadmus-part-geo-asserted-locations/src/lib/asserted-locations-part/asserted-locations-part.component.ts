@@ -52,6 +52,7 @@ import {
   Layer,
   Marker,
 } from 'leaflet';
+import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 
 import { AssertedLocationComponent } from '../asserted-location/asserted-location.component';
 import {
@@ -62,6 +63,10 @@ import {
 
 const OSM_ATTR =
   '&copy; <a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+
+interface AssertedLocationsPartSettings {
+  lookupProviderOptions?: LookupProviderOptions;
+}
 
 /**
  * Asserted locations part editor.
@@ -105,7 +110,7 @@ export class AssertedLocationsPartComponent
 
   public readonly leafletLayers = signal<Layer[]>([]);
   public readonly selectedLocation = signal<AssertedLocation | undefined>(
-    undefined
+    undefined,
   );
 
   public readonly leafletOptions = signal<any>({
@@ -123,7 +128,7 @@ export class AssertedLocationsPartComponent
     baseLayers: {
       'Open Street Map': tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        { maxZoom: 18, attribution: OSM_ATTR }
+        { maxZoom: 18, attribution: OSM_ATTR },
       ),
     },
     overlays: {
@@ -135,20 +140,25 @@ export class AssertedLocationsPartComponent
 
   // geo-location-tags
   public readonly locTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // assertion-tags
   public readonly assTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // doc-reference-types
   public readonly refTypeEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
   // doc-reference-tags
   public readonly refTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined
+    undefined,
   );
+
+  // lookup options depending on role
+  public readonly lookupProviderOptions = signal<
+    LookupProviderOptions | undefined
+  >(undefined);
 
   public locations: FormControl<AssertedLocation[]>;
 
@@ -156,7 +166,7 @@ export class AssertedLocationsPartComponent
     authService: AuthJwtService,
     formBuilder: FormBuilder,
     private _dialogService: DialogService,
-    env: EnvService
+    env: EnvService,
   ) {
     super(authService, formBuilder);
     this.mapToken.set(env.get('mapbox_token'));
@@ -225,20 +235,29 @@ export class AssertedLocationsPartComponent
   }
 
   protected override onDataSet(
-    data?: EditedObject<AssertedLocationsPart>
+    data?: EditedObject<AssertedLocationsPart>,
   ): void {
     // thesauri
     if (data?.thesauri) {
       this.updateThesauri(data.thesauri);
     }
-
+    // settings
+    this._appRepository
+      ?.getSettingFor<AssertedLocationsPartSettings>(
+        ASSERTED_LOCATIONS_PART_TYPEID,
+        this.identity()?.roleId || undefined,
+      )
+      .then((settings) => {
+        const options = settings?.lookupProviderOptions;
+        this.lookupProviderOptions.set(options || undefined);
+      });
     // form
     this.updateForm(data?.value);
   }
 
   protected getValue(): AssertedLocationsPart {
     let part = this.getEditedPart(
-      ASSERTED_LOCATIONS_PART_TYPEID
+      ASSERTED_LOCATIONS_PART_TYPEID,
     ) as AssertedLocationsPart;
     part.locations = this.locations.value || [];
     return part;
@@ -335,7 +354,7 @@ export class AssertedLocationsPartComponent
   private createMarker(
     latlng: [number, number],
     label?: string,
-    permanent = true
+    permanent = true,
   ) {
     const newMarker = marker(latlng, {
       icon: icon({
@@ -359,7 +378,7 @@ export class AssertedLocationsPartComponent
   private handleMarkerClick(latlng: [number, number]) {
     // find location with latlng and select it
     const location = this.locations.value.find(
-      (l) => l.point.lat === latlng[0] && l.point.lon === latlng[1]
+      (l) => l.point.lat === latlng[0] && l.point.lon === latlng[1],
     );
     if (location) {
       this.selectedLocation.set(location);
@@ -386,7 +405,7 @@ export class AssertedLocationsPartComponent
       locations.map((l) => {
         const m = this.createMarker([l.point.lat, l.point.lon]);
         return m;
-      })
+      }),
     );
 
     // if there is a single marker, center the map on it;

@@ -76,6 +76,9 @@ imports: [
 
 ## History
 
+- 2026-02-05:
+  - updated Angular and packages.
+  - added `lookupProviderOptions` wherever lookup components are used, getting data from settings and changing the corresponding part thesauri to be role-dependent.
 - 2026-01-17: updated Angular and packages.
 - 2025-11-23:
   - ⚠️ upgraded to Angular 21.

@@ -22,90 +22,96 @@
           </button>
         </div>
         @if (toponyms.value.length) {
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>name</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for ( entry of toponyms.value; track entry; let i = $index; let
-            first = $first; let last = $last) {
-            <tr [class.selected]="i === editedIndex()">
-              <td>
-                <button
-                  type="button"
-                  mat-icon-button
-                  matTooltip="Edit this toponym"
-                  (click)="editAssertedToponym(entry, i)"
-                >
-                  <mat-icon class="mat-primary">edit</mat-icon>
-                </button>
-                <button
-                  type="button"
-                  mat-icon-button
-                  matTooltip="Move this toponym up"
-                  [disabled]="first"
-                  (click)="moveAssertedToponymUp(i)"
-                >
-                  <mat-icon>arrow_upward</mat-icon>
-                </button>
-                <button
-                  type="button"
-                  mat-icon-button
-                  matTooltip="Move this toponym down"
-                  [disabled]="last"
-                  (click)="moveAssertedToponymDown(i)"
-                >
-                  <mat-icon>arrow_downward</mat-icon>
-                </button>
-                <button
-                  type="button"
-                  mat-icon-button
-                  matTooltip="Delete this toponym"
-                  (click)="deleteAssertedToponym(i)"
-                >
-                  <mat-icon class="mat-warn">remove_circle</mat-icon>
-                </button>
-              </td>
-              <td>
-                {{
-                  entry.name
-                    | cadmusProperName
-                      : namePieceTypeEntries
-                      : namePieceValueEntries
-                      : "id"
-                      : "value"
-                      : true
-                }}
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>name</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (
+                entry of toponyms.value;
+                track entry;
+                let i = $index;
+                let first = $first;
+                let last = $last
+              ) {
+                <tr [class.selected]="i === editedIndex()">
+                  <td>
+                    <button
+                      type="button"
+                      mat-icon-button
+                      matTooltip="Edit this toponym"
+                      (click)="editAssertedToponym(entry, i)"
+                    >
+                      <mat-icon class="mat-primary">edit</mat-icon>
+                    </button>
+                    <button
+                      type="button"
+                      mat-icon-button
+                      matTooltip="Move this toponym up"
+                      [disabled]="first"
+                      (click)="moveAssertedToponymUp(i)"
+                    >
+                      <mat-icon>arrow_upward</mat-icon>
+                    </button>
+                    <button
+                      type="button"
+                      mat-icon-button
+                      matTooltip="Move this toponym down"
+                      [disabled]="last"
+                      (click)="moveAssertedToponymDown(i)"
+                    >
+                      <mat-icon>arrow_downward</mat-icon>
+                    </button>
+                    <button
+                      type="button"
+                      mat-icon-button
+                      matTooltip="Delete this toponym"
+                      (click)="deleteAssertedToponym(i)"
+                    >
+                      <mat-icon class="mat-warn">remove_circle</mat-icon>
+                    </button>
+                  </td>
+                  <td>
+                    {{
+                      entry.name
+                        | cadmusProperName
+                          : namePieceTypeEntries
+                          : namePieceValueEntries
+                          : "id"
+                          : "value"
+                          : true
+                    }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         }
       </div>
 
       <!-- editor -->
       @if (edited()) {
-      <mat-expansion-panel [expanded]="edited()" [disabled]="!edited()">
-        <mat-expansion-panel-header
-          >toponym #{{ editedIndex() + 1 }}</mat-expansion-panel-header
-        >
-        <cadmus-asserted-toponym
-          [toponym]="edited()"
-          [topTagEntries]="topTagEntries()"
-          [assTagEntries]="assTagEntries()"
-          [refTagEntries]="refTagEntries()"
-          [nameTagEntries]="nameTagEntries()"
-          [refTypeEntries]="refTypeEntries()"
-          [nameTypeEntries]="nameTypeEntries()"
-          [nameLangEntries]="nameLangEntries()"
-          (toponymChange)="saveAssertedToponym($event!)"
-          (editorClose)="closeAssertedToponym()"
-        />
-      </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="edited()" [disabled]="!edited()">
+          <mat-expansion-panel-header
+            >toponym #{{ editedIndex() + 1 }}</mat-expansion-panel-header
+          >
+          <cadmus-asserted-toponym
+            [toponym]="edited()"
+            [topTagEntries]="topTagEntries()"
+            [assTagEntries]="assTagEntries()"
+            [refTagEntries]="refTagEntries()"
+            [nameTagEntries]="nameTagEntries()"
+            [refTypeEntries]="refTypeEntries()"
+            [nameTypeEntries]="nameTypeEntries()"
+            [nameLangEntries]="nameLangEntries()"
+            [lookupProviderOptions]="lookupProviderOptions()"
+            (toponymChange)="saveAssertedToponym($event!)"
+            (editorClose)="closeAssertedToponym()"
+          />
+        </mat-expansion-panel>
       }
     </mat-card-content>
     <mat-card-actions>
