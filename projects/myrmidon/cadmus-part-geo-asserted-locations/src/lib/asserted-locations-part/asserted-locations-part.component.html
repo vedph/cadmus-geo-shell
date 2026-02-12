@@ -41,8 +41,8 @@
               </thead>
               <tbody>
                 @for (
-                  entry of locations.value;
-                  track entry;
+                  location of locations.value;
+                  track location;
                   let i = $index;
                   let first = $first;
                   let last = $last
@@ -53,7 +53,7 @@
                         type="button"
                         mat-icon-button
                         matTooltip="Edit this location"
-                        (click)="editAssertedLocation(entry, i)"
+                        (click)="editAssertedLocation(location, i)"
                       >
                         <mat-icon class="mat-primary">edit</mat-icon>
                       </button>
@@ -91,9 +91,9 @@
                         <mat-icon>adjust</mat-icon>
                       </button>
                     </td>
-                    <td>{{ entry.value.label }}</td>
-                    <td>{{ entry.value.latitude }}</td>
-                    <td>{{ entry.value.longitude }}</td>
+                    <td>{{ location.value.label }}</td>
+                    <td>{{ location.value.latitude }}</td>
+                    <td>{{ location.value.longitude }}</td>
                   </tr>
                 }
               </tbody>
@@ -119,9 +119,6 @@
             </mat-expansion-panel>
           }
         </div>
-
-        <!-- map -->
-        <div id="map-frame"></div>
       </div>
     </mat-card-content>
     <mat-card-actions>
