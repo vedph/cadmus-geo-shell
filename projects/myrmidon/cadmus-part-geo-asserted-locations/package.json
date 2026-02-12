@@ -18,8 +18,6 @@
     "@angular/common": "^20.0.0 || ^21.0.0",
     "@angular/core": "^20.0.0 || ^21.0.0",
     "@angular/material": "^20.0.0 || ^21.0.0",
-    "leaflet": "^1.9.4",
-    "@bluehalo/ngx-leaflet": "^21.0.0",
     "@myrmidon/cadmus-refs-assertion": "^10.0.6",
     "@myrmidon/cadmus-core": "^12.0.3",
     "@myrmidon/cadmus-state": "^14.0.4",

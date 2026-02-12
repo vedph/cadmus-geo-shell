@@ -1,22 +1,10 @@
 import { Part } from '@myrmidon/cadmus-core';
+import { GeoLocation } from '@myrmidon/cadmus-geo-location';
 import { Assertion } from '@myrmidon/cadmus-refs-assertion';
-
-export interface LocationPoint {
-  lat: number;
-  lon: number;
-}
-
-export interface LocationBox {
-  a: LocationPoint;
-  b: LocationPoint;
-}
 
 export interface AssertedLocation {
   tag?: string;
-  point: LocationPoint;
-  box?: LocationBox;
-  altitude?: number;
-  geometry?: string;
+  value: GeoLocation;
   assertion?: Assertion;
 }
 
@@ -84,55 +72,37 @@ export const ASSERTED_LOCATIONS_PART_SCHEMA = {
       pattern: '^([a-z][-0-9a-z._]*)?$',
     },
     tag: {
-      type: 'string'
-    },
-    point: {
-      type: 'object',
-      required: ['lat', 'lon'],
-      properties: {
-        lat: {
-          type: 'number',
-        },
-        lon: {
-          type: 'number',
-        },
-      },
-    },
-    box: {
-      type: 'object',
-      required: ['a', 'b'],
-      properties: {
-        a: {
-          type: 'object',
-          required: ['lat', 'lon'],
-          properties: {
-            lat: {
-              type: 'number',
-            },
-            lon: {
-              type: 'number',
-            },
-          },
-        },
-        b: {
-          type: 'object',
-          required: ['lat', 'lon'],
-          properties: {
-            lat: {
-              type: 'number',
-            },
-            lon: {
-              type: 'number',
-            },
-          },
-        },
-      },
-    },
-    altitude: {
-      type: 'number',
-    },
-    geometry: {
       type: 'string',
+    },
+    value: {
+      type: 'object',
+      required: ['label', 'latitude', 'longitude'],
+      properties: {
+        eid: {
+          type: 'string',
+        },
+        label: {
+          type: 'string',
+        },
+        latitude: {
+          type: 'number',
+        },
+        longitude: {
+          type: 'number',
+        },
+        altitude: {
+          type: 'number',
+        },
+        radius: {
+          type: 'number',
+        },
+        geometry: {
+          type: 'string',
+        },
+        note: {
+          type: 'string',
+        },
+      },
     },
     assertion: {
       type: 'object',

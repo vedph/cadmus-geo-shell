@@ -9,6 +9,12 @@ import {
 } from '@angular/forms';
 
 import { MatCheckbox } from '@angular/material/checkbox';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelDescription,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -20,13 +26,9 @@ import { MatIcon } from '@angular/material/icon';
 import { ThesaurusEntry } from '@myrmidon/cadmus-core';
 import { Assertion, AssertionComponent } from '@myrmidon/cadmus-refs-assertion';
 import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
+import { GeoLocation, GeoLocationEditor } from '@myrmidon/cadmus-geo-location';
 
-import {
-  AssertedLocation,
-  LocationBox,
-  LocationPoint,
-} from '../asserted-locations-part';
-import { LocationPointComponent } from '../location-point/location-point.component';
+import { AssertedLocation } from '../asserted-locations-part';
 
 /**
  * Editor for a location with an optional assertion.
@@ -38,18 +40,22 @@ import { LocationPointComponent } from '../location-point/location-point.compone
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    LocationPointComponent,
     MatCheckbox,
-    MatFormField,
-    MatLabel,
-    MatInput,
     MatError,
-    MatSelect,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    MatFormField,
+    MatInput,
+    MatLabel,
     MatOption,
-    AssertionComponent,
     MatIconButton,
+    MatSelect,
     MatTooltip,
     MatIcon,
+    AssertionComponent,
+    GeoLocationEditor,
   ],
 })
 export class AssertedLocationComponent {
@@ -77,36 +83,19 @@ export class AssertedLocationComponent {
   public readonly editorClose = output();
 
   // form
-  public point: FormControl<LocationPoint | null>;
-  public hasAltitude: FormControl<boolean>;
-  public altitude: FormControl<number | null>;
-  public hasBox: FormControl<boolean>;
-  public box: FormControl<LocationBox | null>;
-  public geometry: FormControl<string | null>;
+  public value: FormControl<GeoLocation | null>;
   public hasAssertion: FormControl<boolean>;
   public assertion: FormControl<Assertion | null>;
   public tag: FormControl<string | null>;
   public form: FormGroup;
 
   constructor(formBuilder: FormBuilder) {
-    this.point = formBuilder.control(null, Validators.required);
-    this.hasAltitude = formBuilder.control(false, { nonNullable: true });
-    this.altitude = formBuilder.control(null);
-    this.hasBox = formBuilder.control(false, { nonNullable: true });
-    this.box = formBuilder.control(null);
-    this.geometry = formBuilder.control(null, {
-      validators: Validators.maxLength(5000),
-    });
+    this.value = formBuilder.control(null, Validators.required);
     this.hasAssertion = formBuilder.control(false, { nonNullable: true });
     this.assertion = formBuilder.control(null);
     this.tag = formBuilder.control(null, Validators.maxLength(50));
     this.form = formBuilder.group({
-      point: this.point,
-      hasAltitude: this.hasAltitude,
-      altitude: this.altitude,
-      hasBox: this.hasBox,
-      box: this.box,
-      geometry: this.geometry,
+      value: this.value,
       hasAssertion: this.hasAssertion,
       assertion: this.assertion,
       tag: this.tag,
@@ -123,37 +112,16 @@ export class AssertedLocationComponent {
       return;
     }
 
-    this.point.setValue(location.point);
-    this.hasBox.setValue(location.box?.a && location.box?.b ? true : false);
-    if (this.hasBox.value) {
-      this.box.setValue({
-        a: location.box!.a,
-        b: location.box!.b,
-      });
-    }
+    this.value.setValue(location.value || null);
     this.hasAssertion.setValue(location.assertion ? true : false);
     this.assertion.setValue(location.assertion || null);
-
-    this.hasAltitude.setValue(
-      location.altitude !== undefined && location.altitude !== null,
-    );
-    if (this.hasAltitude.value) {
-      this.altitude.setValue(location.altitude!);
-    }
-    this.geometry.setValue(location.geometry || null);
     this.tag.setValue(location.tag || null);
     this.form.markAsPristine();
   }
 
   private getLocation(): AssertedLocation {
     return {
-      point: this.point.value!,
-      altitude:
-        this.hasAltitude && this.altitude.value !== null
-          ? this.altitude.value
-          : undefined,
-      box: this.hasBox.value && this.box.value ? this.box.value : undefined,
-      geometry: this.geometry.value?.trim() || undefined,
+      value: this.value.value!,
       assertion:
         this.hasAssertion.value && this.assertion.value
           ? this.assertion.value
@@ -162,30 +130,10 @@ export class AssertedLocationComponent {
     };
   }
 
-  public onPointChange(point: LocationPoint): void {
-    this.point.setValue(point);
-    this.point.markAsDirty();
-    this.point.updateValueAndValidity();
-  }
-
-  public onPointAChange(point: LocationPoint): void {
-    const box: LocationBox = {
-      a: point,
-      b: this.box.value?.b || { lat: 0, lon: 0 },
-    };
-    this.box.setValue(box);
-    this.box.markAsDirty();
-    this.box.updateValueAndValidity();
-  }
-
-  public onPointBChange(point: LocationPoint): void {
-    const box: LocationBox = {
-      a: this.box.value?.a || { lat: 0, lon: 0 },
-      b: point,
-    };
-    this.box.setValue(box);
-    this.box.markAsDirty();
-    this.box.updateValueAndValidity();
+  public onLocationChange(value: GeoLocation): void {
+    this.value.setValue(value);
+    this.value.markAsDirty();
+    this.value.updateValueAndValidity();
   }
 
   public onAssertionChange(assertion?: Assertion): void {

@@ -1,63 +1,31 @@
 <form [formGroup]="form" (submit)="save()">
-  <!-- point -->
-  <cadmus-location-point
-    [point]="point.value || undefined"
-    [hasLocator]="true"
-    (pointChange)="onPointChange($event!)"
-  />
-
-  <!-- altitude -->
-  <div class="form-row">
-    <mat-checkbox [formControl]="hasAltitude">altitude</mat-checkbox>
-    @if (hasAltitude.value) {
-      <mat-form-field style="width: 6em">
-        <mat-label>alt.</mat-label>
-        <input matInput type="number" [formControl]="altitude" />
-      </mat-form-field>
-    }
-  </div>
-
-  <!-- box -->
+  <!-- location -->
   <div>
-    <mat-checkbox [formControl]="hasBox">bounding box</mat-checkbox>
-  </div>
-  @if (hasBox.value) {
-    <fieldset>
-      <legend>box</legend>
-      <div>
-        <!-- point A -->
-        A
-        <cadmus-location-point
-          [point]="box.value?.a"
-          [hasLocator]="true"
-          (pointChange)="onPointAChange($event!)"
-        />
-      </div>
-      <div>
-        <!-- point B -->
-        B
-        <cadmus-location-point
-          [point]="box.value?.b"
-          [hasLocator]="true"
-          (pointChange)="onPointBChange($event!)"
-        />
-      </div>
-    </fieldset>
-  }
-
-  <!-- geometry -->
-  <div style="margin-top: 8px">
-    <mat-form-field class="long-text">
-      <mat-label>geometry</mat-label>
-      <textarea matInput [formControl]="geometry"></textarea>
-      @if (
-        $any(geometry).errors?.maxLength && (geometry.dirty || geometry.touched)
-      ) {
-        <mat-error>geometry too long</mat-error>
-      }
-    </mat-form-field>
+    <mat-expansion-panel [expanded]="false" #locPanel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> location </mat-panel-title>
+        <mat-panel-description>
+          {{
+            value.value
+              ? value.value.label +
+                " (" +
+                value.value.latitude +
+                ", " +
+                value.value.longitude +
+                ")"
+              : "no location"
+          }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <cadmus-geo-location-editor
+        [location]="value.value || undefined"
+        (locationChange)="onLocationChange($event!)"
+        (cancelEdit)="locPanel.expanded = false"
+      />
+    </mat-expansion-panel>
   </div>
 
+  <!-- tag -->
   <div>
     <!-- tag (bound) -->
     @if (locTagEntries()?.length) {

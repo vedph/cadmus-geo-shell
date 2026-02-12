@@ -24,9 +24,7 @@
             <button
               type="button"
               mat-icon-button
-              [disabled]="leafletLayers().length < 2"
               matTooltip="Fit map to locations"
-              (click)="fitMapToMarkers()"
             >
               <mat-icon>fit_screen</mat-icon>
             </button>
@@ -36,8 +34,9 @@
               <thead>
                 <tr>
                   <th></th>
-                  <th>lat</th>
-                  <th>lon</th>
+                  <th>label</th>
+                  <th>lat.</th>
+                  <th>lon.</th>
                 </tr>
               </thead>
               <tbody>
@@ -84,21 +83,17 @@
                       >
                         <mat-icon class="mat-warn">remove_circle</mat-icon>
                       </button>
-                      @if (mapToken()) {
-                        <button
-                          type="button"
-                          mat-icon-button
-                          matTooltip="Fly to this location"
-                          (click)="
-                            flyToLocation(entry.point.lat, entry.point.lon)
-                          "
-                        >
-                          <mat-icon>adjust</mat-icon>
-                        </button>
-                      }
+                      <button
+                        type="button"
+                        mat-icon-button
+                        matTooltip="Fly to this location"
+                      >
+                        <mat-icon>adjust</mat-icon>
+                      </button>
                     </td>
-                    <td>{{ entry.point.lat }}</td>
-                    <td>{{ entry.point.lon }}</td>
+                    <td>{{ entry.value.label }}</td>
+                    <td>{{ entry.value.latitude }}</td>
+                    <td>{{ entry.value.longitude }}</td>
                   </tr>
                 }
               </tbody>
@@ -126,16 +121,7 @@
         </div>
 
         <!-- map -->
-        <div id="map-frame">
-          <div
-            id="map"
-            leaflet
-            [leafletOptions]="leafletOptions()"
-            [leafletLayers]="leafletLayers()"
-            [leafletLayersControl]="layersControl()"
-            (leafletMapReady)="onMapReady($event)"
-          ></div>
-        </div>
+        <div id="map-frame"></div>
       </div>
     </mat-card-content>
     <mat-card-actions>

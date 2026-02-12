@@ -30,13 +30,11 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "./node_modules/leaflet/dist/leaflet.css"
+              "src/styles.scss"
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
-              "leaflet",
-              "diff-match-patch",
+              "maplibre-gl",
               "webcola",
               "dagre",
               "ngraph.forcelayout"

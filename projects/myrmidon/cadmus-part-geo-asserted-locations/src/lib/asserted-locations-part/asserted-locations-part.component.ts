@@ -37,21 +37,11 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   MatExpansionPanel,
+  MatExpansionPanelDescription,
   MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 
-import { LeafletModule } from '@bluehalo/ngx-leaflet';
-import {
-  latLng,
-  latLngBounds,
-  marker,
-  tileLayer,
-  Map,
-  icon,
-  layerGroup,
-  Layer,
-  Marker,
-} from 'leaflet';
 import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 
 import { AssertedLocationComponent } from '../asserted-location/asserted-location.component';
@@ -60,9 +50,6 @@ import {
   AssertedLocationsPart,
   ASSERTED_LOCATIONS_PART_TYPEID,
 } from '../asserted-locations-part';
-
-const OSM_ATTR =
-  '&copy; <a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
 interface AssertedLocationsPartSettings {
   lookupProviderOptions?: LookupProviderOptions;
@@ -91,52 +78,21 @@ interface AssertedLocationsPartSettings {
     MatTooltip,
     MatExpansionPanel,
     MatExpansionPanelHeader,
+    MatExpansionPanelDescription,
+    MatExpansionPanelTitle,
     TitleCasePipe,
     AssertedLocationComponent,
-    LeafletModule,
     MatCardActions,
     CloseSaveButtonsComponent,
   ],
 })
-export class AssertedLocationsPartComponent
-  extends ModelEditorComponentBase<AssertedLocationsPart>
-  implements OnInit
-{
-  private _updating?: boolean;
-  private _map?: Map;
-
+export class AssertedLocationsPartComponent extends ModelEditorComponentBase<AssertedLocationsPart> {
   public readonly edited = signal<AssertedLocation | undefined>(undefined);
   public readonly editedIndex = signal<number>(-1);
 
-  public readonly leafletLayers = signal<Layer[]>([]);
   public readonly selectedLocation = signal<AssertedLocation | undefined>(
     undefined,
   );
-
-  public readonly leafletOptions = signal<any>({
-    layers: [
-      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: OSM_ATTR,
-      }),
-    ],
-    zoom: 5,
-    center: latLng(46.879966, -121.726909),
-  });
-
-  public readonly layersControl = signal<any>({
-    baseLayers: {
-      'Open Street Map': tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        { maxZoom: 18, attribution: OSM_ATTR },
-      ),
-    },
-    overlays: {
-      Markers: layerGroup([]),
-    },
-  });
-  // TODO use this to provide an additional layer (satellite imagery) from mapbox
-  public readonly mapToken = signal<string | undefined>(undefined);
 
   // geo-location-tags
   public readonly locTagEntries = signal<ThesaurusEntry[] | undefined>(
@@ -169,25 +125,12 @@ export class AssertedLocationsPartComponent
     env: EnvService,
   ) {
     super(authService, formBuilder);
-    this.mapToken.set(env.get('mapbox_token'));
     // form
     this.locations = formBuilder.control([], {
       // at least 1 entry
       validators: NgxToolsValidators.strictMinLengthValidator(1),
       nonNullable: true,
     });
-  }
-
-  public override ngOnInit(): void {
-    super.ngOnInit();
-    // update markers when locations are updated
-    this.locations.valueChanges
-      .pipe(debounceTime(200))
-      .subscribe((locations) => {
-        if (!this._updating) {
-          this.updateMarkers(locations);
-        }
-      });
   }
 
   protected buildForm(formBuilder: FormBuilder): FormGroup | UntypedFormGroup {
@@ -228,10 +171,8 @@ export class AssertedLocationsPartComponent
       this.form.reset();
       return;
     }
-    this._updating = true;
     this.locations.setValue(part.locations || []);
     this.form.markAsPristine();
-    this._updating = false;
   }
 
   protected override onDataSet(
@@ -265,7 +206,7 @@ export class AssertedLocationsPartComponent
 
   public addAssertedLocation(): void {
     const entry: AssertedLocation = {
-      point: { lat: 0, lon: 0 },
+      value: { label: 'location', latitude: 0, longitude: 0 },
     };
     this.editAssertedLocation(entry, -1);
   }
@@ -335,89 +276,5 @@ export class AssertedLocationsPartComponent
     this.locations.setValue(locations);
     this.locations.markAsDirty();
     this.locations.updateValueAndValidity();
-  }
-
-  private isMarker(layer: any): boolean {
-    return typeof layer.getLatLng === 'function';
-  }
-
-  public fitMapToMarkers() {
-    if (!this._map || !this.leafletLayers().length) return;
-
-    const latlngs = this.leafletLayers()
-      .filter((layer: Layer) => this.isMarker(layer))
-      .map((marker) => (marker as Marker).getLatLng());
-    const bounds = latLngBounds(latlngs);
-    this._map.fitBounds(bounds);
-  }
-
-  private createMarker(
-    latlng: [number, number],
-    label?: string,
-    permanent = true,
-  ) {
-    const newMarker = marker(latlng, {
-      icon: icon({
-        iconSize: [25, 41],
-        iconAnchor: [13, 41],
-        iconUrl: 'img/marker-icon.png',
-        shadowUrl: 'img/marker-shadow.png',
-      }),
-    }).setLatLng(latlng);
-    if (label) {
-      newMarker.bindTooltip(label, {
-        permanent: permanent,
-        direction: 'top',
-        offset: [0, -35],
-      });
-    }
-    newMarker.on('click', () => this.handleMarkerClick(latlng));
-    return newMarker;
-  }
-
-  private handleMarkerClick(latlng: [number, number]) {
-    // find location with latlng and select it
-    const location = this.locations.value.find(
-      (l) => l.point.lat === latlng[0] && l.point.lon === latlng[1],
-    );
-    if (location) {
-      this.selectedLocation.set(location);
-    }
-  }
-
-  public ngAfterViewInit() {
-    this.fitMapToMarkers();
-  }
-
-  public onMapReady(map: Map) {
-    this._map = map;
-  }
-
-  public flyToLocation(lat: number, lng: number, zoom = 10) {
-    if (!this._map) return;
-
-    this._map.flyTo(latLng(lat, lng), zoom);
-  }
-
-  private updateMarkers(locations: AssertedLocation[]): void {
-    // add markers from locations
-    this.leafletLayers.set(
-      locations.map((l) => {
-        const m = this.createMarker([l.point.lat, l.point.lon]);
-        return m;
-      }),
-    );
-
-    // if there is a single marker, center the map on it;
-    // else fit it to the markers bounds
-    if (this.leafletLayers().length === 1) {
-      const marker = this.leafletLayers()[0];
-      if (this.isMarker(marker)) {
-        const latLng = (marker as Marker).getLatLng();
-        this.flyToLocation(latLng.lat, latLng.lng);
-      }
-    } else {
-      this.fitMapToMarkers();
-    }
   }
 }
