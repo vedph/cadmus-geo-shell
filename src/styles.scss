@@ -48,17 +48,21 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.mat-primary, .mat-accent {
+.mat-primary,
+.mat-accent {
   @include mat.all-component-colors($accent-theme);
 }
 
-.mat-error, .mat-warn {
+.mat-error,
+.mat-warn {
   @include mat.all-component-colors($error-theme);
 }
 
-mat-icon.mat-accent, mat-icon.mat-primary {
+mat-icon.mat-accent,
+mat-icon.mat-primary {
   color: var(--mat-form-field-filled-focus-label-text-color) !important;
 }
-mat-icon.mat-error, mat-icon.mat-warn {
+mat-icon.mat-error,
+mat-icon.mat-warn {
   color: var(--mat-form-field-error-focus-trailing-icon-color) !important;
 }

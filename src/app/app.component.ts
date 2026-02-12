@@ -13,7 +13,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { AuthJwtService, GravatarPipe, User } from '@myrmidon/auth-jwt-login';
 import { EnvService } from '@myrmidon/ngx-tools';
-import { LeafletModule } from '@bluehalo/ngx-leaflet';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +24,6 @@ import { LeafletModule } from '@bluehalo/ngx-leaflet';
     MatToolbarModule,
     MatTooltipModule,
     GravatarPipe,
-    LeafletModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -45,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private _authService: AuthJwtService,
     private _appRepository: AppRepository,
     private _router: Router,
-    env: EnvService
+    env: EnvService,
   ) {
     this.version = env.get('version') || '';
   }
@@ -61,13 +59,13 @@ export class AppComponent implements OnInit, OnDestroy {
         if (user) {
           this._appRepository.load();
         }
-      }
+      },
     );
 
     this._brSub = this._appRepository.itemBrowserThesaurus$.subscribe(
       (thesaurus: Thesaurus | undefined) => {
         this.itemBrowsers = thesaurus ? thesaurus.entries : undefined;
-      }
+      },
     );
   }
 

@@ -7,7 +7,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { debounceTime, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { TitleCasePipe } from '@angular/common';
 
 import { deepCopy, EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
@@ -37,9 +37,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   MatExpansionPanel,
-  MatExpansionPanelDescription,
   MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 
 import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
