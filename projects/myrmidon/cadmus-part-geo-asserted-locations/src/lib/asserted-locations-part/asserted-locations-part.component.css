@@ -23,11 +23,12 @@ tr.selected {
 div#container {
   display: grid;
   min-height: 600px;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   grid-template-columns: 1fr;
   grid-template-areas:
     "list"
-    "editor";
+    "editor"
+    "map";
   gap: 8px;
 }
 div#editor {
@@ -35,6 +36,14 @@ div#editor {
 }
 div#list {
   grid-area: list;
+}
+div#overview-map {
+  grid-area: map;
+}
+div#overview-map mgl-map {
+  display: block;
+  height: 400px;
+  width: 100%;
 }
 .button-row {
   display: flex;
@@ -50,7 +59,8 @@ div#list {
     grid-template-columns: 1fr;
     grid-template-areas:
       "list"
-      "editor";
+      "editor"
+      "map";
   }
   .noif-lt-md {
     display: none;

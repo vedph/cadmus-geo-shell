@@ -25,6 +25,8 @@
               type="button"
               mat-icon-button
               matTooltip="Fit map to locations"
+              [disabled]="!locations.value.length"
+              (click)="fitMapToLocations()"
             >
               <mat-icon>fit_screen</mat-icon>
             </button>
@@ -87,6 +89,7 @@
                         type="button"
                         mat-icon-button
                         matTooltip="Fly to this location"
+                        (click)="flyToLocation(location)"
                       >
                         <mat-icon>adjust</mat-icon>
                       </button>
@@ -118,6 +121,55 @@
               />
             </mat-expansion-panel>
           }
+        </div>
+
+        <!-- overview map -->
+        <div id="overview-map">
+          <mgl-map
+            [mapStyle]="mapStyle"
+            [center]="mapCenter()"
+            [zoom]="mapZoom()"
+            (mapLoad)="onOverviewMapLoad($event)"
+          >
+            <!-- Navigation controls -->
+            <mgl-control position="top-right" mglNavigation></mgl-control>
+            <!-- Scale bar -->
+            <mgl-control
+              position="bottom-left"
+              mglScale
+              unit="metric"
+            ></mgl-control>
+
+            <!-- Markers for each location -->
+            @for (loc of mapLocations(); track $index) {
+              <mgl-marker
+                [lngLat]="[loc.value.longitude, loc.value.latitude]"
+                color="#3f51b5"
+              >
+              </mgl-marker>
+            }
+
+            <!-- Labels -->
+            <mgl-geojson-source id="overview-labels" [data]="labelsGeoJSON()">
+            </mgl-geojson-source>
+            <mgl-layer
+              id="overview-labels-text"
+              type="symbol"
+              source="overview-labels"
+              [layout]="{
+                'text-field': ['get', 'label'],
+                'text-font': ['Noto Sans Regular'],
+                'text-offset': [0, 1.5],
+                'text-anchor': 'top',
+                'text-size': 13,
+              }"
+              [paint]="{
+                'text-color': '#3f51b5',
+                'text-halo-color': '#ffffff',
+                'text-halo-width': 1.5,
+              }"
+            ></mgl-layer>
+          </mgl-map>
         </div>
       </div>
     </mat-card-content>

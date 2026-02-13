@@ -76,6 +76,9 @@ imports: [
 
 ## History
 
+### 12.0.0
+
+- 2026-02-13: ⚠️ refactored asserted location part to use [new GeoLocationEditor brick](https://github.com/vedph/cadmus-bricks-shell-v3/blob/master/projects/myrmidon/cadmus-geo-location/README.md) and its [new model](https://github.com/vedph/cadmus-geo/blob/master/docs/asserted-locations.md) for location and replaced leaflet with maplibre.
 - 2026-02-05:
   - updated Angular and packages.
   - added `lookupProviderOptions` wherever lookup components are used, getting data from settings and changing the corresponding part thesauri to be role-dependent.

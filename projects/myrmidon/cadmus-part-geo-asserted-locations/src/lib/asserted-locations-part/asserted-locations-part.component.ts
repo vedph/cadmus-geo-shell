@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import {
   FormControl,
   FormBuilder,
@@ -9,6 +9,8 @@ import {
 } from '@angular/forms';
 import { take } from 'rxjs/operators';
 import { TitleCasePipe } from '@angular/common';
+import type { FeatureCollection } from 'geojson';
+import { Map as MaplibreMap, LngLatBounds, LngLatLike } from 'maplibre-gl';
 
 import { deepCopy, EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
@@ -40,6 +42,16 @@ import {
   MatExpansionPanelHeader,
 } from '@angular/material/expansion';
 
+import {
+  MapComponent,
+  MarkerComponent,
+  ControlComponent,
+  NavigationControlDirective,
+  ScaleControlDirective,
+  GeoJSONSourceComponent,
+  LayerComponent,
+} from '@maplibre/ngx-maplibre-gl';
+
 import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 
 import { AssertedLocationComponent } from '../asserted-location/asserted-location.component';
@@ -48,6 +60,8 @@ import {
   AssertedLocationsPart,
   ASSERTED_LOCATIONS_PART_TYPEID,
 } from '../asserted-locations-part';
+
+const DEFAULT_MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
 
 interface AssertedLocationsPartSettings {
   lookupProviderOptions?: LookupProviderOptions;
@@ -80,6 +94,14 @@ interface AssertedLocationsPartSettings {
     AssertedLocationComponent,
     MatCardActions,
     CloseSaveButtonsComponent,
+    // MapLibre
+    MapComponent,
+    MarkerComponent,
+    ControlComponent,
+    NavigationControlDirective,
+    ScaleControlDirective,
+    GeoJSONSourceComponent,
+    LayerComponent,
   ],
 })
 export class AssertedLocationsPartComponent extends ModelEditorComponentBase<AssertedLocationsPart> {
@@ -114,6 +136,31 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
 
   public locations: FormControl<AssertedLocation[]>;
 
+  // overview map
+  public readonly mapStyle = DEFAULT_MAP_STYLE;
+  public readonly mapReady = signal(false);
+  public readonly mapLocations = signal<AssertedLocation[]>([]);
+  public readonly mapCenter = signal<LngLatLike>([0, 20]);
+  public readonly mapZoom = signal<[number]>([2]);
+  private _overviewMap?: MaplibreMap;
+
+  public readonly labelsGeoJSON = computed<FeatureCollection>(() => {
+    const locs = this.mapLocations();
+    return {
+      type: 'FeatureCollection',
+      features: locs.map((loc) => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [loc.value.longitude, loc.value.latitude],
+        },
+        properties: {
+          label: loc.value.label || '',
+        },
+      })),
+    };
+  });
+
   constructor(
     authService: AuthJwtService,
     formBuilder: FormBuilder,
@@ -126,6 +173,10 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
       // at least 1 entry
       validators: NgxToolsValidators.strictMinLengthValidator(1),
       nonNullable: true,
+    });
+    // keep overview map in sync with form control
+    this.locations.valueChanges.subscribe((locs) => {
+      this.mapLocations.set([...locs]);
     });
   }
 
@@ -165,10 +216,15 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
   private updateForm(part?: AssertedLocationsPart | null): void {
     if (!part) {
       this.form.reset();
+      this.mapLocations.set([]);
       return;
     }
     this.locations.setValue(part.locations || []);
     this.form.markAsPristine();
+    // fit overview map to locations
+    if (this._overviewMap && part.locations?.length) {
+      setTimeout(() => this.fitMapToLocations());
+    }
   }
 
   protected override onDataSet(
@@ -200,6 +256,52 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     return part;
   }
 
+  //#region Overview map
+  public onOverviewMapLoad(map: MaplibreMap): void {
+    this._overviewMap = map;
+    this.mapReady.set(true);
+    map.resize();
+    if (this.locations.value.length) {
+      setTimeout(() => this.fitMapToLocations());
+    }
+  }
+
+  public fitMapToLocations(): void {
+    if (!this._overviewMap || !this.locations.value.length) {
+      return;
+    }
+    // single location: fly to it
+    if (this.locations.value.length === 1) {
+      const loc = this.locations.value[0];
+      this._overviewMap.flyTo({
+        center: [loc.value.longitude, loc.value.latitude],
+        zoom: 10,
+      });
+      return;
+    }
+    // multiple locations: fit bounds
+    const bounds = new LngLatBounds();
+    for (const loc of this.locations.value) {
+      bounds.extend([loc.value.longitude, loc.value.latitude]);
+    }
+    this._overviewMap.fitBounds(bounds, {
+      padding: 50,
+      maxZoom: 14,
+    });
+  }
+
+  public flyToLocation(location: AssertedLocation): void {
+    if (!this._overviewMap) {
+      return;
+    }
+    this._overviewMap.flyTo({
+      center: [location.value.longitude, location.value.latitude],
+      zoom: 14,
+    });
+  }
+  //#endregion
+
+  //#region Locations CRUD
   public addAssertedLocation(): void {
     const entry: AssertedLocation = {
       value: { label: 'location', latitude: 0, longitude: 0 },
@@ -273,4 +375,5 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     this.locations.markAsDirty();
     this.locations.updateValueAndValidity();
   }
+  //#endregion
 }
