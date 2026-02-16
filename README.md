@@ -43,7 +43,9 @@ graph LR;
 
 ## Requirements
 
-This requires **Leaflet** via [ngx-leaflet](https://github.com/bluehalo/ngx-leaflet).
+This requires MapLibre GL and its Angular wrapper, see <https://github.com/vedph/cadmus-bricks-shell-v3/blob/master/projects/myrmidon/cadmus-geo-location/README.md> for setup.
+
+Before version 12, this used Leaflet via [ngx-leaflet](https://github.com/bluehalo/ngx-leaflet), which required these steps (you can undo them when updating to V12+):
 
 ▶️ (1) install packages:
 
@@ -75,6 +77,10 @@ imports: [
 ```
 
 ## History
+
+### 12.0.1
+
+- 2026-02-16: minor UI improvements for location.
 
 ### 12.0.0
 

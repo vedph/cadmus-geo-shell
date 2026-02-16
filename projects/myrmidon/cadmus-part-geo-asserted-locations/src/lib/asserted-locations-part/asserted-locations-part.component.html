@@ -17,7 +17,7 @@
               type="button"
               mat-flat-button
               class="mat-primary"
-              (click)="addAssertedLocation()"
+              (click)="addLocation()"
             >
               <mat-icon>add_circle</mat-icon> location
             </button>
@@ -55,7 +55,7 @@
                         type="button"
                         mat-icon-button
                         matTooltip="Edit this location"
-                        (click)="editAssertedLocation(location, i)"
+                        (click)="editLocation(location, i)"
                       >
                         <mat-icon class="mat-primary">edit</mat-icon>
                       </button>
@@ -64,7 +64,7 @@
                         mat-icon-button
                         matTooltip="Move this location up"
                         [disabled]="first"
-                        (click)="moveAssertedLocationUp(i)"
+                        (click)="moveLocationUp(i)"
                       >
                         <mat-icon>arrow_upward</mat-icon>
                       </button>
@@ -73,7 +73,7 @@
                         mat-icon-button
                         matTooltip="Move this location down"
                         [disabled]="last"
-                        (click)="moveAssertedLocationDown(i)"
+                        (click)="moveLocationDown(i)"
                       >
                         <mat-icon>arrow_downward</mat-icon>
                       </button>
@@ -81,7 +81,7 @@
                         type="button"
                         mat-icon-button
                         matTooltip="Delete this location"
-                        (click)="deleteAssertedLocation(i)"
+                        (click)="deleteLocation(i)"
                       >
                         <mat-icon class="mat-warn">remove_circle</mat-icon>
                       </button>
@@ -116,8 +116,8 @@
                 [refTypeEntries]="refTypeEntries()"
                 [lookupProviderOptions]="lookupProviderOptions()"
                 [location]="edited()"
-                (locationChange)="saveAssertedLocation($event!)"
-                (editorClose)="closeAssertedLocation()"
+                (locationChange)="saveLocation($event!)"
+                (editorClose)="closeLocation()"
               />
             </mat-expansion-panel>
           }

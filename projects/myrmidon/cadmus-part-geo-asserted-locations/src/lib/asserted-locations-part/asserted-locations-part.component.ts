@@ -302,24 +302,24 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
   //#endregion
 
   //#region Locations CRUD
-  public addAssertedLocation(): void {
+  public addLocation(): void {
     const entry: AssertedLocation = {
-      value: { label: 'location', latitude: 0, longitude: 0 },
+      value: { label: '', latitude: 0, longitude: 0 },
     };
-    this.editAssertedLocation(entry, -1);
+    this.editLocation(entry, -1);
   }
 
-  public editAssertedLocation(entry: AssertedLocation, index: number): void {
+  public editLocation(entry: AssertedLocation, index: number): void {
     this.editedIndex.set(index);
     this.edited.set(deepCopy(entry));
   }
 
-  public closeAssertedLocation(): void {
+  public closeLocation(): void {
     this.editedIndex.set(-1);
     this.edited.set(undefined);
   }
 
-  public saveAssertedLocation(entry: AssertedLocation): void {
+  public saveLocation(entry: AssertedLocation): void {
     const locations = [...this.locations.value];
     if (this.editedIndex() === -1) {
       locations.push(entry);
@@ -329,17 +329,17 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     this.locations.setValue(locations);
     this.locations.markAsDirty();
     this.locations.updateValueAndValidity();
-    this.closeAssertedLocation();
+    this.closeLocation();
   }
 
-  public deleteAssertedLocation(index: number): void {
+  public deleteLocation(index: number): void {
     this._dialogService
       .confirm('Confirmation', 'Delete location?')
       .pipe(take(1))
       .subscribe((yes) => {
         if (yes) {
           if (this.editedIndex() === index) {
-            this.closeAssertedLocation();
+            this.closeLocation();
           }
           const locations = [...this.locations.value];
           locations.splice(index, 1);
@@ -350,7 +350,7 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
       });
   }
 
-  public moveAssertedLocationUp(index: number): void {
+  public moveLocationUp(index: number): void {
     if (index < 1) {
       return;
     }
@@ -363,7 +363,7 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     this.locations.updateValueAndValidity();
   }
 
-  public moveAssertedLocationDown(index: number): void {
+  public moveLocationDown(index: number): void {
     if (index + 1 >= this.locations.value.length) {
       return;
     }

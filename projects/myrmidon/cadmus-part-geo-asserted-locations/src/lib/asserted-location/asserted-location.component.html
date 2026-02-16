@@ -1,9 +1,15 @@
 <form [formGroup]="form" (submit)="save()">
   <!-- location -->
   <div>
-    <mat-expansion-panel [expanded]="false" #locPanel>
+    <mat-expansion-panel
+      [expanded]="locationExpanded()"
+      (expandedChange)="onLocationToggle($event)"
+    >
       <mat-expansion-panel-header>
-        <mat-panel-title> location </mat-panel-title>
+        <mat-panel-title>
+          <mat-icon>map</mat-icon>
+          coordinates
+        </mat-panel-title>
         <mat-panel-description>
           {{
             value.value
@@ -17,11 +23,13 @@
           }}
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <cadmus-geo-location-editor
-        [location]="value.value || undefined"
-        (locationChange)="onLocationChange($event!)"
-        (cancelEdit)="locPanel.expanded = false"
-      />
+      <fieldset>
+        <cadmus-geo-location-editor
+          [location]="value.value || undefined"
+          (locationChange)="onLocationChange($event!)"
+          (cancelEdit)="onLocationClose()"
+        />
+      </fieldset>
     </mat-expansion-panel>
   </div>
 
@@ -78,7 +86,7 @@
       type="submit"
       [disabled]="form.invalid || form.pristine"
       mat-icon-button
-      matTooltip="Save location"
+      matTooltip="Save asserted location"
     >
       <mat-icon class="mat-primary">check_circle</mat-icon>
     </button>

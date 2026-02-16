@@ -1,4 +1,4 @@
-import { Component, effect, input, model, output } from '@angular/core';
+import { Component, effect, input, model, output, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -82,6 +82,8 @@ export class AssertedLocationComponent {
    */
   public readonly editorClose = output();
 
+  public readonly locationExpanded = signal<boolean>(false);
+
   // form
   public value: FormControl<GeoLocation | null>;
   public hasAssertion: FormControl<boolean>;
@@ -134,6 +136,15 @@ export class AssertedLocationComponent {
     this.value.setValue(value);
     this.value.markAsDirty();
     this.value.updateValueAndValidity();
+    this.locationExpanded.set(false);
+  }
+
+  public onLocationClose(): void {
+    this.locationExpanded.set(false);
+  }
+
+  public onLocationToggle(expanded: boolean): void {
+    this.locationExpanded.set(expanded);
   }
 
   public onAssertionChange(assertion?: Assertion): void {
