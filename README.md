@@ -78,6 +78,8 @@ imports: [
 
 ## History
 
+- 2026-02-22: updated Angular and packages.
+
 ### 12.0.1
 
 - 2026-02-16: minor UI improvements for location.
