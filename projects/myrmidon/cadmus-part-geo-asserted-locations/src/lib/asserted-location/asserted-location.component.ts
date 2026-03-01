@@ -1,4 +1,12 @@
-import { Component, effect, input, model, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  input,
+  model,
+  output,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -37,6 +45,7 @@ import { AssertedLocation } from '../asserted-locations-part';
   selector: 'cadmus-asserted-location',
   templateUrl: './asserted-location.component.html',
   styleUrls: ['./asserted-location.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,

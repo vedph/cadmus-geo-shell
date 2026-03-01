@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -9,10 +9,11 @@ import { CurrentItemBarComponent } from '@myrmidon/cadmus-ui-pg';
 import { AssertedToponymsPartComponent } from '../asserted-toponyms-part/asserted-toponyms-part.component';
 
 @Component({
-    selector: 'cadmus-asserted-toponyms-part-feature',
-    templateUrl: './asserted-toponyms-part-feature.component.html',
-    styleUrls: ['./asserted-toponyms-part-feature.component.css'],
-    imports: [CurrentItemBarComponent, AssertedToponymsPartComponent],
+  selector: 'cadmus-asserted-toponyms-part-feature',
+  templateUrl: './asserted-toponyms-part-feature.component.html',
+  styleUrls: ['./asserted-toponyms-part-feature.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CurrentItemBarComponent, AssertedToponymsPartComponent],
 })
 export class AssertedToponymsPartFeatureComponent
   extends EditPartFeatureBase
@@ -24,7 +25,7 @@ export class AssertedToponymsPartFeatureComponent
     snackbar: MatSnackBar,
     itemService: ItemService,
     thesaurusService: ThesaurusService,
-    editorService: PartEditorService
+    editorService: PartEditorService,
   ) {
     super(
       router,
@@ -32,7 +33,7 @@ export class AssertedToponymsPartFeatureComponent
       snackbar,
       itemService,
       thesaurusService,
-      editorService
+      editorService,
     );
     this.roleIdInThesauri = true;
   }

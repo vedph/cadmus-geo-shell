@@ -1,6 +1,6 @@
 <cadmus-current-item-bar/>
 <cadmus-asserted-toponyms-part
-  [identity]="identity"
+  [identity]="identity()"
   [data]="$any(data)"
   (dataChange)="save($event!.value!)"
   (editorClose)="close()"

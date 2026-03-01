@@ -1,4 +1,9 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormBuilder,
@@ -26,7 +31,7 @@ import {
   MatExpansionPanelHeader,
 } from '@angular/material/expansion';
 
-import { deepCopy, NgxToolsValidators } from '@myrmidon/ngx-tools';
+import { NgxToolsValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 import {
@@ -65,6 +70,7 @@ interface AssertedToponymsPartSettings {
   selector: 'cadmus-asserted-toponyms-part',
   templateUrl: './asserted-toponyms-part.component.html',
   styleUrls: ['./asserted-toponyms-part.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -86,10 +92,7 @@ interface AssertedToponymsPartSettings {
     CloseSaveButtonsComponent,
   ],
 })
-export class AssertedToponymsPartComponent
-  extends ModelEditorComponentBase<AssertedToponymsPart>
-  implements OnInit
-{
+export class AssertedToponymsPartComponent extends ModelEditorComponentBase<AssertedToponymsPart> {
   public readonly editedIndex = signal<number>(-1);
   public readonly edited = signal<AssertedToponym | undefined>(undefined);
 
@@ -150,10 +153,6 @@ export class AssertedToponymsPartComponent
       validators: NgxToolsValidators.strictMinLengthValidator(1),
       nonNullable: true,
     });
-  }
-
-  public override ngOnInit(): void {
-    super.ngOnInit();
   }
 
   protected buildForm(formBuilder: FormBuilder): FormGroup | UntypedFormGroup {
@@ -263,7 +262,7 @@ export class AssertedToponymsPartComponent
 
   public editAssertedToponym(entry: AssertedToponym, index: number): void {
     this.editedIndex.set(index);
-    this.edited.set(deepCopy(entry));
+    this.edited.set(structuredClone(entry));
   }
 
   public closeAssertedToponym(): void {

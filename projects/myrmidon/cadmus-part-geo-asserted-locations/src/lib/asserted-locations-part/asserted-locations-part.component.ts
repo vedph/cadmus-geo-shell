@@ -1,4 +1,9 @@
-import { Component, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormBuilder,
@@ -12,7 +17,7 @@ import { TitleCasePipe } from '@angular/common';
 import type { FeatureCollection } from 'geojson';
 import { Map as MaplibreMap, LngLatBounds, LngLatLike } from 'maplibre-gl';
 
-import { deepCopy, EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
+import { EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 
@@ -76,6 +81,7 @@ interface AssertedLocationsPartSettings {
   selector: 'cadmus-asserted-locations-part',
   templateUrl: './asserted-locations-part.component.html',
   styleUrls: ['./asserted-locations-part.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -311,7 +317,7 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
 
   public editLocation(entry: AssertedLocation, index: number): void {
     this.editedIndex.set(index);
-    this.edited.set(deepCopy(entry));
+    this.edited.set(structuredClone(entry));
   }
 
   public closeLocation(): void {

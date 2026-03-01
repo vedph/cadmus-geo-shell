@@ -1,4 +1,11 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  signal,
+} from '@angular/core';
 import { Thesaurus, ThesaurusEntry } from '@myrmidon/cadmus-core';
 import { Router, RouterModule } from '@angular/router';
 import { take } from 'rxjs/operators';
@@ -27,15 +34,18 @@ import { EnvService } from '@myrmidon/ngx-tools';
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit, OnDestroy {
   private _authSub?: Subscription;
   private _brSub?: Subscription;
 
-  public user?: User;
-  public logged?: boolean;
-  public itemBrowsers?: ThesaurusEntry[];
-  public version: string;
+  public readonly user = signal<User | undefined>(undefined);
+  public readonly logged = signal<boolean>(false);
+  public readonly itemBrowsers = signal<ThesaurusEntry[] | undefined>(
+    undefined,
+  );
+  public readonly version = signal<string>('');
 
   constructor(
     @Inject('itemBrowserKeys')
@@ -45,17 +55,17 @@ export class AppComponent implements OnInit, OnDestroy {
     private _router: Router,
     env: EnvService,
   ) {
-    this.version = env.get('version') || '';
+    this.version.set(env.get('version') || '');
   }
 
   public ngOnInit(): void {
-    this.user = this._authService.currentUserValue || undefined;
-    this.logged = this.user !== null;
+    this.user.set(this._authService.currentUserValue || undefined);
+    this.logged.set(this.user() !== null);
 
     this._authSub = this._authService.currentUser$.subscribe(
       (user: User | null) => {
-        this.logged = this._authService.isAuthenticated(true);
-        this.user = user || undefined;
+        this.logged.set(this._authService.isAuthenticated(true));
+        this.user.set(user || undefined);
         if (user) {
           this._appRepository.load();
         }
@@ -64,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this._brSub = this._appRepository.itemBrowserThesaurus$.subscribe(
       (thesaurus: Thesaurus | undefined) => {
-        this.itemBrowsers = thesaurus ? thesaurus.entries : undefined;
+        this.itemBrowsers.set(thesaurus ? thesaurus.entries : undefined);
       },
     );
   }
@@ -79,7 +89,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public logout(): void {
-    if (!this.logged) {
+    if (!this.logged()) {
       return;
     }
     this._authService

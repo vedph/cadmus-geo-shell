@@ -1,4 +1,11 @@
-import { Component, effect, input, model, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  input,
+  model,
+  output,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -29,6 +36,7 @@ import { AssertedToponym } from '../asserted-toponyms-part';
   selector: 'cadmus-asserted-toponym',
   templateUrl: './asserted-toponym.component.html',
   styleUrls: ['./asserted-toponym.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     ReactiveFormsModule,

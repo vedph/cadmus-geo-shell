@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 
 @Component({
   selector: 'cadmus-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
-  public logged: boolean;
+  public readonly logged = signal<boolean>(false);
 
   constructor(authService: AuthJwtService) {
-    this.logged = authService.currentUserValue !== null;
+    this.logged.set(authService.currentUserValue !== null);
   }
 }

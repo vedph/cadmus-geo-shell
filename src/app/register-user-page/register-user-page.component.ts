@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,6 @@ import { AuthJwtRegistrationComponent } from '@myrmidon/auth-jwt-admin';
 
 @Component({
   selector: 'app-register-user-page',
-  standalone: true,
   templateUrl: './register-user-page.component.html',
   styleUrls: ['./register-user-page.component.css'],
   imports: [
@@ -27,8 +26,9 @@ import { AuthJwtRegistrationComponent } from '@myrmidon/auth-jwt-admin';
     MatInputModule,
     MatProgressBarModule,
     MatTooltipModule,
-    AuthJwtRegistrationComponent
-],
+    AuthJwtRegistrationComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterUserPageComponent {
   constructor(private _router: Router) {}

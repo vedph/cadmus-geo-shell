@@ -107,7 +107,7 @@
         <!-- editor -->
         <div id="editor">
           @if (edited()) {
-            <mat-expansion-panel [expanded]="edited()" [disabled]="!edited()">
+            <mat-expansion-panel [expanded]="!!edited()" [disabled]="!edited()">
               <mat-expansion-panel-header>location</mat-expansion-panel-header>
               <cadmus-asserted-location
                 [assTagEntries]="assTagEntries()"

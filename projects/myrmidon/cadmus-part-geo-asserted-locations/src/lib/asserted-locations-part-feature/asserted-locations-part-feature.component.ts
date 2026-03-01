@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,6 +13,7 @@ import { AssertedLocationsPartComponent } from '../asserted-locations-part/asser
   selector: 'cadmus-asserted-locations-part-feature',
   templateUrl: './asserted-locations-part-feature.component.html',
   styleUrls: ['./asserted-locations-part-feature.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrentItemBarComponent, AssertedLocationsPartComponent],
 })
 export class AssertedLocationsPartFeatureComponent
@@ -25,7 +26,7 @@ export class AssertedLocationsPartFeatureComponent
     snackbar: MatSnackBar,
     itemService: ItemService,
     thesaurusService: ThesaurusService,
-    editorService: PartEditorService
+    editorService: PartEditorService,
   ) {
     super(
       router,
@@ -33,7 +34,7 @@ export class AssertedLocationsPartFeatureComponent
       snackbar,
       itemService,
       thesaurusService,
-      editorService
+      editorService,
     );
     this.roleIdInThesauri = true;
   }

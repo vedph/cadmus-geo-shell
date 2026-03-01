@@ -78,6 +78,11 @@ imports: [
 
 ## History
 
+### 12.1.0
+
+- 2026-03-01:
+  - updated Angular and packages.
+  - ⚠️ migrated to `OnPush`.
 - 2026-02-22: updated Angular and packages.
 
 ### 12.0.1
