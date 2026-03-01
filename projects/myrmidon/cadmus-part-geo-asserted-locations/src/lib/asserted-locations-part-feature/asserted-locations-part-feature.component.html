@@ -1,7 +1,7 @@
 <cadmus-current-item-bar />
 <cadmus-asserted-locations-part
   [identity]="identity()"
-  [data]="$any(data)"
+  [data]="$any(data())"
   (dataChange)="save($event!.value!)"
   (editorClose)="close()"
   (dirtyChange)="onDirtyChange($event)"
