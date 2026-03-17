@@ -78,6 +78,8 @@ imports: [
 
 ## History
 
+- 2026-03-17: ⚠️ shell app migrated to zoneless.
+
 ### 12.1.1
 
 - 2026-03-01:

@@ -1,7 +1,7 @@
 import {
   ApplicationConfig,
   importProvidersFrom,
-  provideZoneChangeDetection,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
@@ -22,12 +22,12 @@ import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideRouter(routes),
     provideNativeDateAdapter(),
     provideHttpClient(
       withInterceptors([authJwtInterceptor]),
-      withJsonpSupport()
+      withJsonpSupport(),
     ),
     importProvidersFrom(NgeMonacoModule.forRoot({})),
     // parts and fragments type IDs to editor group keys mappings
