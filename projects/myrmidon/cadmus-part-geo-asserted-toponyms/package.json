@@ -1,6 +1,6 @@
 {
   "name": "@myrmidon/cadmus-part-geo-asserted-toponyms",
-  "version": "11.1.1",
+  "version": "11.1.2",
   "description": "Cadmus - asserted toponyms UI component.",
   "keywords": [
     "Cadmus",
@@ -19,7 +19,7 @@
     "@angular/core": "^20.0.0 || ^21.0.0",
     "@angular/material": "^20.0.0 || ^21.0.0",
     "@myrmidon/cadmus-refs-assertion": "^10.0.6",
-    "@myrmidon/cadmus-refs-proper-name": "^10.0.5",
+    "@myrmidon/cadmus-refs-proper-name": "^10.0.6",
     "@myrmidon/cadmus-core": "^12.0.3",
     "@myrmidon/cadmus-state": "^15.0.0",
     "@myrmidon/cadmus-ui": "^16.1.0",

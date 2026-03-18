@@ -78,6 +78,7 @@ imports: [
 
 ## History
 
+- 2026-03-18: migrated shell app to M3 themes and added dark theme support to components.
 - 2026-03-17: ⚠️ shell app migrated to zoneless.
 
 ### 12.1.1
