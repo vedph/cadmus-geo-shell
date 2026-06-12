@@ -8,10 +8,14 @@ import {
   provideHttpClient,
   withInterceptors,
   withJsonpSupport,
+  withXhr,
 } from '@angular/common/http';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
-import { NgeMonacoModule } from '@cisstech/nge/monaco';
+import {
+  DefaultMonacoLoader,
+  NGX_MONACO_LOADER_PROVIDER,
+} from '@jean-merelis/ngx-monaco-editor';
 
 import { authJwtInterceptor } from '@myrmidon/auth-jwt-login';
 
@@ -26,10 +30,14 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideNativeDateAdapter(),
     provideHttpClient(
+      withXhr(),
       withInterceptors([authJwtInterceptor]),
       withJsonpSupport(),
     ),
-    importProvidersFrom(NgeMonacoModule.forRoot({})),
+    {
+      provide: NGX_MONACO_LOADER_PROVIDER,
+      useFactory: () => new DefaultMonacoLoader(),
+    },
     // parts and fragments type IDs to editor group keys mappings
     // https://github.com/nrwl/nx/issues/208#issuecomment-384102058
     // inject like: @Inject('partEditorKeys') partEditorKeys: PartEditorKeys
