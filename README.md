@@ -41,43 +41,9 @@ graph LR;
   cadmus-part-geo-pg --> cadmus-part-geo-asserted-toponyms
 ```
 
-## Requirements
-
-This requires MapLibre GL and its Angular wrapper, see <https://github.com/vedph/cadmus-bricks-shell-v3/blob/master/projects/myrmidon/cadmus-geo-location/README.md> for setup.
-
-Before version 12, this used Leaflet via [ngx-leaflet](https://github.com/bluehalo/ngx-leaflet), which required these steps (you can undo them when updating to V12+):
-
-▶️ (1) install packages:
-
-```bash
-npm install leaflet @bluehalo/ngx-leaflet
-npm install --save-dev @types/leaflet
-```
-
-▶️ (2) in `angular.json` under `styles` add the leaflet CSS stylesheet:
-
-```json
-"styles": [
-  "./node_modules/leaflet/dist/leaflet.css"
-]
-```
-
-▶️ (3) manually copy images from `node_modules/leaflet/dist/images` to `public/img`.
-
-▶️ (4) import the corresponding module in your root component or module:
-
-```ts
-import { LeafletModule } from '@bluehalo/ngx-leaflet';
-
-...
-imports: [
-  LeafletModule
-]
-...
-```
-
 ## History
 
+- 2026-07-21: updated Angular and packages.
 - 2026-06-12: ⚠️ replaced Monaco wrapper.
 - 2026-03-18: migrated shell app to M3 themes and added dark theme support to components.
 - 2026-03-17: ⚠️ shell app migrated to zoneless.
