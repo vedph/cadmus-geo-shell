@@ -13,3 +13,5 @@ minimumReleaseAgeExclude:
   - '@myrmidon/cadmus-text-ed@11.0.0'
   - '@myrmidon/cadmus-ui-note-set@12.0.0'
   - marked@18.0.7
+  - '@maplibre/ngx-maplibre-gl@22.0.0'
+  - '@myrmidon/cadmus-geo-location@1.0.1'

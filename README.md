@@ -43,6 +43,26 @@ graph LR;
 
 ## History
 
+- 2026-07-27: ⚠️ upgraded `maplibre-gl` 5→6 and `@maplibre/ngx-maplibre-gl` 21→22. MapLibre v6 dropped its UMD/CommonJS build and ships ESM-only, which breaks the worker script lookup under Angular's esbuild bundler (`import.meta.url` resolves to the bundled chunk, not to `maplibre-gl.mjs`, so the default worker URL 404s and any map using a real source silently hangs instead of firing `load`/`idle`). Fixed by:
+  - in `angular.json`, removed `"maplibre-gl"` from `allowedCommonJsDependencies` (no longer needed, v6 has no CommonJS build) and added an `assets` entry copying the worker + its dependency chunk as static files:
+
+    ```json
+    {
+      "glob": "maplibre-gl-{worker,shared}.mjs",
+      "input": "node_modules/maplibre-gl/dist",
+      "output": "assets/maplibre-gl"
+    }
+    ```
+
+  - in `main.ts`, added a `setWorkerUrl` call from `maplibre-gl` before `bootstrapApplication`, pointing at the copied asset (respects `<base href>`):
+
+    ```ts
+    import { setWorkerUrl } from 'maplibre-gl';
+    setWorkerUrl(new URL('assets/maplibre-gl/maplibre-gl-worker.mjs', document.baseURI).toString());
+    ```
+
+  - verified with a headless Chrome smoke test (GeoJSON source + `idle` event): without the fix the map never reaches `idle`; with it, it loads correctly.
+  - no other code changes were needed: the direct `maplibre-gl` / `@maplibre/ngx-maplibre-gl` imports in `asserted-locations-part.component.ts` don't touch any of v6's other breaking APIs (no `setData` with a second argument, no `styleimagemissing` listener, no `MapDataEvent`/`.transform` usage); `@import 'maplibre-gl/dist/maplibre-gl.css';` and the TS target (`ES2022`) are unaffected too.
 - 2026-07-21: updated Angular and packages.
 - 2026-06-12: ⚠️ replaced Monaco wrapper.
 - 2026-03-18: migrated shell app to M3 themes and added dark theme support to components.

@@ -13,7 +13,7 @@
     "build-lib": "npm run build-loc && npm run build-top && npm run build-pg"
   },
   "private": true,
-  "packageManager": "pnpm@11.15.1",
+  "packageManager": "pnpm@11.17.0",
   "dependencies": {
     "@angular/animations": "^22.0.7",
     "@angular/cdk": "^22.0.5",
@@ -27,14 +27,14 @@
     "@angular/router": "^22.0.7",
     "@auth0/angular-jwt": "^5.2.0",
     "@jean-merelis/ngx-monaco-editor": "^21.0.0",
-    "@maplibre/ngx-maplibre-gl": "^21.0.2",
+    "@maplibre/ngx-maplibre-gl": "^22.0.0",
     "@myrmidon/auth-jwt-admin": "^10.0.0",
     "@myrmidon/auth-jwt-login": "^10.0.0",
     "@myrmidon/cadmus-api": "^15.0.1",
     "@myrmidon/cadmus-core": "^13.0.0",
     "@myrmidon/cadmus-flags-pg": "^16.0.0",
     "@myrmidon/cadmus-flags-ui": "^16.0.0",
-    "@myrmidon/cadmus-geo-location": "^1.0.0",
+    "@myrmidon/cadmus-geo-location": "^1.0.1",
     "@myrmidon/cadmus-graph-pg": "^16.0.0",
     "@myrmidon/cadmus-graph-pg-ex": "^17.0.0",
     "@myrmidon/cadmus-graph-ui": "^16.0.0",
@@ -77,7 +77,7 @@
     "@terraformer/wkt": "^2.2.2",
     "@types/diff-match-patch": "^1.0.36",
     "@types/geojson": "^7946.0.16",
-    "maplibre-gl": "^5.24.0",
+    "maplibre-gl": "^6.0.0",
     "marked": "^18.0.7",
     "monaco-editor": "^0.47.0",
     "ngx-markdown": "^22.0.0",
@@ -105,7 +105,7 @@
     "vitest": "^4.1.10"
   },
   "optionalDependencies": {
-    "@rollup/rollup-win32-arm64-msvc": "^4.62.2"
+    "@rollup/rollup-win32-arm64-msvc": "^4.62.3"
   },
   "pnpm": {
     "overrides": {
