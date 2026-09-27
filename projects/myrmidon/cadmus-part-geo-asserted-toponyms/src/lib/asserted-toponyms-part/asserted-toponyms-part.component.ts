@@ -42,6 +42,7 @@ import {
 import {
   CloseSaveButtonsComponent,
   ModelEditorComponentBase,
+  HelpLinkComponent,
 } from '@myrmidon/cadmus-ui';
 import {
   EditedObject,
@@ -90,6 +91,7 @@ interface AssertedToponymsPartSettings {
     MatCardActions,
     CadmusProperNamePipe,
     CloseSaveButtonsComponent,
+    HelpLinkComponent,
   ],
 })
 export class AssertedToponymsPartComponent extends ModelEditorComponentBase<AssertedToponymsPart> {

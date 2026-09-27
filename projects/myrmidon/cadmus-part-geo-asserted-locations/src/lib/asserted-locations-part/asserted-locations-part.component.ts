@@ -24,6 +24,7 @@ import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 import {
   CloseSaveButtonsComponent,
   ModelEditorComponentBase,
+  HelpLinkComponent,
 } from '@myrmidon/cadmus-ui';
 import {
   EditedObject,
@@ -100,6 +101,7 @@ interface AssertedLocationsPartSettings {
     AssertedLocationComponent,
     MatCardActions,
     CloseSaveButtonsComponent,
+    HelpLinkComponent,
     // MapLibre
     MapComponent,
     MarkerComponent,
@@ -147,7 +149,7 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
   public readonly mapReady = signal(false);
   public readonly mapLocations = signal<AssertedLocation[]>([]);
   public readonly mapCenter = signal<LngLatLike>([0, 20]);
-  public readonly mapZoom = signal<[number]>([2]);
+  public readonly mapZoom = signal<number>(4);
   private _overviewMap?: MaplibreMap;
 
   public readonly labelsGeoJSON = computed<FeatureCollection>(() => {

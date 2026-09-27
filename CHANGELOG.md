@@ -1,5 +1,8 @@
 # History
 
+- 2026-09-27:
+  - 🆕 added help links to part editors.
+  - updated zoom usage for MapLibre.
 - 2026-09-25: updated Angular and packages.
 - 2026-07-27: ⚠️ upgraded `maplibre-gl` 5→6 and `@maplibre/ngx-maplibre-gl` 21→22. MapLibre v6 dropped its UMD/CommonJS build and ships ESM-only, which breaks the worker script lookup under Angular's esbuild bundler (`import.meta.url` resolves to the bundled chunk, not to `maplibre-gl.mjs`, so the default worker URL 404s and any map using a real source silently hangs instead of firing `load`/`idle`). Fixed by:
   - in `angular.json`, removed `"maplibre-gl"` from `allowedCommonJsDependencies` (no longer needed, v6 has no CommonJS build) and added an `assets` entry copying the worker + its dependency chunk as static files:
