@@ -137,7 +137,7 @@ export class AssertedLocationComponent {
         this.hasAssertion.value && this.assertion.value
           ? this.assertion.value
           : undefined,
-      tag: this.tag.value?.trim(),
+      tag: this.tag.value?.trim() || undefined,
     };
   }
 
