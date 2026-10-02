@@ -17,7 +17,7 @@ After building your library with `ng build cadmus-part-geo-pg`, go to the dist f
 
 ## Running unit tests
 
-Run `ng test cadmus-part-geo-pg` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `ng test @myrmidon/cadmus-part-geo-pg` to execute the unit tests via [Vitest](https://vitest.dev). Build the locations and toponyms libraries first, as they are imported from `dist`.
 
 ## Further help
 
