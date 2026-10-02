@@ -10,21 +10,21 @@
     "build-loc": "ng build @myrmidon/cadmus-part-geo-asserted-locations",
     "build-top": "ng build @myrmidon/cadmus-part-geo-asserted-toponyms",
     "build-pg": "ng build @myrmidon/cadmus-part-geo-pg",
-    "build-lib": "npm run build-loc && npm run build-top && npm run build-pg"
+    "build:lib": "npm run build-loc && npm run build-top && npm run build-pg"
   },
   "private": true,
-  "packageManager": "pnpm@12.6.0",
+  "packageManager": "pnpm@12.8.1",
   "dependencies": {
-    "@angular/animations": "^22.2.0",
-    "@angular/cdk": "^22.2.0",
-    "@angular/common": "^22.2.0",
-    "@angular/compiler": "^22.2.0",
-    "@angular/core": "^22.2.0",
-    "@angular/forms": "^22.2.0",
-    "@angular/material": "^22.2.0",
-    "@angular/platform-browser": "^22.2.0",
-    "@angular/platform-browser-dynamic": "^22.2.0",
-    "@angular/router": "^22.2.0",
+    "@angular/animations": "^22.2.1",
+    "@angular/cdk": "^22.2.1",
+    "@angular/common": "^22.2.1",
+    "@angular/compiler": "^22.2.1",
+    "@angular/core": "^22.2.1",
+    "@angular/forms": "^22.2.1",
+    "@angular/material": "^22.2.1",
+    "@angular/platform-browser": "^22.2.1",
+    "@angular/platform-browser-dynamic": "^22.2.1",
+    "@angular/router": "^22.2.1",
     "@auth0/angular-jwt": "^5.2.0",
     "@jean-merelis/ngx-monaco-editor": "^21.0.0",
     "@maplibre/ngx-maplibre-gl": "^22.1.0",
@@ -86,13 +86,13 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^22.2.0",
-    "@angular/cli": "^22.2.0",
-    "@angular/compiler-cli": "^22.2.0",
-    "@angular/localize": "^22.2.0",
+    "@angular/build": "^22.2.1",
+    "@angular/cli": "^22.2.1",
+    "@angular/compiler-cli": "^22.2.1",
+    "@angular/localize": "^22.2.1",
     "@terraformer/wkt": "^2.2.2",
     "@types/geojson": "^7946.0.16",
-    "@types/jasmine": "~6.0.0",
+    "@types/jasmine": "~7.0.0",
     "istanbul-lib-instrument": "^6.0.3",
     "jasmine-core": "~7.0.2",
     "karma": "~6.4.4",
@@ -100,12 +100,12 @@
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.3.0",
-    "ng-packagr": "^22.2.1",
+    "ng-packagr": "^22.2.4",
     "typescript": "~6.0.3",
-    "vitest": "^5.0.2"
+    "vitest": "^5.0.3"
   },
   "optionalDependencies": {
-    "@rollup/rollup-win32-arm64-msvc": "^4.63.5"
+    "@rollup/rollup-win32-arm64-msvc": "^4.64.0"
   },
   "pnpm": {
     "overrides": {

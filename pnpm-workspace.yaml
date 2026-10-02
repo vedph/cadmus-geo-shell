@@ -15,7 +15,7 @@ minimumReleaseAgeExclude:
   - marked@18.0.7
   - '@maplibre/ngx-maplibre-gl@22.0.0'
   - '@myrmidon/cadmus-geo-location@1.0.1'
-  - '@rollup/rollup-win32-arm64-msvc@4.63.5'
+  - '@rollup/rollup-win32-arm64-msvc@4.63.5 || 4.64.0'
   - maplibre-gl@6.11.2
   - '@myrmidon/cadmus-item-editor@18.0.1'
   - '@myrmidon/cadmus-ui@18.0.1'
