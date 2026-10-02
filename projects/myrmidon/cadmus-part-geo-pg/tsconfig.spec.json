@@ -4,12 +4,12 @@
   "compilerOptions": {
     "outDir": "../../../out-tsc/spec",
     "types": [
-      "jasmine"
+      "vitest/globals"
     ]
   },
   "include": [
-    "**/*.spec.ts",
-    "**/*.d.ts"
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts"
   ],
   "angularCompilerOptions": {
     "extendedDiagnostics": {

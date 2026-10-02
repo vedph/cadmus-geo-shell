@@ -19,3 +19,8 @@ minimumReleaseAgeExclude:
   - maplibre-gl@6.11.2
   - '@myrmidon/cadmus-item-editor@18.0.1'
   - '@myrmidon/cadmus-ui@18.0.1'
+hoistPattern:
+  - '*'
+  # zoneless workspace: keep zone.js (an optional peer of @angular/core) out of
+  # the hoisted store, otherwise the unit-test builder tries to load zone testing
+  - '!zone.js'

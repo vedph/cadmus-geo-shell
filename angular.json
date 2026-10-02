@@ -123,10 +123,10 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "projects/myrmidon/cadmus-part-geo-asserted-locations/tsconfig.spec.json",
-            "polyfills": []
+            "runner": "vitest"
           }
         }
       }
@@ -153,10 +153,10 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "projects/myrmidon/cadmus-part-geo-asserted-toponyms/tsconfig.spec.json",
-            "polyfills": []
+            "runner": "vitest"
           }
         }
       }
@@ -183,10 +183,10 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "projects/myrmidon/cadmus-part-geo-pg/tsconfig.spec.json",
-            "polyfills": []
+            "runner": "vitest"
           }
         }
       }
