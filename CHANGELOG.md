@@ -1,6 +1,8 @@
 # History
 
-- 2026-10-02: updated Angular and packages.
+- 2026-10-02:
+  - updated Angular and packages.
+  - ⚠️ migrated to Vitest and fixed bugs.
 - 2026-09-27:
   - 🆕 added help links to part editors.
   - updated zoom usage for MapLibre.
