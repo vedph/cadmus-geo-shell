@@ -237,6 +237,13 @@ export class AssertedToponymsPartComponent extends ModelEditorComponentBase<Asse
       .then((settings) => {
         const options = settings?.lookupProviderOptions;
         this.lookupProviderOptions.set(options || undefined);
+      })
+      .catch((err) => {
+        console.warn(
+          `Failed to load settings for ${ASSERTED_TOPONYMS_PART_TYPEID}:`,
+          err,
+        );
+        this.lookupProviderOptions.set(undefined);
       });
     // form
     this.updateForm(data?.value);

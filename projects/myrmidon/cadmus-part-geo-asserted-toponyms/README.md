@@ -17,7 +17,7 @@ After building your library with `ng build cadmus-part-geo-asserted-toponyms`, g
 
 ## Running unit tests
 
-Run `ng test cadmus-part-geo-asserted-toponyms` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `ng test @myrmidon/cadmus-part-geo-asserted-toponyms` to execute the unit tests via [Vitest](https://vitest.dev).
 
 ## Further help
 

@@ -118,9 +118,11 @@ export class AssertedToponymComponent {
 
   private getToponym(): AssertedToponym {
     return {
-      eid: this.eid.value?.trim(),
-      tag: this.tag.value?.trim(),
+      eid: this.eid.value?.trim() || undefined,
+      tag: this.tag.value?.trim() || undefined,
       name: this.name.value!,
+      // the toponym-level assertion is not edited here: preserve it
+      assertion: this.toponym()?.assertion,
     };
   }
 
