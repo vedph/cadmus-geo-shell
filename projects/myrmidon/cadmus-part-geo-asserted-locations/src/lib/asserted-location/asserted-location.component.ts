@@ -3,18 +3,13 @@ import {
   Component,
   effect,
   input,
+  linkedSignal,
   model,
   output,
   signal,
+  untracked,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormField, form, maxLength, required } from '@angular/forms/signals';
 
 import { MatCheckbox } from '@angular/material/checkbox';
 import {
@@ -35,8 +30,49 @@ import { ThesaurusEntry } from '@myrmidon/cadmus-core';
 import { Assertion, AssertionComponent } from '@myrmidon/cadmus-refs-assertion';
 import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 import { GeoLocation, GeoLocationEditor } from '@myrmidon/cadmus-geo-location';
+import {
+  copyFormValue,
+  isImplicitSubmission,
+  setFieldFromChild,
+} from '@myrmidon/cadmus-ui';
 
 import { AssertedLocation } from '../asserted-locations-part';
+
+/**
+ * The editable shape behind the form.
+ */
+interface AssertedLocationControls {
+  value: GeoLocation | null;
+  hasAssertion: boolean;
+  assertion: Assertion | null;
+  tag: string;
+}
+
+/**
+ * Bound location -> editable draft.
+ */
+function toDraft(location?: AssertedLocation | null): AssertedLocationControls {
+  return {
+    value: copyFormValue(location?.value) ?? null,
+    hasAssertion: !!location?.assertion,
+    assertion: copyFormValue(location?.assertion) ?? null,
+    tag: location?.tag || '',
+  };
+}
+
+/**
+ * Editable draft -> location.
+ */
+function toLocation(draft: AssertedLocationControls): AssertedLocation {
+  return {
+    value: copyFormValue(draft.value)!,
+    assertion:
+      draft.hasAssertion && draft.assertion
+        ? copyFormValue(draft.assertion)
+        : undefined,
+    tag: draft.tag.trim() || undefined,
+  };
+}
 
 /**
  * Editor for a location with an optional assertion.
@@ -47,8 +83,7 @@ import { AssertedLocation } from '../asserted-locations-part';
   styleUrls: ['./asserted-location.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     MatCheckbox,
     MatError,
     MatExpansionPanel,
@@ -93,58 +128,48 @@ export class AssertedLocationComponent {
 
   public readonly locationExpanded = signal<boolean>(false);
 
-  // form
-  public value: FormControl<GeoLocation | null>;
-  public hasAssertion: FormControl<boolean>;
-  public assertion: FormControl<Assertion | null>;
-  public tag: FormControl<string | null>;
-  public form: FormGroup;
+  /**
+   * The editable draft, derived from `location`. On the echo of our own
+   * save, keep the draft rather than rebuilding it from the normalized
+   * location.
+   */
+  private readonly _draft = linkedSignal<
+    AssertedLocation | undefined,
+    AssertedLocationControls
+  >({
+    source: () => this.location(),
+    computation: (location, previous) =>
+      previous &&
+      JSON.stringify(location) === JSON.stringify(toLocation(previous.value))
+        ? previous.value
+        : toDraft(location),
+  });
 
-  constructor(formBuilder: FormBuilder) {
-    this.value = formBuilder.control(null, Validators.required);
-    this.hasAssertion = formBuilder.control(false, { nonNullable: true });
-    this.assertion = formBuilder.control(null);
-    this.tag = formBuilder.control(null, Validators.maxLength(50));
-    this.form = formBuilder.group({
-      value: this.value,
-      hasAssertion: this.hasAssertion,
-      assertion: this.assertion,
-      tag: this.tag,
-    });
+  public readonly form = form(this._draft, (p) => {
+    required(p.value);
+    maxLength(p.tag, 50);
+  });
 
+  constructor() {
+    // once the draft mirrors the bound location again there are no unsaved
+    // edits: clear the interaction state
     effect(() => {
-      this.updateForm(this.location());
+      const draft = this._draft();
+      untracked(() => {
+        if (this.isDraftInSync(draft)) {
+          this.form().reset();
+        }
+      });
     });
   }
 
-  private updateForm(location: AssertedLocation | undefined | null): void {
-    if (!location) {
-      this.form.reset();
-      return;
-    }
-
-    this.value.setValue(location.value || null);
-    this.hasAssertion.setValue(location.assertion ? true : false);
-    this.assertion.setValue(location.assertion || null);
-    this.tag.setValue(location.tag || null);
-    this.form.markAsPristine();
-  }
-
-  private getLocation(): AssertedLocation {
-    return {
-      value: this.value.value!,
-      assertion:
-        this.hasAssertion.value && this.assertion.value
-          ? this.assertion.value
-          : undefined,
-      tag: this.tag.value?.trim() || undefined,
-    };
+  private isDraftInSync(draft: AssertedLocationControls): boolean {
+    return JSON.stringify(draft) === JSON.stringify(toDraft(this.location()));
   }
 
   public onLocationChange(value: GeoLocation): void {
-    this.value.setValue(value);
-    this.value.markAsDirty();
-    this.value.updateValueAndValidity();
+    this.form.value().value.set(copyFormValue(value));
+    this.form.value().markAsDirty();
     this.locationExpanded.set(false);
   }
 
@@ -157,9 +182,19 @@ export class AssertedLocationComponent {
   }
 
   public onAssertionChange(assertion?: Assertion): void {
-    this.assertion.setValue(assertion || null);
-    this.assertion.markAsDirty();
-    this.assertion.updateValueAndValidity();
+    setFieldFromChild(this.form.assertion, copyFormValue(assertion) ?? null);
+  }
+
+  public onEnterKey(event: Event): void {
+    if (!isImplicitSubmission(event)) {
+      return;
+    }
+    event.preventDefault();
+    // as the save button, do nothing when invalid or unchanged
+    if (this.form().invalid() || !this.form().dirty()) {
+      return;
+    }
+    this.save();
   }
 
   public close(): void {
@@ -167,9 +202,11 @@ export class AssertedLocationComponent {
   }
 
   public save(): void {
-    if (this.form.invalid) {
+    if (this.form().invalid()) {
+      this.form().markAsTouched();
       return;
     }
-    this.location.set(this.getLocation());
+    this.location.set(toLocation(this._draft()));
+    this.form().reset();
   }
 }

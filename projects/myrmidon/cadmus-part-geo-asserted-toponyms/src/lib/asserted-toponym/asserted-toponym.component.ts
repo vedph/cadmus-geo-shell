@@ -3,17 +3,12 @@ import {
   Component,
   effect,
   input,
+  linkedSignal,
   model,
   output,
+  untracked,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormField, form, maxLength, required } from '@angular/forms/signals';
 
 import { MatFormField, MatError, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -24,13 +19,54 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 
 import { ThesaurusEntry } from '@myrmidon/cadmus-core';
+import { Assertion } from '@myrmidon/cadmus-refs-assertion';
 import {
   ProperName,
   ProperNameComponent,
 } from '@myrmidon/cadmus-refs-proper-name';
 import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
+import {
+  copyFormValue,
+  isImplicitSubmission,
+  setFieldFromChild,
+} from '@myrmidon/cadmus-ui';
 
 import { AssertedToponym } from '../asserted-toponyms-part';
+
+/**
+ * The editable shape behind the form.
+ */
+interface AssertedToponymControls {
+  eid: string;
+  tag: string;
+  name: ProperName | null;
+  // the toponym-level assertion is not edited here: carried through
+  assertion: Assertion | null;
+}
+
+/**
+ * Bound toponym -> editable draft.
+ */
+function toDraft(toponym?: AssertedToponym | null): AssertedToponymControls {
+  return {
+    eid: toponym?.eid || '',
+    tag: toponym?.tag || '',
+    name: copyFormValue(toponym?.name) ?? null,
+    assertion: copyFormValue(toponym?.assertion) ?? null,
+  };
+}
+
+/**
+ * Editable draft -> toponym.
+ */
+function toToponym(draft: AssertedToponymControls): AssertedToponym {
+  return {
+    eid: draft.eid.trim() || undefined,
+    tag: draft.tag.trim() || undefined,
+    name: copyFormValue(draft.name)!,
+    assertion: copyFormValue(draft.assertion) ?? undefined,
+  };
+}
 
 @Component({
   selector: 'cadmus-asserted-toponym',
@@ -38,8 +74,7 @@ import { AssertedToponym } from '../asserted-toponyms-part';
   styleUrls: ['./asserted-toponym.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     MatFormField,
     MatInput,
     MatError,
@@ -76,54 +111,60 @@ export class AssertedToponymComponent {
 
   public readonly editorClose = output();
 
-  public eid: FormControl<string | null>;
-  public tag: FormControl<string | null>;
-  public name: FormControl<ProperName | null>;
-  public form: FormGroup;
+  /**
+   * The editable draft, derived from `toponym`. On the echo of our own
+   * save, keep the draft rather than rebuilding it from the normalized
+   * toponym.
+   */
+  private readonly _draft = linkedSignal<
+    AssertedToponym | undefined,
+    AssertedToponymControls
+  >({
+    source: () => this.toponym(),
+    computation: (toponym, previous) =>
+      previous &&
+      JSON.stringify(toponym) === JSON.stringify(toToponym(previous.value))
+        ? previous.value
+        : toDraft(toponym),
+  });
 
-  constructor(formBuilder: FormBuilder) {
-    // form
-    this.eid = formBuilder.control(null, Validators.maxLength(500));
-    this.tag = formBuilder.control(null, Validators.maxLength(50));
-    this.name = formBuilder.control(null, Validators.required);
-    this.form = formBuilder.group({
-      eid: this.eid,
-      tag: this.tag,
-      name: this.name,
-    });
+  public readonly form = form(this._draft, (p) => {
+    maxLength(p.eid, 500);
+    maxLength(p.tag, 50);
+    required(p.name);
+  });
 
+  constructor() {
+    // once the draft mirrors the bound toponym again there are no unsaved
+    // edits: clear the interaction state
     effect(() => {
-      const toponym = this.toponym();
-      this.updateForm(toponym);
+      const draft = this._draft();
+      untracked(() => {
+        if (this.isDraftInSync(draft)) {
+          this.form().reset();
+        }
+      });
     });
   }
 
-  private updateForm(toponym: AssertedToponym | undefined | null): void {
-    if (!toponym) {
-      this.form.reset();
-      return;
-    }
-
-    this.eid.setValue(toponym.eid || null);
-    this.tag.setValue(toponym.tag || null);
-    this.name.setValue(toponym.name);
-    this.form.markAsPristine();
+  private isDraftInSync(draft: AssertedToponymControls): boolean {
+    return JSON.stringify(draft) === JSON.stringify(toDraft(this.toponym()));
   }
 
   public onNameChange(name: ProperName | undefined): void {
-    this.name.setValue(name || null);
-    this.name.markAsDirty();
-    this.name.updateValueAndValidity();
+    setFieldFromChild(this.form.name, copyFormValue(name) ?? null);
   }
 
-  private getToponym(): AssertedToponym {
-    return {
-      eid: this.eid.value?.trim() || undefined,
-      tag: this.tag.value?.trim() || undefined,
-      name: this.name.value!,
-      // the toponym-level assertion is not edited here: preserve it
-      assertion: this.toponym()?.assertion,
-    };
+  public onEnterKey(event: Event): void {
+    if (!isImplicitSubmission(event)) {
+      return;
+    }
+    event.preventDefault();
+    // as the save button, do nothing when invalid or unchanged
+    if (this.form().invalid() || !this.form().dirty()) {
+      return;
+    }
+    this.save();
   }
 
   public cancel(): void {
@@ -131,10 +172,11 @@ export class AssertedToponymComponent {
   }
 
   public save(): void {
-    if (this.form.invalid) {
+    if (this.form().invalid()) {
+      this.form().markAsTouched();
       return;
     }
-    const toponym = this.getToponym();
-    this.toponym.set(toponym);
+    this.toponym.set(toToponym(this._draft()));
+    this.form().reset();
   }
 }

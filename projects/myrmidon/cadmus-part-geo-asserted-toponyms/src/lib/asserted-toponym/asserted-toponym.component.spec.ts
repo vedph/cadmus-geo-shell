@@ -78,36 +78,45 @@ describe('AssertedToponymComponent', () => {
 
   it('should create with an empty invalid form', () => {
     expect(component).toBeTruthy();
-    expect(component.eid.value).toBeNull();
-    expect(component.tag.value).toBeNull();
-    expect(component.name.value).toBeNull();
-    expect(component.form.invalid).toBe(true);
+    expect(component.form.eid().value()).toBe('');
+    expect(component.form.tag().value()).toBe('');
+    expect(component.form.name().value()).toBeNull();
+    expect(component.form().invalid()).toBe(true);
+  });
+
+  it('should render no <form> element', () => {
+    expect(fixture.nativeElement.querySelector('form')).toBeNull();
   });
 
   describe('updating form from toponym', () => {
     it('should fill the form from a toponym', async () => {
       await setToponym({ eid: 'rome', tag: 'city', name: NAME });
 
-      expect(component.eid.value).toBe('rome');
-      expect(component.tag.value).toBe('city');
-      expect(component.name.value).toEqual(NAME);
-      expect(component.form.valid).toBe(true);
-      expect(component.form.pristine).toBe(true);
+      expect(component.form.eid().value()).toBe('rome');
+      expect(component.form.tag().value()).toBe('city');
+      expect(component.form.name().value()).toEqual(NAME);
+      expect(component.form().valid()).toBe(true);
+      expect(component.form().dirty()).toBe(false);
     });
 
-    it('should set missing eid and tag to null', async () => {
+    it('should not adopt the bound name', async () => {
       await setToponym({ name: NAME });
-      expect(component.eid.value).toBeNull();
-      expect(component.tag.value).toBeNull();
+      expect(component.form.name().value()).not.toBe(NAME);
+    });
+
+    it('should set missing eid and tag to empty', async () => {
+      await setToponym({ name: NAME });
+      expect(component.form.eid().value()).toBe('');
+      expect(component.form.tag().value()).toBe('');
     });
 
     it('should reset the form when toponym is cleared', async () => {
       await setToponym({ eid: 'rome', tag: 'city', name: NAME });
       await setToponym(undefined);
 
-      expect(component.eid.value).toBeNull();
-      expect(component.tag.value).toBeNull();
-      expect(component.name.value).toBeNull();
+      expect(component.form.eid().value()).toBe('');
+      expect(component.form.tag().value()).toBe('');
+      expect(component.form.name().value()).toBeNull();
     });
   });
 
@@ -151,39 +160,52 @@ describe('AssertedToponymComponent', () => {
     });
 
     it('should show error for a too long EID', async () => {
-      component.eid.setValue('x'.repeat(501));
-      component.eid.markAsDirty();
-      component.eid.markAsTouched();
+      component.form.eid().value.set('x'.repeat(501));
+      component.form.eid().markAsTouched();
       await refresh();
 
-      expect(component.eid.errors?.['maxlength']).toBeTruthy();
+      expect(component.form.eid().getError('maxLength')).toBeTruthy();
       const error = fixture.nativeElement.querySelector('mat-error');
       expect(error?.textContent).toContain('EID too long');
     });
 
     it('should show error for a too long free tag', async () => {
-      component.tag.setValue('x'.repeat(51));
-      component.tag.markAsDirty();
-      component.tag.markAsTouched();
+      component.form.tag().value.set('x'.repeat(51));
+      component.form.tag().markAsTouched();
       await refresh();
 
-      expect(component.tag.errors?.['maxlength']).toBeTruthy();
+      expect(component.form.tag().getError('maxLength')).toBeTruthy();
       const error = fixture.nativeElement.querySelector('mat-error');
       expect(error?.textContent).toContain('tag too long');
     });
 
     it('should disable save button when form is pristine or invalid', async () => {
       const saveBtn = (): HTMLButtonElement =>
-        fixture.nativeElement.querySelector('button[type="submit"]');
+        fixture.nativeElement.querySelector(
+          'button[mattooltip="Save toponym"]',
+        );
+      expect(saveBtn().type).toBe('button');
       expect(saveBtn().disabled).toBe(true);
 
       await setToponym({ name: NAME });
       expect(saveBtn().disabled).toBe(true);
 
-      component.eid.setValue('rome');
-      component.eid.markAsDirty();
+      component.form.eid().value.set('rome');
+      component.form.eid().markAsDirty();
       await refresh();
       expect(saveBtn().disabled).toBe(false);
+    });
+
+    it('should become pristine again when the edit is reverted', async () => {
+      await setToponym({ eid: 'a', name: NAME });
+      component.form.eid().value.set('b');
+      component.form.eid().markAsDirty();
+      await refresh();
+      expect(component.form().dirty()).toBe(true);
+
+      component.form.eid().value.set('a');
+      await refresh();
+      expect(component.form().dirty()).toBe(false);
     });
   });
 
@@ -198,15 +220,26 @@ describe('AssertedToponymComponent', () => {
       nameEditor().name.set(changed);
       await fixture.whenStable();
 
-      expect(component.name.value).toEqual(changed);
-      expect(component.name.dirty).toBe(true);
+      expect(component.form.name().value()).toEqual(changed);
+      expect(component.form.name().dirty()).toBe(true);
+    });
+
+    it('should stay pristine on a name echo', async () => {
+      // server data often contain nulls...
+      const name = { ...NAME, tag: null } as unknown as ProperName;
+      await setToponym({ name });
+      // ...and the name editor autosaves a normalized copy of what it got
+      nameEditor().name.set({ ...NAME, tag: undefined });
+      await fixture.whenStable();
+
+      expect(component.form().dirty()).toBe(false);
     });
 
     it('should set name to null when cleared', async () => {
       await setToponym({ name: NAME });
       component.onNameChange(undefined);
-      expect(component.name.value).toBeNull();
-      expect(component.form.invalid).toBe(true);
+      expect(component.form.name().value()).toBeNull();
+      expect(component.form().invalid()).toBe(true);
     });
   });
 
@@ -236,12 +269,13 @@ describe('AssertedToponymComponent', () => {
       component.toponym.subscribe((t) => (saved = t));
       component.save();
       expect(saved).toBeUndefined();
+      expect(component.form.name().touched()).toBe(true);
     });
 
     it('should save toponym with trimmed eid and tag', async () => {
       await setToponym({ name: NAME });
-      component.eid.setValue('  rome ');
-      component.tag.setValue(' city  ');
+      component.form.eid().value.set('  rome ');
+      component.form.tag().value.set(' city  ');
 
       let saved: AssertedToponym | undefined;
       component.toponym.subscribe((t) => (saved = t));
@@ -253,8 +287,8 @@ describe('AssertedToponymComponent', () => {
 
     it('should save empty eid and tag as undefined', async () => {
       await setToponym({ eid: 'rome', tag: 'city', name: NAME });
-      component.eid.setValue('  ');
-      component.tag.setValue('');
+      component.form.eid().value.set('  ');
+      component.form.tag().value.set('');
       component.save();
 
       const saved = component.toponym()!;
@@ -264,7 +298,7 @@ describe('AssertedToponymComponent', () => {
 
     it('should preserve the toponym assertion', async () => {
       await setToponym({ eid: 'rome', name: NAME, assertion: ASSERTION });
-      component.eid.setValue('roma');
+      component.form.eid().value.set('roma');
       component.save();
 
       expect(component.toponym()).toEqual({
@@ -274,17 +308,65 @@ describe('AssertedToponymComponent', () => {
       });
     });
 
-    it('should save on form submit', async () => {
+    it('should save on save button click', async () => {
       await setToponym({ name: NAME });
-      component.eid.setValue('rome');
-      component.eid.markAsDirty();
+      component.form.eid().value.set('rome');
+      component.form.eid().markAsDirty();
       await refresh();
 
-      fixture.debugElement.query(By.css('form')).triggerEventHandler(
-        'submit',
-        {},
-      );
+      (
+        fixture.nativeElement.querySelector(
+          'button[mattooltip="Save toponym"]',
+        ) as HTMLButtonElement
+      ).click();
       expect(component.toponym()).toEqual({ eid: 'rome', name: NAME });
+    });
+
+    const pressEnter = (input: HTMLInputElement): KeyboardEvent => {
+      const event = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+        cancelable: true,
+      });
+      input.dispatchEvent(event);
+      return event;
+    };
+
+    it('should save on Enter in the EID input', async () => {
+      await setToponym({ name: NAME });
+      component.form.eid().value.set('rome');
+      component.form.eid().markAsDirty();
+      await refresh();
+
+      const event = pressEnter(
+        fixture.nativeElement.querySelector('input[placeholder="EID"]'),
+      );
+      expect(event.defaultPrevented).toBe(true);
+      expect(component.toponym()).toEqual({ eid: 'rome', name: NAME });
+    });
+
+    it('should not save on Enter when unchanged', async () => {
+      const toponym: AssertedToponym = { eid: 'rome', name: NAME };
+      await setToponym(toponym);
+
+      pressEnter(
+        fixture.nativeElement.querySelector('input[placeholder="EID"]'),
+      );
+      expect(component.toponym()).toBe(toponym);
+    });
+
+    it('should save a toponym carrying no Symbol tags', async () => {
+      await setToponym({ name: NAME, assertion: ASSERTION });
+      component.form.eid().value.set('rome');
+      component.save();
+
+      const saved = component.toponym()!;
+      const symbols = (o: object) => Object.getOwnPropertySymbols(o).length;
+      expect(symbols(saved.name)).toBe(0);
+      expect(saved.name.pieces.every((p) => !symbols(p))).toBe(true);
+      expect(saved.assertion!.references!.every((r) => !symbols(r))).toBe(
+        true,
+      );
     });
   });
 });

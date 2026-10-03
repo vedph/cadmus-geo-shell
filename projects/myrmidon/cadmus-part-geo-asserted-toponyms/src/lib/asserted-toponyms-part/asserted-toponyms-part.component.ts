@@ -2,16 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
+  linkedSignal,
   signal,
 } from '@angular/core';
-import {
-  FormControl,
-  FormBuilder,
-  FormGroup,
-  UntypedFormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { take } from 'rxjs/operators';
 
@@ -31,24 +25,19 @@ import {
   MatExpansionPanelHeader,
 } from '@angular/material/expansion';
 
-import { NgxToolsValidators } from '@myrmidon/ngx-tools';
+import { NgxToolsSignalValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
-import { AuthJwtService } from '@myrmidon/auth-jwt-login';
+
 import {
   ProperNameService,
   CadmusProperNamePipe,
 } from '@myrmidon/cadmus-refs-proper-name';
-
 import {
   CloseSaveButtonsComponent,
   ModelEditorComponentBase,
   HelpLinkComponent,
+  copyFormValue,
 } from '@myrmidon/cadmus-ui';
-import {
-  EditedObject,
-  ThesauriSet,
-  ThesaurusEntry,
-} from '@myrmidon/cadmus-core';
 import { LookupProviderOptions } from '@myrmidon/cadmus-refs-lookup';
 
 import {
@@ -63,6 +52,22 @@ interface AssertedToponymsPartSettings {
 }
 
 /**
+ * The editable shape behind the form.
+ */
+interface AssertedToponymsPartControls {
+  toponyms: AssertedToponym[];
+}
+
+/**
+ * Bound part -> editable draft.
+ */
+function toDraft(
+  part?: AssertedToponymsPart | null,
+): AssertedToponymsPartControls {
+  return { toponyms: copyFormValue(part?.toponyms) || [] };
+}
+
+/**
  * AssertedToponymsPart editor component.
  * Thesauri: geo-toponym-tags, geo-name-tags, geo-name-languages,
  * geo-name-piece-types, assertion-tags, doc-reference-types, doc-reference-tags.
@@ -73,8 +78,6 @@ interface AssertedToponymsPartSettings {
   styleUrls: ['./asserted-toponyms-part.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
     MatCard,
     MatCardHeader,
     MatCardAvatar,
@@ -95,36 +98,39 @@ interface AssertedToponymsPartSettings {
   ],
 })
 export class AssertedToponymsPartComponent extends ModelEditorComponentBase<AssertedToponymsPart> {
+  private readonly _nameService = inject(ProperNameService);
+  private readonly _dialogService = inject(DialogService);
+
   public readonly editedIndex = signal<number>(-1);
   public readonly edited = signal<AssertedToponym | undefined>(undefined);
 
   // geo-toponym-tags
-  public readonly topTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly topTagEntries = computed(
+    () => this.data()?.thesauri?.['geo-toponym-tags']?.entries,
   );
   // geo-name-tags
-  public readonly nameTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly nameTagEntries = computed(
+    () => this.data()?.thesauri?.['geo-name-tags']?.entries,
   );
   // geo-name-languages
-  public readonly nameLangEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly nameLangEntries = computed(
+    () => this.data()?.thesauri?.['geo-name-languages']?.entries,
   );
   // geo-name-piece-types
-  public readonly nameTypeEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly nameTypeEntries = computed(
+    () => this.data()?.thesauri?.['geo-name-piece-types']?.entries,
   );
   // assertion-tags
-  public readonly assTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly assTagEntries = computed(
+    () => this.data()?.thesauri?.['assertion-tags']?.entries,
   );
   // doc-reference-types
-  public readonly refTypeEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly refTypeEntries = computed(
+    () => this.data()?.thesauri?.['doc-reference-types']?.entries,
   );
   // doc-reference-tags
-  public readonly refTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly refTagEntries = computed(
+    () => this.data()?.thesauri?.['doc-reference-tags']?.entries,
   );
 
   // lookup options depending on role
@@ -132,7 +138,11 @@ export class AssertedToponymsPartComponent extends ModelEditorComponentBase<Asse
     LookupProviderOptions | undefined
   >(undefined);
 
-  public toponyms: FormControl<AssertedToponym[]>;
+  private readonly _draft = linkedSignal(() => toDraft(this.data()?.value));
+  public readonly form = this.createForm(this._draft, (p) => {
+    // at least 1 entry
+    NgxToolsSignalValidators.strictMinLength(p.toponyms, 1);
+  });
 
   // calculated entries
   public readonly namePieceTypeEntries = computed(() => {
@@ -142,119 +152,28 @@ export class AssertedToponymsPartComponent extends ModelEditorComponentBase<Asse
     return this._nameService.getValueEntries(this.namePieceTypeEntries());
   });
 
-  constructor(
-    authService: AuthJwtService,
-    formBuilder: FormBuilder,
-    private _nameService: ProperNameService,
-    private _dialogService: DialogService,
-  ) {
-    super(authService, formBuilder);
-    // form
-    this.toponyms = formBuilder.control([], {
-      // at least 1 entry
-      validators: NgxToolsValidators.strictMinLengthValidator(1),
-      nonNullable: true,
-    });
-  }
-
-  protected buildForm(formBuilder: FormBuilder): FormGroup | UntypedFormGroup {
-    return formBuilder.group({
-      entries: this.toponyms,
-    });
-  }
-
-  private updateThesauri(thesauri: ThesauriSet): void {
-    let key = 'geo-toponym-tags';
-    if (this.hasThesaurus(key)) {
-      this.topTagEntries.set(thesauri[key].entries);
-    } else {
-      this.topTagEntries.set(undefined);
-    }
-
-    key = 'geo-name-tags';
-    if (this.hasThesaurus(key)) {
-      this.nameTagEntries.set(thesauri[key].entries);
-    } else {
-      this.nameTagEntries.set(undefined);
-    }
-
-    key = 'geo-name-languages';
-    if (this.hasThesaurus(key)) {
-      this.nameLangEntries.set(thesauri[key].entries);
-    } else {
-      this.nameLangEntries.set(undefined);
-    }
-
-    key = 'geo-name-piece-types';
-    if (this.hasThesaurus(key)) {
-      this.nameTypeEntries.set(thesauri[key].entries);
-    } else {
-      this.nameTypeEntries.set(undefined);
-    }
-
-    key = 'assertion-tags';
-    if (this.hasThesaurus(key)) {
-      this.assTagEntries.set(thesauri[key].entries);
-    } else {
-      this.assTagEntries.set(undefined);
-    }
-    key = 'doc-reference-types';
-    if (this.hasThesaurus(key)) {
-      this.refTypeEntries.set(thesauri[key].entries);
-    } else {
-      this.refTypeEntries.set(undefined);
-    }
-    key = 'doc-reference-tags';
-    if (this.hasThesaurus(key)) {
-      this.refTagEntries.set(thesauri[key].entries);
-    } else {
-      this.refTagEntries.set(undefined);
-    }
-  }
-
-  private updateForm(part?: AssertedToponymsPart | null): void {
-    if (!part) {
-      this.form.reset();
-      return;
-    }
-    this.toponyms.setValue(part.toponyms || []);
-    this.form.markAsPristine();
-  }
-
-  protected override onDataSet(
-    data?: EditedObject<AssertedToponymsPart>,
-  ): void {
-    // thesauri
-    if (data?.thesauri) {
-      this.updateThesauri(data.thesauri);
-    }
-    // settings
-    this._appRepository
-      ?.getSettingFor<AssertedToponymsPartSettings>(
-        ASSERTED_TOPONYMS_PART_TYPEID,
-        this.identity()?.roleId || undefined,
-      )
-      .then((settings) => {
-        const options = settings?.lookupProviderOptions;
-        this.lookupProviderOptions.set(options || undefined);
-      })
-      .catch((err) => {
-        console.warn(
-          `Failed to load settings for ${ASSERTED_TOPONYMS_PART_TYPEID}:`,
-          err,
-        );
-        this.lookupProviderOptions.set(undefined);
-      });
-    // form
-    this.updateForm(data?.value);
+  constructor() {
+    super();
+    this.initSettings<AssertedToponymsPartSettings>(
+      ASSERTED_TOPONYMS_PART_TYPEID,
+      (settings) =>
+        this.lookupProviderOptions.set(
+          settings?.lookupProviderOptions || undefined,
+        ),
+    );
   }
 
   protected getValue(): AssertedToponymsPart {
-    let part = this.getEditedPart(
+    const part = this.getEditedPart(
       ASSERTED_TOPONYMS_PART_TYPEID,
     ) as AssertedToponymsPart;
-    part.toponyms = this.toponyms.value || [];
+    part.toponyms = copyFormValue(this._draft().toponyms);
     return part;
+  }
+
+  private setToponyms(toponyms: AssertedToponym[]): void {
+    this.form.toponyms().value.set(toponyms);
+    this.form.toponyms().markAsDirty();
   }
 
   public addAssertedToponym(): void {
@@ -271,7 +190,7 @@ export class AssertedToponymsPartComponent extends ModelEditorComponentBase<Asse
 
   public editAssertedToponym(entry: AssertedToponym, index: number): void {
     this.editedIndex.set(index);
-    this.edited.set(structuredClone(entry));
+    this.edited.set(copyFormValue(entry));
   }
 
   public closeAssertedToponym(): void {
@@ -280,15 +199,13 @@ export class AssertedToponymsPartComponent extends ModelEditorComponentBase<Asse
   }
 
   public saveAssertedToponym(entry: AssertedToponym): void {
-    const entries = [...this.toponyms.value];
+    const toponyms = [...this._draft().toponyms];
     if (this.editedIndex() === -1) {
-      entries.push(entry);
+      toponyms.push(copyFormValue(entry));
     } else {
-      entries.splice(this.editedIndex(), 1, entry);
+      toponyms.splice(this.editedIndex(), 1, copyFormValue(entry));
     }
-    this.toponyms.setValue(entries);
-    this.toponyms.markAsDirty();
-    this.toponyms.updateValueAndValidity();
+    this.setToponyms(toponyms);
     this.closeAssertedToponym();
   }
 
@@ -301,11 +218,9 @@ export class AssertedToponymsPartComponent extends ModelEditorComponentBase<Asse
           if (this.editedIndex() === index) {
             this.closeAssertedToponym();
           }
-          const entries = [...this.toponyms.value];
-          entries.splice(index, 1);
-          this.toponyms.setValue(entries);
-          this.toponyms.markAsDirty();
-          this.toponyms.updateValueAndValidity();
+          this.setToponyms(
+            this._draft().toponyms.filter((_, i) => i !== index),
+          );
         }
       });
   }
@@ -314,25 +229,19 @@ export class AssertedToponymsPartComponent extends ModelEditorComponentBase<Asse
     if (index < 1) {
       return;
     }
-    const entry = this.toponyms.value[index];
-    const entries = [...this.toponyms.value];
-    entries.splice(index, 1);
-    entries.splice(index - 1, 0, entry);
-    this.toponyms.setValue(entries);
-    this.toponyms.markAsDirty();
-    this.toponyms.updateValueAndValidity();
+    const toponyms = [...this._draft().toponyms];
+    const entry = toponyms.splice(index, 1)[0];
+    toponyms.splice(index - 1, 0, entry);
+    this.setToponyms(toponyms);
   }
 
   public moveAssertedToponymDown(index: number): void {
-    if (index + 1 >= this.toponyms.value.length) {
+    const toponyms = [...this._draft().toponyms];
+    if (index + 1 >= toponyms.length) {
       return;
     }
-    const entry = this.toponyms.value[index];
-    const entries = [...this.toponyms.value];
-    entries.splice(index, 1);
-    entries.splice(index + 1, 0, entry);
-    this.toponyms.setValue(entries);
-    this.toponyms.markAsDirty();
-    this.toponyms.updateValueAndValidity();
+    const entry = toponyms.splice(index, 1)[0];
+    toponyms.splice(index + 1, 0, entry);
+    this.setToponyms(toponyms);
   }
 }

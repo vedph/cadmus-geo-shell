@@ -4,10 +4,10 @@ allowBuilds:
   lmdb: true
   msgpackr-extract: true
 minimumReleaseAgeExclude:
-  - '@myrmidon/cadmus-part-general-pg@18.0.0'
-  - '@myrmidon/cadmus-part-general-ui@18.0.0 || 18.0.4'
-  - '@myrmidon/cadmus-part-philology-pg@18.0.0'
-  - '@myrmidon/cadmus-part-philology-ui@19.0.0 || 19.0.3'
+  - '@myrmidon/cadmus-part-general-pg@18.0.0 || 20.0.0'
+  - '@myrmidon/cadmus-part-general-ui@18.0.0 || 18.0.4 || 20.0.0'
+  - '@myrmidon/cadmus-part-philology-pg@18.0.0 || 20.0.0'
+  - '@myrmidon/cadmus-part-philology-ui@19.0.0 || 19.0.3 || 20.0.0'
   - '@myrmidon/cadmus-text-ed-md@12.0.0'
   - '@myrmidon/cadmus-text-ed-txt@11.0.0'
   - '@myrmidon/cadmus-text-ed@11.0.0'
@@ -17,8 +17,25 @@ minimumReleaseAgeExclude:
   - '@myrmidon/cadmus-geo-location@1.0.1'
   - '@rollup/rollup-win32-arm64-msvc@4.63.5 || 4.64.0'
   - maplibre-gl@6.11.2
-  - '@myrmidon/cadmus-item-editor@18.0.1'
-  - '@myrmidon/cadmus-ui@18.0.1'
+  - '@myrmidon/cadmus-item-editor@18.0.1 || 20.0.0'
+  - '@myrmidon/cadmus-ui@18.0.1 || 20.0.0'
+  - '@myrmidon/cadmus-api@20.0.0'
+  - '@myrmidon/cadmus-core@20.0.0'
+  - '@myrmidon/cadmus-flags-pg@20.0.0'
+  - '@myrmidon/cadmus-flags-ui@20.0.0'
+  - '@myrmidon/cadmus-graph-pg-ex@20.0.0'
+  - '@myrmidon/cadmus-graph-pg@20.0.0'
+  - '@myrmidon/cadmus-graph-ui-ex@20.0.0'
+  - '@myrmidon/cadmus-graph-ui@20.0.0'
+  - '@myrmidon/cadmus-item-list@20.0.0'
+  - '@myrmidon/cadmus-item-search@20.0.0'
+  - '@myrmidon/cadmus-preview-pg@20.0.0'
+  - '@myrmidon/cadmus-preview-ui@20.0.0'
+  - '@myrmidon/cadmus-profile-core@20.0.0'
+  - '@myrmidon/cadmus-state@20.0.0'
+  - '@myrmidon/cadmus-thesaurus-editor@20.0.0'
+  - '@myrmidon/cadmus-thesaurus-list@20.0.0'
+  - '@myrmidon/cadmus-thesaurus-ui@20.0.0'
 hoistPattern:
   - '*'
   # zoneless workspace: keep zone.js (an optional peer of @angular/core) out of

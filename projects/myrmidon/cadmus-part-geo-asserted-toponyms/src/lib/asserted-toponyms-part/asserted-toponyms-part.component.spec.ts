@@ -110,6 +110,10 @@ describe('AssertedToponymsPartComponent', () => {
     getTypeThesaurus: ReturnType<typeof vi.fn>;
   };
 
+  // the form tags its array items with an identity Symbol: compare plain copies
+  const draftToponyms = () =>
+    JSON.parse(JSON.stringify(component.form.toponyms().value()));
+
   const identity: PartIdentity = {
     itemId: ITEM_ID,
     typeId: ASSERTED_TOPONYMS_PART_TYPEID,
@@ -177,8 +181,9 @@ describe('AssertedToponymsPartComponent', () => {
 
   it('should create with an empty invalid form', () => {
     expect(component).toBeTruthy();
-    expect(component.toponyms.value).toEqual([]);
-    expect(component.form.invalid).toBe(true);
+    expect(draftToponyms()).toEqual([]);
+    expect(component.form().invalid()).toBe(true);
+    expect(component.form.toponyms().getError('strictMinLength')).toBeTruthy();
     expect(component.userLevel).toBe(2);
     expect(component.namePieceTypeEntries()).toEqual([]);
     expect(component.namePieceValueEntries()).toEqual([]);
@@ -188,9 +193,21 @@ describe('AssertedToponymsPartComponent', () => {
     it('should load toponyms from data', async () => {
       await setData(createPart([ROMA, MEDIOLANUM]));
 
-      expect(component.toponyms.value).toEqual([ROMA, MEDIOLANUM]);
-      expect(component.form.valid).toBe(true);
-      expect(component.form.pristine).toBe(true);
+      expect(draftToponyms()).toEqual([ROMA, MEDIOLANUM]);
+      expect(component.form().valid()).toBe(true);
+      expect(component.form().dirty()).toBe(false);
+      expect(component.isDirty()).toBe(false);
+    });
+
+    it('should not adopt the bound toponyms', async () => {
+      await setData(createPart([ROMA, MEDIOLANUM]));
+      expect(component.form.toponyms().value()[0]).not.toBe(ROMA);
+      expect(Object.getOwnPropertySymbols(ROMA)).toEqual([]);
+    });
+
+    it('should render no <form> element', async () => {
+      await setData(createPart([ROMA]));
+      expect(fixture.nativeElement.querySelector('form')).toBeNull();
     });
 
     it('should render one row per toponym with its name', async () => {
@@ -205,7 +222,7 @@ describe('AssertedToponymsPartComponent', () => {
       await setData(createPart([ROMA]));
       await setData(undefined);
 
-      expect(component.toponyms.value).toEqual([]);
+      expect(draftToponyms()).toEqual([]);
       expect(fixture.nativeElement.querySelector('table')).toBeNull();
     });
 
@@ -213,7 +230,7 @@ describe('AssertedToponymsPartComponent', () => {
       const part = createPart([]);
       delete (part as Partial<AssertedToponymsPart>).toponyms;
       await setData(part);
-      expect(component.toponyms.value).toEqual([]);
+      expect(draftToponyms()).toEqual([]);
     });
 
     it('should load thesauri entries', async () => {
@@ -251,6 +268,7 @@ describe('AssertedToponymsPartComponent', () => {
       appRepository.getSettingFor.mockResolvedValue({
         lookupProviderOptions: options,
       });
+      fixture.componentRef.setInput('identity', { ...identity });
       await setData(createPart([ROMA]));
 
       expect(appRepository.getSettingFor).toHaveBeenCalledWith(
@@ -272,11 +290,12 @@ describe('AssertedToponymsPartComponent', () => {
     it('should not fail when settings cannot be loaded', async () => {
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       appRepository.getSettingFor.mockRejectedValue(new Error('offline'));
+      fixture.componentRef.setInput('identity', { ...identity });
       await setData(createPart([ROMA]));
       await fixture.whenStable();
 
       expect(component.lookupProviderOptions()).toBeUndefined();
-      expect(component.toponyms.value).toEqual([ROMA]);
+      expect(draftToponyms()).toEqual([ROMA]);
       expect(warn).toHaveBeenCalled();
       warn.mockRestore();
     });
@@ -307,6 +326,7 @@ describe('AssertedToponymsPartComponent', () => {
       appRepository.getSettingFor.mockResolvedValue({
         lookupProviderOptions: options,
       });
+      fixture.componentRef.setInput('identity', { ...identity });
       const thesauri = createThesauri();
       await setData(createPart([ROMA]), thesauri);
       component.addAssertedToponym();
@@ -384,8 +404,8 @@ describe('AssertedToponymsPartComponent', () => {
       toponymEditor()!.toponym.set(MEDIOLANUM);
       await fixture.whenStable();
 
-      expect(component.toponyms.value).toEqual([ROMA, MEDIOLANUM]);
-      expect(component.toponyms.dirty).toBe(true);
+      expect(draftToponyms()).toEqual([ROMA, MEDIOLANUM]);
+      expect(component.form.toponyms().dirty()).toBe(true);
       expect(component.edited()).toBeUndefined();
     });
 
@@ -394,7 +414,7 @@ describe('AssertedToponymsPartComponent', () => {
       component.editAssertedToponym(MEDIOLANUM, 1);
       component.saveAssertedToponym(NEAPOLIS);
 
-      expect(component.toponyms.value).toEqual([ROMA, NEAPOLIS]);
+      expect(draftToponyms()).toEqual([ROMA, NEAPOLIS]);
       expect(component.editedIndex()).toBe(-1);
     });
 
@@ -403,15 +423,15 @@ describe('AssertedToponymsPartComponent', () => {
       component.deleteAssertedToponym(0);
 
       expect(dialogService.confirm).toHaveBeenCalled();
-      expect(component.toponyms.value).toEqual([MEDIOLANUM]);
-      expect(component.toponyms.dirty).toBe(true);
+      expect(draftToponyms()).toEqual([MEDIOLANUM]);
+      expect(component.form.toponyms().dirty()).toBe(true);
     });
 
     it('should not delete a toponym when not confirmed', async () => {
       dialogService.confirm.mockReturnValue(of(false));
       await setData(createPart([ROMA, MEDIOLANUM]));
       component.deleteAssertedToponym(0);
-      expect(component.toponyms.value).toEqual([ROMA, MEDIOLANUM]);
+      expect(draftToponyms()).toEqual([ROMA, MEDIOLANUM]);
     });
 
     it('should close editor when deleting the edited toponym', async () => {
@@ -420,7 +440,7 @@ describe('AssertedToponymsPartComponent', () => {
       component.deleteAssertedToponym(1);
 
       expect(component.edited()).toBeUndefined();
-      expect(component.toponyms.value).toEqual([ROMA]);
+      expect(draftToponyms()).toEqual([ROMA]);
     });
 
     it('should keep editor open when deleting another toponym', async () => {
@@ -429,34 +449,34 @@ describe('AssertedToponymsPartComponent', () => {
       component.deleteAssertedToponym(0);
 
       expect(component.edited()).toEqual(MEDIOLANUM);
-      expect(component.toponyms.value).toEqual([MEDIOLANUM]);
+      expect(draftToponyms()).toEqual([MEDIOLANUM]);
     });
 
     it('should move a toponym up', async () => {
       await setData(createPart([ROMA, MEDIOLANUM, NEAPOLIS]));
       component.moveAssertedToponymUp(2);
-      expect(component.toponyms.value).toEqual([ROMA, NEAPOLIS, MEDIOLANUM]);
-      expect(component.toponyms.dirty).toBe(true);
+      expect(draftToponyms()).toEqual([ROMA, NEAPOLIS, MEDIOLANUM]);
+      expect(component.form.toponyms().dirty()).toBe(true);
     });
 
     it('should not move the first toponym up', async () => {
       await setData(createPart([ROMA, MEDIOLANUM]));
       component.moveAssertedToponymUp(0);
-      expect(component.toponyms.value).toEqual([ROMA, MEDIOLANUM]);
-      expect(component.toponyms.dirty).toBe(false);
+      expect(draftToponyms()).toEqual([ROMA, MEDIOLANUM]);
+      expect(component.form.toponyms().dirty()).toBe(false);
     });
 
     it('should move a toponym down', async () => {
       await setData(createPart([ROMA, MEDIOLANUM, NEAPOLIS]));
       component.moveAssertedToponymDown(0);
-      expect(component.toponyms.value).toEqual([MEDIOLANUM, ROMA, NEAPOLIS]);
+      expect(draftToponyms()).toEqual([MEDIOLANUM, ROMA, NEAPOLIS]);
     });
 
     it('should not move the last toponym down', async () => {
       await setData(createPart([ROMA, MEDIOLANUM]));
       component.moveAssertedToponymDown(1);
-      expect(component.toponyms.value).toEqual([ROMA, MEDIOLANUM]);
-      expect(component.toponyms.dirty).toBe(false);
+      expect(draftToponyms()).toEqual([ROMA, MEDIOLANUM]);
+      expect(component.form.toponyms().dirty()).toBe(false);
     });
 
     it('should disable move buttons at list boundaries', async () => {
@@ -495,7 +515,31 @@ describe('AssertedToponymsPartComponent', () => {
       expect(saved!.value!.itemId).toBe(ITEM_ID);
       expect(saved!.value!.typeId).toBe(ASSERTED_TOPONYMS_PART_TYPEID);
       expect(saved!.value!.toponyms).toEqual([ROMA, MEDIOLANUM]);
-      expect(component.form.pristine).toBe(true);
+      expect(
+        saved!.value!.toponyms.every(
+          (t) => !Object.getOwnPropertySymbols(t).length,
+        ),
+      ).toBe(true);
+      await fixture.whenStable();
+      expect(component.form().dirty()).toBe(false);
+    });
+
+    it('should save from the close/save buttons', async () => {
+      await setData(createPart([ROMA]));
+      component.saveAssertedToponym(MEDIOLANUM);
+      await fixture.whenStable();
+
+      let saved: EditedObject<AssertedToponymsPart> | undefined;
+      component.data.subscribe((d) => (saved = d));
+      const button = Array.from(
+        fixture.nativeElement.querySelectorAll(
+          'cadmus-close-save-buttons button',
+        ) as NodeListOf<HTMLButtonElement>,
+      ).find((b) => b.textContent?.includes('save'))!;
+      expect(button.type).toBe('button');
+      button.click();
+
+      expect(saved!.value!.toponyms).toEqual([ROMA, MEDIOLANUM]);
     });
 
     it('should create a new part when saving without data', () => {
@@ -510,10 +554,11 @@ describe('AssertedToponymsPartComponent', () => {
       expect(saved!.value!.toponyms).toEqual([ROMA]);
     });
 
-    it('should emit dirty changes', () => {
+    it('should emit dirty changes', async () => {
       const dirty: boolean[] = [];
       component.dirtyChange.subscribe((d) => dirty.push(d));
       component.saveAssertedToponym(ROMA);
+      await fixture.whenStable();
       expect(dirty).toEqual([true]);
       expect(component.isDirty()).toBe(true);
     });

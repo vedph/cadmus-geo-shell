@@ -2,35 +2,25 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
+  linkedSignal,
   signal,
 } from '@angular/core';
-import {
-  FormControl,
-  FormBuilder,
-  FormGroup,
-  UntypedFormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
 import { take } from 'rxjs/operators';
 import { TitleCasePipe } from '@angular/common';
 import type { FeatureCollection } from 'geojson';
 import { Map as MaplibreMap, LngLatBounds, LngLatLike } from 'maplibre-gl';
 
-import { EnvService, NgxToolsValidators } from '@myrmidon/ngx-tools';
+import { NgxToolsSignalValidators } from '@myrmidon/ngx-tools';
 import { DialogService } from '@myrmidon/ngx-mat-tools';
-import { AuthJwtService } from '@myrmidon/auth-jwt-login';
 
 import {
   CloseSaveButtonsComponent,
   ModelEditorComponentBase,
   HelpLinkComponent,
+  copyFormValue,
 } from '@myrmidon/cadmus-ui';
-import {
-  EditedObject,
-  ThesauriSet,
-  ThesaurusEntry,
-} from '@myrmidon/cadmus-core';
+import { EditedObject } from '@myrmidon/cadmus-core';
 
 import {
   MatCard,
@@ -74,6 +64,22 @@ interface AssertedLocationsPartSettings {
 }
 
 /**
+ * The editable shape behind the form.
+ */
+interface AssertedLocationsPartControls {
+  locations: AssertedLocation[];
+}
+
+/**
+ * Bound part -> editable draft.
+ */
+function toDraft(
+  part?: AssertedLocationsPart | null,
+): AssertedLocationsPartControls {
+  return { locations: copyFormValue(part?.locations) || [] };
+}
+
+/**
  * Asserted locations part editor.
  * Thesauri: geo-location-tags, assertion-tags, doc-reference-types,
  * doc-reference-tags.
@@ -84,8 +90,6 @@ interface AssertedLocationsPartSettings {
   styleUrls: ['./asserted-locations-part.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
     MatCard,
     MatCardHeader,
     MatCardAvatar,
@@ -113,6 +117,8 @@ interface AssertedLocationsPartSettings {
   ],
 })
 export class AssertedLocationsPartComponent extends ModelEditorComponentBase<AssertedLocationsPart> {
+  private readonly _dialogService = inject(DialogService);
+
   public readonly edited = signal<AssertedLocation | undefined>(undefined);
   public readonly editedIndex = signal<number>(-1);
 
@@ -121,20 +127,20 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
   );
 
   // geo-location-tags
-  public readonly locTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly locTagEntries = computed(
+    () => this.data()?.thesauri?.['geo-location-tags']?.entries,
   );
   // assertion-tags
-  public readonly assTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly assTagEntries = computed(
+    () => this.data()?.thesauri?.['assertion-tags']?.entries,
   );
   // doc-reference-types
-  public readonly refTypeEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly refTypeEntries = computed(
+    () => this.data()?.thesauri?.['doc-reference-types']?.entries,
   );
   // doc-reference-tags
-  public readonly refTagEntries = signal<ThesaurusEntry[] | undefined>(
-    undefined,
+  public readonly refTagEntries = computed(
+    () => this.data()?.thesauri?.['doc-reference-tags']?.entries,
   );
 
   // lookup options depending on role
@@ -142,12 +148,18 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     LookupProviderOptions | undefined
   >(undefined);
 
-  public locations: FormControl<AssertedLocation[]>;
+  private readonly _draft = linkedSignal(() => toDraft(this.data()?.value));
+  public readonly form = this.createForm(this._draft, (p) => {
+    // at least 1 entry
+    NgxToolsSignalValidators.strictMinLength(p.locations, 1);
+  });
 
   // overview map
   public readonly mapStyle = DEFAULT_MAP_STYLE;
   public readonly mapReady = signal(false);
-  public readonly mapLocations = signal<AssertedLocation[]>([]);
+  public readonly mapLocations = computed(() =>
+    this.form.locations().value(),
+  );
   public readonly mapCenter = signal<LngLatLike>([0, 20]);
   public readonly mapZoom = signal<number>(4);
   private _overviewMap?: MaplibreMap;
@@ -169,105 +181,31 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     };
   });
 
-  constructor(
-    authService: AuthJwtService,
-    formBuilder: FormBuilder,
-    private _dialogService: DialogService,
-    env: EnvService,
-  ) {
-    super(authService, formBuilder);
-    // form
-    this.locations = formBuilder.control([], {
-      // at least 1 entry
-      validators: NgxToolsValidators.strictMinLengthValidator(1),
-      nonNullable: true,
-    });
-    // keep overview map in sync with form control
-    this.locations.valueChanges.subscribe((locs) => {
-      this.mapLocations.set([...locs]);
-    });
-  }
-
-  protected buildForm(formBuilder: FormBuilder): FormGroup | UntypedFormGroup {
-    return formBuilder.group({
-      entries: this.locations,
-    });
-  }
-
-  private updateThesauri(thesauri: ThesauriSet): void {
-    let key = 'geo-location-tags';
-    if (this.hasThesaurus(key)) {
-      this.locTagEntries.set(thesauri[key].entries);
-    } else {
-      this.locTagEntries.set(undefined);
-    }
-    key = 'assertion-tags';
-    if (this.hasThesaurus(key)) {
-      this.assTagEntries.set(thesauri[key].entries);
-    } else {
-      this.assTagEntries.set(undefined);
-    }
-    key = 'doc-reference-types';
-    if (this.hasThesaurus(key)) {
-      this.refTypeEntries.set(thesauri[key].entries);
-    } else {
-      this.refTypeEntries.set(undefined);
-    }
-    key = 'doc-reference-tags';
-    if (this.hasThesaurus(key)) {
-      this.refTagEntries.set(thesauri[key].entries);
-    } else {
-      this.refTagEntries.set(undefined);
-    }
-  }
-
-  private updateForm(part?: AssertedLocationsPart | null): void {
-    if (!part) {
-      this.form.reset();
-      this.mapLocations.set([]);
-      return;
-    }
-    this.locations.setValue(part.locations || []);
-    this.form.markAsPristine();
-    // fit overview map to locations
-    if (this._overviewMap && part.locations?.length) {
-      setTimeout(() => this.fitMapToLocations());
-    }
+  constructor() {
+    super();
+    this.initSettings<AssertedLocationsPartSettings>(
+      ASSERTED_LOCATIONS_PART_TYPEID,
+      (settings) =>
+        this.lookupProviderOptions.set(
+          settings?.lookupProviderOptions || undefined,
+        ),
+    );
   }
 
   protected override onDataSet(
     data?: EditedObject<AssertedLocationsPart>,
   ): void {
-    // thesauri
-    if (data?.thesauri) {
-      this.updateThesauri(data.thesauri);
+    // fit overview map to locations
+    if (this._overviewMap && data?.value?.locations?.length) {
+      setTimeout(() => this.fitMapToLocations());
     }
-    // settings
-    this._appRepository
-      ?.getSettingFor<AssertedLocationsPartSettings>(
-        ASSERTED_LOCATIONS_PART_TYPEID,
-        this.identity()?.roleId || undefined,
-      )
-      .then((settings) => {
-        const options = settings?.lookupProviderOptions;
-        this.lookupProviderOptions.set(options || undefined);
-      })
-      .catch((err) => {
-        console.warn(
-          `Failed to load settings for ${ASSERTED_LOCATIONS_PART_TYPEID}:`,
-          err,
-        );
-        this.lookupProviderOptions.set(undefined);
-      });
-    // form
-    this.updateForm(data?.value);
   }
 
   protected getValue(): AssertedLocationsPart {
-    let part = this.getEditedPart(
+    const part = this.getEditedPart(
       ASSERTED_LOCATIONS_PART_TYPEID,
     ) as AssertedLocationsPart;
-    part.locations = this.locations.value || [];
+    part.locations = copyFormValue(this._draft().locations);
     return part;
   }
 
@@ -276,18 +214,19 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     this._overviewMap = map;
     this.mapReady.set(true);
     map.resize();
-    if (this.locations.value.length) {
+    if (this._draft().locations.length) {
       setTimeout(() => this.fitMapToLocations());
     }
   }
 
   public fitMapToLocations(): void {
-    if (!this._overviewMap || !this.locations.value.length) {
+    const locations = this._draft().locations;
+    if (!this._overviewMap || !locations.length) {
       return;
     }
     // single location: fly to it
-    if (this.locations.value.length === 1) {
-      const loc = this.locations.value[0];
+    if (locations.length === 1) {
+      const loc = locations[0];
       this._overviewMap.flyTo({
         center: [loc.value.longitude, loc.value.latitude],
         zoom: 10,
@@ -296,7 +235,7 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     }
     // multiple locations: fit bounds
     const bounds = new LngLatBounds();
-    for (const loc of this.locations.value) {
+    for (const loc of locations) {
       bounds.extend([loc.value.longitude, loc.value.latitude]);
     }
     this._overviewMap.fitBounds(bounds, {
@@ -317,6 +256,11 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
   //#endregion
 
   //#region Locations CRUD
+  private setLocations(locations: AssertedLocation[]): void {
+    this.form.locations().value.set(locations);
+    this.form.locations().markAsDirty();
+  }
+
   public addLocation(): void {
     const entry: AssertedLocation = {
       value: { label: '', latitude: 0, longitude: 0 },
@@ -326,7 +270,7 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
 
   public editLocation(entry: AssertedLocation, index: number): void {
     this.editedIndex.set(index);
-    this.edited.set(structuredClone(entry));
+    this.edited.set(copyFormValue(entry));
   }
 
   public closeLocation(): void {
@@ -335,15 +279,13 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
   }
 
   public saveLocation(entry: AssertedLocation): void {
-    const locations = [...this.locations.value];
+    const locations = [...this._draft().locations];
     if (this.editedIndex() === -1) {
-      locations.push(entry);
+      locations.push(copyFormValue(entry));
     } else {
-      locations.splice(this.editedIndex(), 1, entry);
+      locations.splice(this.editedIndex(), 1, copyFormValue(entry));
     }
-    this.locations.setValue(locations);
-    this.locations.markAsDirty();
-    this.locations.updateValueAndValidity();
+    this.setLocations(locations);
     this.closeLocation();
   }
 
@@ -356,11 +298,9 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
           if (this.editedIndex() === index) {
             this.closeLocation();
           }
-          const locations = [...this.locations.value];
-          locations.splice(index, 1);
-          this.locations.setValue(locations);
-          this.locations.markAsDirty();
-          this.locations.updateValueAndValidity();
+          this.setLocations(
+            this._draft().locations.filter((_, i) => i !== index),
+          );
         }
       });
   }
@@ -369,26 +309,20 @@ export class AssertedLocationsPartComponent extends ModelEditorComponentBase<Ass
     if (index < 1) {
       return;
     }
-    const location = this.locations.value[index];
-    const locations = [...this.locations.value];
-    locations.splice(index, 1);
+    const locations = [...this._draft().locations];
+    const location = locations.splice(index, 1)[0];
     locations.splice(index - 1, 0, location);
-    this.locations.setValue(locations);
-    this.locations.markAsDirty();
-    this.locations.updateValueAndValidity();
+    this.setLocations(locations);
   }
 
   public moveLocationDown(index: number): void {
-    if (index + 1 >= this.locations.value.length) {
+    const locations = [...this._draft().locations];
+    if (index + 1 >= locations.length) {
       return;
     }
-    const location = this.locations.value[index];
-    const locations = [...this.locations.value];
-    locations.splice(index, 1);
+    const location = locations.splice(index, 1)[0];
     locations.splice(index + 1, 0, location);
-    this.locations.setValue(locations);
-    this.locations.markAsDirty();
-    this.locations.updateValueAndValidity();
+    this.setLocations(locations);
   }
   //#endregion
 }

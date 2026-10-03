@@ -180,6 +180,10 @@ describe('AssertedLocationsPartComponent', () => {
     await fixture.whenStable();
   };
 
+  // the form tags its array items with an identity Symbol: compare plain copies
+  const plain = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
+  const draftLocations = () => plain(component.form.locations().value());
+
   const locationEditor = (): MockAssertedLocationComponent | undefined =>
     fixture.debugElement.query(By.directive(MockAssertedLocationComponent))
       ?.componentInstance;
@@ -254,8 +258,9 @@ describe('AssertedLocationsPartComponent', () => {
 
   it('should create with an empty invalid form', () => {
     expect(component).toBeTruthy();
-    expect(component.locations.value).toEqual([]);
-    expect(component.form.invalid).toBe(true);
+    expect(draftLocations()).toEqual([]);
+    expect(component.form().invalid()).toBe(true);
+    expect(component.form.locations().getError('strictMinLength')).toBeTruthy();
     expect(component.userLevel).toBe(4);
     expect(component.mapLocations()).toEqual([]);
     expect(component.labelsGeoJSON().features).toEqual([]);
@@ -265,10 +270,23 @@ describe('AssertedLocationsPartComponent', () => {
     it('should load locations from data', async () => {
       await setData(createPart([ROME, MILAN]));
 
-      expect(component.locations.value).toEqual([ROME, MILAN]);
-      expect(component.form.valid).toBe(true);
-      expect(component.form.pristine).toBe(true);
-      expect(component.mapLocations()).toEqual([ROME, MILAN]);
+      expect(draftLocations()).toEqual([ROME, MILAN]);
+      expect(component.form().valid()).toBe(true);
+      expect(component.form().dirty()).toBe(false);
+      expect(component.isDirty()).toBe(false);
+      expect(plain(component.mapLocations())).toEqual([ROME, MILAN]);
+    });
+
+    it('should not adopt the bound locations', async () => {
+      const part = createPart([ROME, MILAN]);
+      await setData(part);
+      expect(component.form.locations().value()[0]).not.toBe(ROME);
+      expect(Object.getOwnPropertySymbols(ROME)).toEqual([]);
+    });
+
+    it('should render no <form> element', async () => {
+      await setData(createPart([ROME]));
+      expect(fixture.nativeElement.querySelector('form')).toBeNull();
     });
 
     it('should render one row per location', async () => {
@@ -284,7 +302,7 @@ describe('AssertedLocationsPartComponent', () => {
       await setData(createPart([ROME]));
       await setData(undefined);
 
-      expect(component.locations.value).toEqual([]);
+      expect(draftLocations()).toEqual([]);
       expect(component.mapLocations()).toEqual([]);
       expect(fixture.nativeElement.querySelector('table')).toBeNull();
     });
@@ -293,7 +311,7 @@ describe('AssertedLocationsPartComponent', () => {
       const part = createPart([]);
       delete (part as Partial<AssertedLocationsPart>).locations;
       await setData(part);
-      expect(component.locations.value).toEqual([]);
+      expect(draftLocations()).toEqual([]);
     });
 
     it('should load thesauri entries', async () => {
@@ -331,6 +349,7 @@ describe('AssertedLocationsPartComponent', () => {
       appRepository.getSettingFor.mockResolvedValue({
         lookupProviderOptions: options,
       });
+      fixture.componentRef.setInput('identity', { ...identity });
       await setData(createPart([ROME]));
 
       expect(appRepository.getSettingFor).toHaveBeenCalledWith(
@@ -355,11 +374,12 @@ describe('AssertedLocationsPartComponent', () => {
     it('should not fail when settings cannot be loaded', async () => {
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       appRepository.getSettingFor.mockRejectedValue(new Error('offline'));
+      fixture.componentRef.setInput('identity', { ...identity });
       await setData(createPart([ROME]));
       await fixture.whenStable();
 
       expect(component.lookupProviderOptions()).toBeUndefined();
-      expect(component.locations.value).toEqual([ROME]);
+      expect(draftLocations()).toEqual([ROME]);
       expect(warn).toHaveBeenCalled();
       warn.mockRestore();
     });
@@ -458,10 +478,10 @@ describe('AssertedLocationsPartComponent', () => {
       locationEditor()!.location.set(MILAN);
       await fixture.whenStable();
 
-      expect(component.locations.value).toEqual([ROME, MILAN]);
-      expect(component.locations.dirty).toBe(true);
+      expect(draftLocations()).toEqual([ROME, MILAN]);
+      expect(component.form.locations().dirty()).toBe(true);
       expect(component.edited()).toBeUndefined();
-      expect(component.mapLocations()).toEqual([ROME, MILAN]);
+      expect(plain(component.mapLocations())).toEqual([ROME, MILAN]);
     });
 
     it('should replace an existing location on save', async () => {
@@ -469,7 +489,7 @@ describe('AssertedLocationsPartComponent', () => {
       component.editLocation(MILAN, 1);
       component.saveLocation(NAPLES);
 
-      expect(component.locations.value).toEqual([ROME, NAPLES]);
+      expect(draftLocations()).toEqual([ROME, NAPLES]);
       expect(component.editedIndex()).toBe(-1);
     });
 
@@ -478,15 +498,15 @@ describe('AssertedLocationsPartComponent', () => {
       component.deleteLocation(0);
 
       expect(dialogService.confirm).toHaveBeenCalled();
-      expect(component.locations.value).toEqual([MILAN]);
-      expect(component.locations.dirty).toBe(true);
+      expect(draftLocations()).toEqual([MILAN]);
+      expect(component.form.locations().dirty()).toBe(true);
     });
 
     it('should not delete a location when not confirmed', async () => {
       dialogService.confirm.mockReturnValue(of(false));
       await setData(createPart([ROME, MILAN]));
       component.deleteLocation(0);
-      expect(component.locations.value).toEqual([ROME, MILAN]);
+      expect(draftLocations()).toEqual([ROME, MILAN]);
     });
 
     it('should close editor when deleting the edited location', async () => {
@@ -496,7 +516,7 @@ describe('AssertedLocationsPartComponent', () => {
 
       expect(component.edited()).toBeUndefined();
       expect(component.editedIndex()).toBe(-1);
-      expect(component.locations.value).toEqual([ROME]);
+      expect(draftLocations()).toEqual([ROME]);
     });
 
     it('should keep editor open when deleting another location', async () => {
@@ -505,34 +525,34 @@ describe('AssertedLocationsPartComponent', () => {
       component.deleteLocation(0);
 
       expect(component.edited()).toEqual(MILAN);
-      expect(component.locations.value).toEqual([MILAN]);
+      expect(draftLocations()).toEqual([MILAN]);
     });
 
     it('should move a location up', async () => {
       await setData(createPart([ROME, MILAN, NAPLES]));
       component.moveLocationUp(2);
-      expect(component.locations.value).toEqual([ROME, NAPLES, MILAN]);
-      expect(component.locations.dirty).toBe(true);
+      expect(draftLocations()).toEqual([ROME, NAPLES, MILAN]);
+      expect(component.form.locations().dirty()).toBe(true);
     });
 
     it('should not move the first location up', async () => {
       await setData(createPart([ROME, MILAN]));
       component.moveLocationUp(0);
-      expect(component.locations.value).toEqual([ROME, MILAN]);
-      expect(component.locations.dirty).toBe(false);
+      expect(draftLocations()).toEqual([ROME, MILAN]);
+      expect(component.form.locations().dirty()).toBe(false);
     });
 
     it('should move a location down', async () => {
       await setData(createPart([ROME, MILAN, NAPLES]));
       component.moveLocationDown(0);
-      expect(component.locations.value).toEqual([MILAN, ROME, NAPLES]);
+      expect(draftLocations()).toEqual([MILAN, ROME, NAPLES]);
     });
 
     it('should not move the last location down', async () => {
       await setData(createPart([ROME, MILAN]));
       component.moveLocationDown(1);
-      expect(component.locations.value).toEqual([ROME, MILAN]);
-      expect(component.locations.dirty).toBe(false);
+      expect(draftLocations()).toEqual([ROME, MILAN]);
+      expect(component.form.locations().dirty()).toBe(false);
     });
 
     it('should disable move buttons at list boundaries', async () => {
@@ -702,7 +722,31 @@ describe('AssertedLocationsPartComponent', () => {
       expect(saved!.value!.itemId).toBe(ITEM_ID);
       expect(saved!.value!.typeId).toBe(ASSERTED_LOCATIONS_PART_TYPEID);
       expect(saved!.value!.locations).toEqual([ROME, MILAN]);
-      expect(component.form.pristine).toBe(true);
+      expect(
+        saved!.value!.locations.every(
+          (l) => !Object.getOwnPropertySymbols(l).length,
+        ),
+      ).toBe(true);
+      await fixture.whenStable();
+      expect(component.form().dirty()).toBe(false);
+    });
+
+    it('should save from the close/save buttons', async () => {
+      await setData(createPart([ROME]));
+      component.saveLocation(MILAN);
+      await fixture.whenStable();
+
+      let saved: EditedObject<AssertedLocationsPart> | undefined;
+      component.data.subscribe((d) => (saved = d));
+      const button = Array.from(
+        fixture.nativeElement.querySelectorAll(
+          'cadmus-close-save-buttons button',
+        ) as NodeListOf<HTMLButtonElement>,
+      ).find((b) => b.textContent?.includes('save'))!;
+      expect(button.type).toBe('button');
+      button.click();
+
+      expect(saved!.value!.locations).toEqual([ROME, MILAN]);
     });
 
     it('should create a new part when saving without data', async () => {
@@ -721,6 +765,7 @@ describe('AssertedLocationsPartComponent', () => {
       const dirty: boolean[] = [];
       component.dirtyChange.subscribe((d) => dirty.push(d));
       component.saveLocation(ROME);
+      await fixture.whenStable();
       expect(dirty).toEqual([true]);
       expect(component.isDirty()).toBe(true);
     });
