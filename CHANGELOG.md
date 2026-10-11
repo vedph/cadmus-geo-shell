@@ -1,5 +1,6 @@
 # History
 
+- 2026-10-11: replaced the `setWorkerUrl` call in `main.ts` with `provideMaplibreWorker` in `app.config.ts`, as recommended by `@maplibre/ngx-maplibre-gl` (removes its console warning and keeps `maplibre-gl` out of the initial bundle). Verified with `maplibre-gl` 6.14.0 and `@maplibre/ngx-maplibre-gl` 22.2.0. See the [setup guide](maplibre-setup.md).
 - 2026-10-02:
   - updated Angular and packages.
   - ⚠️ migrated to Vitest and fixed bugs.

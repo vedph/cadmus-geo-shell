@@ -17,6 +17,8 @@ import {
   NGX_MONACO_LOADER_PROVIDER,
 } from '@jean-merelis/ngx-monaco-editor';
 
+import { provideMaplibreWorker } from '@maplibre/ngx-maplibre-gl/config';
+
 import { authJwtInterceptor } from '@myrmidon/auth-jwt-login';
 
 import { PART_EDITOR_KEYS } from './part-editor-keys';
@@ -38,6 +40,10 @@ export const appConfig: ApplicationConfig = {
       provide: NGX_MONACO_LOADER_PROVIDER,
       useFactory: () => new DefaultMonacoLoader(),
     },
+    // maplibre-gl v6 ships as ESM only: bundlers cannot resolve the worker script
+    // via import.meta.url, so it is copied as a static asset (see angular.json)
+    // and its URL (relative to the base href) is provided here.
+    provideMaplibreWorker('assets/maplibre-gl/maplibre-gl-worker.mjs'),
     // parts and fragments type IDs to editor group keys mappings
     // https://github.com/nrwl/nx/issues/208#issuecomment-384102058
     // inject like: @Inject('partEditorKeys') partEditorKeys: PartEditorKeys
